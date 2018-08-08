@@ -1,20 +1,19 @@
-FROM microsoft/dotnet:2.1-aspnetcore-runtime-nanoserver-1709 AS base
+FROM microsoft/dotnet:2.1.1-aspnetcore-runtime AS base
 WORKDIR /app
-EXPOSE 64158
-EXPOSE 44319
+EXPOSE 80
 
-FROM microsoft/dotnet:2.1-sdk-nanoserver-1709 AS build
+FROM microsoft/dotnet:2.1.1-sdk AS build
 WORKDIR /src
-COPY PaymentWebAPI/PaymentWebAPI.csproj PaymentWebAPI/
-RUN dotnet restore PaymentWebAPI/PaymentWebAPI.csproj
+COPY PaymentWebApi/PaymentWebApi.csproj PaymentWebApi/
+RUN dotnet restore PaymentWebApi/PaymentWebApi.csproj
 COPY . .
-WORKDIR /src/PaymentWebAPI
-RUN dotnet build PaymentWebAPI.csproj -c Release -o /app
+WORKDIR /src/PaymentWebApi
+RUN dotnet build PaymentWebApi.csproj -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish PaymentWebAPI.csproj -c Release -o /app
+RUN dotnet publish PaymentWebApi.csproj -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "PaymentWebAPI.dll"]
+ENTRYPOINT ["dotnet", "PaymentWebApi.dll"]
