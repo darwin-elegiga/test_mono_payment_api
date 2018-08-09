@@ -5,4 +5,4 @@ services:
     image: ${DOCKER_REGISTRY}paymentwebapi
     build:
       context: .
-      dockerfile: PaymentWebApi/Dockerfile
+      dockerfile: VPay.Payment.Api/Dockerfile
