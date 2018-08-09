@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentWebApi", "PaymentWebApi\PaymentWebApi.csproj", "{1F691D4F-E08B-4D24-821A-F8ADBF4A286D}"
-EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{DA974F47-FAFF-4F8A-97E1-6BF17BF996AC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.Api", "VPay.Payment.Api\VPay.Payment.Api.csproj", "{1F691D4F-E08B-4D24-821A-F8ADBF4A286D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment", "VPay.Payment\VPay.Payment.csproj", "{F030853F-2E0D-41F9-91DD-1B65BC4C7BA7}"
 EndProject
