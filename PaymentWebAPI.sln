@@ -3,9 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentWebApi", "PaymentWebApi\PaymentWebApi.csproj", "{1F691D4F-E08B-4D24-821A-F8ADBF4A286D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentWebApi", "PaymentWebApi\PaymentWebApi.csproj", "{1F691D4F-E08B-4D24-821A-F8ADBF4A286D}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{DA974F47-FAFF-4F8A-97E1-6BF17BF996AC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment", "VPay.Payment\VPay.Payment.csproj", "{F030853F-2E0D-41F9-91DD-1B65BC4C7BA7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.Common", "VPay.Payment.Common\VPay.Payment.Common.csproj", "{09B43C96-05C2-4454-8975-FDD86EAB41D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E9E9420C-73E8-49CF-9073-D75EB7F3AFBF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.Tests", "VPay.Payment.Tests\VPay.Payment.Tests.csproj", "{60DB8381-E335-4D93-8EF2-CA3B19DF6821}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.Api.Tests", "VPay.Payment.Api.Tests\VPay.Payment.Api.Tests.csproj", "{C3456BB9-EED6-42BB-A918-00D7EAB46D28}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{903A3768-1CFF-4667-B82E-B80625CEFE0B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +37,29 @@ Global
 		{DA974F47-FAFF-4F8A-97E1-6BF17BF996AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA974F47-FAFF-4F8A-97E1-6BF17BF996AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA974F47-FAFF-4F8A-97E1-6BF17BF996AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F030853F-2E0D-41F9-91DD-1B65BC4C7BA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F030853F-2E0D-41F9-91DD-1B65BC4C7BA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F030853F-2E0D-41F9-91DD-1B65BC4C7BA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F030853F-2E0D-41F9-91DD-1B65BC4C7BA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09B43C96-05C2-4454-8975-FDD86EAB41D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09B43C96-05C2-4454-8975-FDD86EAB41D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09B43C96-05C2-4454-8975-FDD86EAB41D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09B43C96-05C2-4454-8975-FDD86EAB41D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60DB8381-E335-4D93-8EF2-CA3B19DF6821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60DB8381-E335-4D93-8EF2-CA3B19DF6821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60DB8381-E335-4D93-8EF2-CA3B19DF6821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60DB8381-E335-4D93-8EF2-CA3B19DF6821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3456BB9-EED6-42BB-A918-00D7EAB46D28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3456BB9-EED6-42BB-A918-00D7EAB46D28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3456BB9-EED6-42BB-A918-00D7EAB46D28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3456BB9-EED6-42BB-A918-00D7EAB46D28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{60DB8381-E335-4D93-8EF2-CA3B19DF6821} = {E9E9420C-73E8-49CF-9073-D75EB7F3AFBF}
+		{C3456BB9-EED6-42BB-A918-00D7EAB46D28} = {E9E9420C-73E8-49CF-9073-D75EB7F3AFBF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2220BD7D-97B5-4EE8-A6FC-938957818909}
