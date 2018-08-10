@@ -6,9 +6,14 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using VPay.Payment.Common;
+using VPay.Payment.Common.Db2;
+using VPay.Payment.Db2;
 
 namespace VPay.Payment.Api
 {
@@ -30,6 +35,17 @@ namespace VPay.Payment.Api
         public static IMvcBuilder AddFluentValidationSettings(this IMvcBuilder mvcBuilder)
         {
             return mvcBuilder;
+        }
+
+        public static IServiceCollection SetupDb2(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<Db2ConnectionConfig>(configuration.GetSection("Db2"));
+            services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<Db2ConnectionConfig>>().Value);
+
+            services.AddScoped<IDbPaymentOps, DbPaymentOps>();
+            services.AddScoped<IHealthCheck, DbPaymentOps>();
+
+            return services;
         }
 
         public static IServiceCollection AddApiVersioningService(this IServiceCollection services)

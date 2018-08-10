@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 /src/VPay.DocSys.Common/Models/Storage/CreateArchiveParam.cs
 /src/VPay.DocSys.Common/Models/Storage/GenericStorageResponse.cs
+
+*.Local.*

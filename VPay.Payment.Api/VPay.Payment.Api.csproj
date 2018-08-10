@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VPay.Payment.Common\VPay.Payment.Common.csproj" />
+    <ProjectReference Include="..\VPay.Payment.Db2\VPay.Payment.Db2.csproj" />
     <ProjectReference Include="..\VPay.Payment\VPay.Payment.csproj" />
   </ItemGroup>
 
