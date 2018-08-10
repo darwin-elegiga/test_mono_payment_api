@@ -36,7 +36,8 @@ namespace VPay.Payment.Api
             services
                 .AddApiVersioningService()
                 .AddOptions()
-                .AddSwaggerGenService();
+                .AddSwaggerGenService()
+                .SetupDb2(Configuration);
 
         }
 
