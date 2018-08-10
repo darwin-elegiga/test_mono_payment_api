@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VPay.Payment.Api.Validation;
+using VPay.Payment.Common;
 
 namespace VPay.Payment.Api
 {
@@ -40,6 +41,7 @@ namespace VPay.Payment.Api
                 .SetupDb2(Configuration)
                 .SetupMySql(Configuration);
 
+            services.AddScoped<IHealthCheckService, HealthCheckService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

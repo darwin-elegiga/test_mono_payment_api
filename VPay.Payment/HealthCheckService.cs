@@ -1,0 +1,38 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using VPay.Payment.Common;
+using VPay.Payment.Common.Models;
+
+namespace VPay.Payment
+{
+    public class HealthCheckService : IHealthCheckService
+    {
+        private readonly IEnumerable<IHealthCheck> _healthChecks;
+        
+        public HealthCheckService(IEnumerable<IHealthCheck> healthChecks)
+        {
+            _healthChecks = healthChecks;
+        }
+
+        public async Task<IEnumerable<ServiceComponentStatus>> CheckHealth()
+        {
+            var tasks = _healthChecks.Select(GetHealth).ToList();
+
+            var results = await Task.WhenAll(tasks);
+
+            return results;
+        }
+
+        private async Task<ServiceComponentStatus> GetHealth(IHealthCheck healthCheck)
+        {
+            var health = await healthCheck.IsHealthy();
+
+            return new ServiceComponentStatus
+            {
+                Component = healthCheck.Component,
+                Status = health ? "OK": "FAILURE"
+            };
+        }
+    }
+}
