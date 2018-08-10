@@ -27,6 +27,10 @@ These instructions will get you a copy of the project up and running on your loc
   "Db2": {
     "UserName": "<Db2UserName>",
     "Password": "<Db2Password>"
+  },  
+  "MySql": {
+    "UserName": "<MySqlUserName>",
+    "Password": "<MySqlPassword>"
   }
 }
 ```

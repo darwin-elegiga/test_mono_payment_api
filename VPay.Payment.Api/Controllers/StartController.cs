@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using VPay.Payment.Common;
+using VPay.Payment.Common.Models;
 
 namespace VPay.Payment.Api.Controllers
 {
@@ -8,9 +10,9 @@ namespace VPay.Payment.Api.Controllers
     [ApiController]
     public class StartController : ControllerBase
     {
-        private readonly IHealthCheck _dbCheck;
+        private readonly IEnumerable<IHealthCheck> _dbCheck;
 
-        public StartController(IHealthCheck dbCheck)
+        public StartController(IEnumerable<IHealthCheck> dbCheck)
         {
             _dbCheck = dbCheck;
         }
@@ -22,9 +24,20 @@ namespace VPay.Payment.Api.Controllers
         }
 
         [HttpGet("db2-status")]
-        public async Task<ActionResult<bool>> GetDb2Status()
+        public async Task<ActionResult<IEnumerable<ServiceComponentStatus>>> GetDb2Status()
         {
-            return await _dbCheck.IsHealthy();
+            var results = new List<ServiceComponentStatus>();
+
+            foreach (var check in _dbCheck)
+            {
+                results.Add(new ServiceComponentStatus()
+                {
+                    Component = check.Component,
+                    Status = (await check.IsHealthy()).ToString()
+                });
+            }
+
+            return results;
         }
     }
 }
