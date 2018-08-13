@@ -22,12 +22,12 @@ namespace VPay.Payment.Api.Tests
             {
                 new ServiceComponentStatus
                 {
-                    Component = "COM1",
+                    Component = "COMP1",
                     Status = "OK"
                 },
                 new ServiceComponentStatus
                 {
-                    Component = "COM2",
+                    Component = "COMP2",
                     Status = "OK"
                 }
             };
@@ -56,12 +56,12 @@ namespace VPay.Payment.Api.Tests
             {
                 new ServiceComponentStatus
                 {
-                    Component = "COM1",
+                    Component = "COMP1",
                     Status = "FALIURE"
                 },
                 new ServiceComponentStatus
                 {
-                    Component = "COM2",
+                    Component = "COMP2",
                     Status = "OK"
                 }
             };

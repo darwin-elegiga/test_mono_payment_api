@@ -17,9 +17,10 @@ namespace VPay.Payment
 
         public async Task<IEnumerable<ServiceComponentStatus>> CheckHealth()
         {
-            var tasks = _healthChecks.Select(GetHealth).ToList();
+            var healthCheckTasks = _healthChecks.Select(GetHealth).ToList();
 
-            var results = await Task.WhenAll(tasks);
+            // Will run the IsHealthy on each of the health check components in parallel.
+            var results = await Task.WhenAll(healthCheckTasks);
 
             return results;
         }

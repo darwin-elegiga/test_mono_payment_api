@@ -15,7 +15,7 @@ namespace VPay.Payment.Tests
         [Fact]
         public async Task CheckHealth_WithSingleComponentThatReturnsTrue_WillReturnOkForThatComponent()
         {
-            var item = CreateHealthCheckComponent("COM1", false);
+            var item = CreateHealthCheckComponent("COMP1", false);
 
             var ops = new HealthCheckService(new List<IHealthCheck> { item.Item1.Object });
 
@@ -34,7 +34,7 @@ namespace VPay.Payment.Tests
         [Fact]
         public async Task CheckHealth_WithSingleComponentThatReturnsFalse_WillReturnFailureForThatComponent()
         {
-            var item = CreateHealthCheckComponent("COM1", true);
+            var item = CreateHealthCheckComponent("COMP1", true);
 
             var ops = new HealthCheckService(new List<IHealthCheck> { item.Item1.Object });
 
@@ -53,9 +53,9 @@ namespace VPay.Payment.Tests
         [Fact]
         public async Task CheckHealth_WithMultipleComponent_WillReturnCorrectValuesForEachComponent()
         {
-            var item1 = CreateHealthCheckComponent("COM1", true);
-            var item2 = CreateHealthCheckComponent("COM2", false);
-            var item3 = CreateHealthCheckComponent("COM3", false);
+            var item1 = CreateHealthCheckComponent("COMP1", true);
+            var item2 = CreateHealthCheckComponent("COMP2", false);
+            var item3 = CreateHealthCheckComponent("COMP3", false);
 
 
             var component = new Mock<IHealthCheck>();
