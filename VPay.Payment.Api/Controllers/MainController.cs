@@ -19,6 +19,7 @@ namespace VPay.Payment.Api.Controllers
             version = "2018-08-10";
         }
 
+        [HttpGet("version")]
         public string GetVer()
         {
             return version;
@@ -36,76 +37,77 @@ namespace VPay.Payment.Api.Controllers
         // Add version tag
         private string version;
 
-        [HttpGet]
-        public Task Echo()
+        [HttpGet("echo")]
+        public Task<string> Echo()
         {
-            return Task.CompletedTask;
+            return Task.FromResult("echo");
         }
 
-        [HttpGet]
-        public Task GetReasonCodes()
+        [HttpGet("ReasonCodes")]
+        public Task<string> GetReasonCodes()
         {
-            return Task.CompletedTask;
+            return Task.FromResult("ReasonCodes");
         }
 
-        public Task GetTransactionDetails()
+        [HttpGet("TransactionDetails")]
+        public Task<string> GetTransactionDetails()
         {
-            return Task.CompletedTask;
+            return Task.FromResult("GetTransactionDetails");
         }
 
-        public Task GetPanNumber()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task GetPanNumber()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task OpenPreAuth()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task OpenPreAuth()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task LoadPan()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task LoadPan()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task BalanceRequest()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task BalanceRequest()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task UnloadPan()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task UnloadPan()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task StopPay()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task StopPay()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task CancelFax()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task CancelFax()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task ChangeFaxNumber()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task ChangeFaxNumber()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task HoldFax()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task HoldFax()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task ReleaseFax()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task ReleaseFax()
+        //{
+        //    return Task.CompletedTask;
+        //}
 
-        public Task ResendFax()
-        {
-            return Task.CompletedTask;
-        }
+        //public Task ResendFax()
+        //{
+        //    return Task.CompletedTask;
+        //}
     }
 }
