@@ -54,7 +54,7 @@ namespace VPay.Payment.Db2
 
         private string ConvertToConnectionString(Db2ConnectionConfig connectionConfig)
         {
-            return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password}";
+            return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password};System={connectionConfig.Hostname}";
         }
 
     }

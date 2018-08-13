@@ -20,12 +20,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{903A3768-1CFF-4667-B82E-B80625CEFE0B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		odbc-setup\odbc.ini = odbc-setup\odbc.ini
+		odbc-setup\odbcinst.ini = odbc-setup\odbcinst.ini
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.Db2", "VPay.Payment.Db2\VPay.Payment.Db2.csproj", "{C121C943-4D08-4311-B4AC-FAF92349E646}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPay.Payment.MySql", "VPay.Payment.MySql\VPay.Payment.MySql.csproj", "{EF866D74-948F-458E-B1D6-D7A89EE38FE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.MySql", "VPay.Payment.MySql\VPay.Payment.MySql.csproj", "{EF866D74-948F-458E-B1D6-D7A89EE38FE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
