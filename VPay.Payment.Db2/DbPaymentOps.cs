@@ -40,6 +40,39 @@ namespace VPay.Payment.Db2
             _dbConnection?.Dispose();
         }
 
+        public async Task<AuthenticationResult> AuthenticateUser(AuthenticationParam param)
+        {
+            var connection = await GetOpenConnection();
+
+
+            using (var cmd = new OdbcCommand("CALL SEWADM.SP_AUTHWEB(?,?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PAUTHCODE", param.Id);
+                cmd.Parameters.AddWithValue("PPWD", param.PassPhrase);
+                cmd.Parameters.AddWithValue("PRMTADDR", param.IpAddress);
+                cmd.Parameters.AddWithValue("PREQBY", "WEBSERVICE");
+
+                var errorMessageParam = cmd.Parameters.Add("ERRMSG", OdbcType.Char, 256);
+                errorMessageParam.Direction = ParameterDirection.InputOutput;
+                errorMessageParam.Value = "";
+
+                var resultParam = cmd.Parameters.Add("PRCOD", OdbcType.Char, 5);
+                resultParam.Direction = ParameterDirection.InputOutput;
+                resultParam.Value = "";
+
+                await cmd.ExecuteNonQueryAsync();
+                
+                return new AuthenticationResult()
+                {
+                    Result = resultParam.Value?.ToString().Trim(),
+                    ErrorMessage = errorMessageParam.Value?.ToString().Trim()
+                };
+            }
+
+        }
+
         private async Task<OdbcConnection> GetOpenConnection()
         {
 
@@ -56,6 +89,6 @@ namespace VPay.Payment.Db2
         {
             return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password};System={connectionConfig.Hostname}";
         }
-
+        
     }
 }
