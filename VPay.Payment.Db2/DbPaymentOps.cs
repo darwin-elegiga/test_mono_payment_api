@@ -87,7 +87,13 @@ namespace VPay.Payment.Db2
 
         private string ConvertToConnectionString(Db2ConnectionConfig connectionConfig)
         {
-            return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password};System={connectionConfig.Hostname}";
+            if (string.IsNullOrWhiteSpace(connectionConfig.DefaultLibraries))
+            {
+
+                return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password};System={connectionConfig.Hostname}";
+            }
+
+            return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password};System={connectionConfig.Hostname};DefaultLibraries={connectionConfig.DefaultLibraries}";
         }
         
     }
