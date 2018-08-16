@@ -41,5 +41,13 @@ namespace VPay.Payment.Api.Controllers
             return result;
         }
 
+        [HttpPost("test-login")]
+        public async Task<ActionResult<bool>> PostTestLogin(Common.DataWebService.CommonData entity)
+        {
+            var result = await _authService.Login(entity);
+
+            return result;
+        }
+
     }
 }

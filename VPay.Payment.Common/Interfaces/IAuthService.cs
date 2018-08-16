@@ -9,5 +9,7 @@ namespace VPay.Payment.Common
         Task<bool> IsAuthenticated(AuthenticationValues av, string ipAddress);
 
         Task<AuthenticationResult> TestAuthentication(AuthenticationParam param);
+
+        Task<bool> Login(Common.DataWebService.CommonData cd);
     }
 }
