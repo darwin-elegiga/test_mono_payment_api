@@ -17,16 +17,18 @@ namespace VPay.Payment
         private readonly IDbPaymentOps _db;
         private readonly IMySqlPaymentOps _mySql;
         private readonly ILogger<AuthService> _logger;
+        private readonly PaymentConfig _config;
 
         /// <summary>
         /// This is used to determine if this is suppose to be a session or a single run
         /// </summary>
         private const int _tokenLength = 64;
 
-        public AuthService(IDbPaymentOps db, IMySqlPaymentOps mySql, ILogger<AuthService> logger)
+        public AuthService(IDbPaymentOps db, IMySqlPaymentOps mySql, ILogger<AuthService> logger, PaymentConfig config)
         {
             _db = db;
             _mySql = mySql;
+            _config = config;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             _logger = logger;
@@ -51,34 +53,40 @@ namespace VPay.Payment
             return result;
         }
 
-        public async Task<bool> Login(Common.DataWebService.CommonData cd)
+        public async Task<UserSessionInfo> Login(AuthenticationParam param)
         {
-            var result = false;
+            if (_config.ValidateIP)
+            {
+                var ipValidate = await TestAuthentication(param);
+                if (ipValidate == null || ipValidate.Result != null)
+                {
+                    return null;
+                }
+            }
+
             UserSessionInfo userSession = null;
 
-            if (cd.Token?.Length >= _tokenLength)
+            if (param.Token?.Length >= _tokenLength)
             {
-                userSession = await GetTokenAndUserId(cd.Token);
+                userSession = await GetTokenAndUserId(param.Token);
             }
 
             if (userSession == null)
             {
-                var loginTry = await DoLogin(cd.User, cd.PassWord, "", "", "WEBSERVICE");
+                var loginTry = await DoLogin(param.UserId, param.Password, "", "", "WEBSERVICE");
 
                 if (loginTry != null)
                 {
                     userSession = await GetTokenAndUserId(loginTry.Uniqueid);
                     userSession.Source = 'S';
-                    result = true;
                 }
             }
             else
             {
                 userSession.Source = 'P'; // Set source to web(P)age
-                result = true;
             }
 
-            return result;
+            return userSession;
         }
 
         public async Task<LoginService> DoLogin(string name, string password, string recordid, string recordtype, string source)

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
+using VPay.Payment.Common.Models;
 
 namespace VPay.Payment.Common
 {
@@ -10,6 +11,6 @@ namespace VPay.Payment.Common
 
         Task<AuthenticationResult> TestAuthentication(AuthenticationParam param);
 
-        Task<bool> Login(Common.DataWebService.CommonData cd);
+        Task<UserSessionInfo> Login(AuthenticationParam param);
     }
 }
