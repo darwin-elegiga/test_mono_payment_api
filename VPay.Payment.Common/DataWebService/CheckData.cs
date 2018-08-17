@@ -120,5 +120,25 @@ namespace VPay.Payment.Common.DataWebService
             return true;
         }
 
+        public bool IsEmpty()
+        {
+            string[] allRelevantStringsThatMightBeEmpty = new string[]
+            {
+                Number, PpChkNum, SwChkNum, ChkNum1, ChkNum2, Date, Address1, Address2, Address3, City, StateOrProvince, Zip,
+                County, Region, Country, EmailAddress, Memo
+            };
+
+            bool isEverythingEmpty = true;
+            foreach (string nextString in allRelevantStringsThatMightBeEmpty)
+            {
+                if (!string.IsNullOrEmpty(nextString))
+                {
+                    isEverythingEmpty = false;
+                    break;
+                }
+            }
+
+            return isEverythingEmpty;
+        }
     }
 }

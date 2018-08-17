@@ -107,5 +107,26 @@ namespace VPay.Payment.Common.DataWebService
         {
             return true;
         }
+
+        public bool IsEmpty()
+        {
+            string[] allRelevantStringsThatMightBeEmpty = new string[]
+            {
+                TransNumber, SeClaimID, TpaClaimID, ProgramID, ReasonCode, ReasonDesc, ResponseCode, ResponseDesc, SuccessCode,
+                SuccessDesc, User, PassWord, TimeStamp, Token
+            };
+
+            bool isEverythingEmpty = true;
+            foreach (string nextString in allRelevantStringsThatMightBeEmpty)
+            {
+                if (!string.IsNullOrEmpty(nextString))
+                {
+                    isEverythingEmpty = false;
+                    break;
+                }
+            }
+
+            return isEverythingEmpty;
+        }
     }
 }

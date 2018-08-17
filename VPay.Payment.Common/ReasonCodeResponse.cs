@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VPay.Payment.Common.DataWebService;
 
 namespace VPay.Payment.Common
 {
@@ -36,10 +37,5 @@ namespace VPay.Payment.Common
             return true;
         }
 
-    }
-
-    public class CommonData
-    {
-        // TODO:  Figure out real class to use instead
     }
 }

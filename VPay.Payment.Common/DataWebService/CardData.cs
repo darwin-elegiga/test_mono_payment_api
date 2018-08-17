@@ -117,5 +117,26 @@ namespace VPay.Payment.Common.DataWebService
         {
             return true;
         }
+
+        public bool IsEmpty()
+        {
+            string[] allRelevantStringsThatMightBeEmpty = new string[]
+            {
+                CardType, CardNumber, CardCvv2, CardExpiration, LoadTransId, LoadAmount, LoadFee, PayeeName, CardholderName, CardholderAddress,
+                CardPostalCode, UnloadCode, UnloadDesc, VcRef, DisplayCvv2, MaskPan
+            };
+
+            bool isEverythingEmpty = true;
+            foreach (string nextString in allRelevantStringsThatMightBeEmpty)
+            {
+                if (!string.IsNullOrEmpty(nextString))
+                {
+                    isEverythingEmpty = false;
+                    break;
+                }
+            }
+
+            return isEverythingEmpty;
+        }
     }
 }
