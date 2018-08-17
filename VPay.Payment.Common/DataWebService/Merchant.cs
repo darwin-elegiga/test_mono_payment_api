@@ -83,5 +83,25 @@ namespace VPay.Payment.Common.DataWebService
 
             return returnValue;
         }
+
+        public bool IsEmpty()
+        {
+            string[] allRelevantStringsThatMightBeEmpty = new string[]
+            {
+                PayeeCode, PayeeName, ContactPerson, PostalCode, Telephone, Fax, EmailAddress
+            }; // EmailAddress is a maybe; ISeries mismatch
+
+            bool isEverythingEmpty = true;
+            foreach (string nextString in allRelevantStringsThatMightBeEmpty)
+            {
+                if (!string.IsNullOrEmpty(nextString))
+                {
+                    isEverythingEmpty = false;
+                    break;
+                }
+            }
+
+            return isEverythingEmpty;
+        }
     }
 }

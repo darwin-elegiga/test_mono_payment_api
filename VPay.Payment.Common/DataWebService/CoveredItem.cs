@@ -121,5 +121,26 @@ namespace VPay.Payment.Common.DataWebService
         {
             return true;
         }
+
+        public bool IsEmpty()
+        {
+            string[] allRelevantStringsThatMightBeEmpty = new string[]
+            {
+                ItemType, ItemId, ItemYear, Manufacturer, Model, BookStateOrProvince, PostalCode, PlanCode, PlanDescription,
+                Deductible, NewUsed, BeginDate, ExpireDate, OdometerType, BeginOdometer, ExpireOdometer, OwnerFirstName, OwnerLastName
+            }; // OwnerFirstName and OwnerLastName = possible order mismatch
+
+            bool isEverythingEmpty = true;
+            foreach (string nextString in allRelevantStringsThatMightBeEmpty)
+            {
+                if (!string.IsNullOrEmpty(nextString))
+                {
+                    isEverythingEmpty = false;
+                    break;
+                }
+            }
+
+            return isEverythingEmpty;
+        }
     }
 }

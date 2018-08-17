@@ -93,5 +93,25 @@ namespace VPay.Payment.Common.DataWebService
         {
             return true;
         }
+
+        public bool IsEmpty()
+        {
+            string[] allRelevantStringsThatMightBeEmpty = new string[]
+            {
+                AcquireID, AuthCode, AvailableBal, CaptureTS, CurrentBal, MerchantID, OlsLogID, Stan, Switch, TerminalID, TransactionTS
+            };
+
+            bool isEverythingEmpty = true;
+            foreach (string nextString in allRelevantStringsThatMightBeEmpty)
+            {
+                if (!string.IsNullOrEmpty(nextString))
+                {
+                    isEverythingEmpty = false;
+                    break;
+                }
+            }
+
+            return isEverythingEmpty;
+        }
     }
 }

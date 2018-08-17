@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using VPay.Payment.Common;
+using VPay.Payment.Common.DataWebService;
 
 namespace VPay.Payment.Api.Controllers
 {
@@ -70,10 +71,21 @@ namespace VPay.Payment.Api.Controllers
         //    return Task.CompletedTask;
         //}
 
-        //public Task BalanceRequest()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("BalanceRequest")]
+        public Task<StandardResponse> BalanceRequest()
+        {
+            AuthenticationValues av = new AuthenticationValues();
+            StandardRequest sr = new StandardRequest();
+
+            string webSvc = "BALREQUEST";
+            string svcName = "BalRequest";
+            string action = "READ";
+            string secGrp = "WSPUBLIC";
+
+            StandardResponse returnValue = Run(av, sr, webSvc, svcName, secGrp, action);
+
+            return Task.FromResult(returnValue);
+        }
 
         //public Task UnloadPan()
         //{
@@ -109,5 +121,18 @@ namespace VPay.Payment.Api.Controllers
         //{
         //    return Task.CompletedTask;
         //}
+
+        private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
+            string secGrp, string action, CustomData ct)
+        {
+            return null;
+        }
+
+        private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
+            string secGrp, string action)
+        {
+            return Run(av, sr, webSvc, svcName, secGrp, action, new CustomData());
+        }
+
     }
 }

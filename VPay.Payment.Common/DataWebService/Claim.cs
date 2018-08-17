@@ -114,5 +114,26 @@ namespace VPay.Payment.Common.DataWebService
 
             return returnValue;
         }
+
+        public bool IsEmpty()
+        {
+            string[] allRelevantStringsThatMightBeEmpty = new string[]
+            {
+                UserKey, UserField1, UserField2, UserField3, CurrencyType, Amount, ClaimDeductible, ClaimDate, ClaimOdometer, ClaimDescription,
+                RequesterId, RequesterName, RepairOrderId, ClaimNotes
+            };
+
+            bool isEverythingEmpty = true;
+            foreach (string nextString in allRelevantStringsThatMightBeEmpty)
+            {
+                if (!string.IsNullOrEmpty(nextString))
+                {
+                    isEverythingEmpty = false;
+                    break;
+                }
+            }
+
+            return isEverythingEmpty;
+        }
     }
 }

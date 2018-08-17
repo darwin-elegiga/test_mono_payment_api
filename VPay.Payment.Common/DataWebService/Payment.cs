@@ -118,5 +118,26 @@ namespace VPay.Payment.Common.DataWebService
         {
             return true;
         }
+
+        public bool IsEmpty()
+        {
+            string[] allRelevantStringsThatMightBeEmpty = new string[]
+            {
+                AcctngCode, AcctngDesc, AccountNumber, Action, AvailableBalance, BillCode, Client, CurrencyCode, CurrentBalance, Free, FutureUse,
+                Id, LoadAmount, PanNumber, RequestedAmount, RoutingNumber, Type
+            };
+
+            bool isEverythingEmpty = true;
+            foreach (string nextString in allRelevantStringsThatMightBeEmpty)
+            {
+                if (!string.IsNullOrEmpty(nextString))
+                {
+                    isEverythingEmpty = false;
+                    break;
+                }
+            }
+
+            return isEverythingEmpty;
+        }
     }
 }
