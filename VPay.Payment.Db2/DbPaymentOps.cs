@@ -44,7 +44,6 @@ namespace VPay.Payment.Db2
         {
             var connection = await GetOpenConnection();
 
-
             using (var cmd = new OdbcCommand("CALL SEWADM.SP_AUTHWEB(?,?,?,?,?,?)", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -68,6 +67,47 @@ namespace VPay.Payment.Db2
                 {
                     Result = resultParam.Value?.ToString().Trim(),
                     ErrorMessage = errorMessageParam.Value?.ToString().Trim()
+                };
+            }
+
+        }
+
+        public async Task<RemoteLoginResult> RemoteLogin(string username, string password, string source)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYSEC.VPAY_REMOTE_LOGIN(?,?,?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                
+                cmd.Parameters.AddWithValue("USERID", username);
+                cmd.Parameters.AddWithValue("PASSWORD", password);
+
+                var resultParam = cmd.Parameters.Add("RETURNCODE", OdbcType.Char, 10);
+                resultParam.Direction = ParameterDirection.InputOutput;
+                resultParam.Value = "";
+
+                var errorMessageParam = cmd.Parameters.Add("ERRMSG", OdbcType.Char, 256);
+                errorMessageParam.Direction = ParameterDirection.InputOutput;
+                errorMessageParam.Value = "";
+
+
+                cmd.Parameters.AddWithValue("GUID", "");
+
+                var tokenParam = cmd.Parameters.Add("TOKEN", OdbcType.Char, 128);
+                tokenParam.Direction = ParameterDirection.InputOutput;
+                tokenParam.Value = "";
+
+                cmd.Parameters.AddWithValue("SOURCE", source);
+
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return new RemoteLoginResult()
+                {
+                    ReturnCode = resultParam.Value?.ToString().Trim(),
+                    ErrorMessage = errorMessageParam.Value?.ToString().Trim(),
+                    Token = tokenParam.Value?.ToString().Trim()
                 };
             }
 

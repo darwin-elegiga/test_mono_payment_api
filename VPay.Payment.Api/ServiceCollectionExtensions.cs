@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
 using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.MySql;
@@ -81,6 +82,13 @@ namespace VPay.Payment.Api
             {
                 //Names used here are used in URL for SwaggerUI
                 c.SwaggerDoc("v1.0", new Info { Title = "Payment API", Version = "v1.0" });
+
+                c.AddSecurityDefinition("VPay", new BasicAuthScheme()
+                {
+                    Description = "Basic HTTP Auth"
+                });
+
+                c.OperationFilter<BasicAuthFilter>(); ;
 
                 //Determine which set of documentation an API should belong to
                 c.DocInclusionPredicate((docName, apiDesc) =>

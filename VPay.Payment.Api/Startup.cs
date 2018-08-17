@@ -8,9 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using VPay.Payment.Api.Auth;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
+using VPay.Payment.Common.Db2;
+using VPay.Payment.Common.Models;
+using VPay.Payment.Common.MySql;
 
 namespace VPay.Payment.Api
 {
@@ -43,20 +48,30 @@ namespace VPay.Payment.Api
                 .SetupDb2(Configuration)
                 .SetupMySql(Configuration);
 
+
+            services
+                .AddAuthorization()
+                .AddAuthentication(VPayAuthenticationDefaults.AuthenticationScheme)
+                .AddBasic<AuthService>();
+
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
 
-            services.AddTransient<IAuthService, AuthService>();
+
+            services.Configure<PaymentConfig>(Configuration.GetSection("PaymentSettings"));
+            services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<PaymentConfig>>().Value);
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IHealthCheckService, HealthCheckService>();
+            services.AddTransient<IHealthCheckService, HealthCheckService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
+            app.UseAuthentication();
 
             app.UseExceptionHandler("/error").WithConventions(x => {
                 ConfigureExceptionHandler(x, env.IsDevelopment());

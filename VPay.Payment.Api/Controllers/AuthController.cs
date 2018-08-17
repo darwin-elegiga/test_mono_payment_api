@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VPay.Payment.Common;
 using VPay.Payment.Common.Db2;
+using VPay.Payment.Common.Models;
 
 namespace VPay.Payment.Api.Controllers
 {
@@ -22,9 +24,12 @@ namespace VPay.Payment.Api.Controllers
         }
 
         [HttpGet("echo")]
+        [Authorize]
         public Task<string> GetRemoteIp()
         {
-            return Task.FromResult(_accessor.HttpContext.Connection.RemoteIpAddress.ToString());
+            var ipAddress = _accessor.HttpContext.Connection.RemoteIpAddress;
+            ipAddress = ipAddress.MapToIPv4();
+            return Task.FromResult(ipAddress.ToString());
         }
 
 
@@ -33,10 +38,20 @@ namespace VPay.Payment.Api.Controllers
         {
             if (string.IsNullOrWhiteSpace(entity.IpAddress))
             {
-                entity.IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                var ipAddress = _accessor.HttpContext.Connection.RemoteIpAddress;
+                ipAddress = ipAddress.MapToIPv4();
+                entity.IpAddress = ipAddress.ToString();
             }
 
             var result = await _authService.TestAuthentication(entity);
+
+            return result;
+        }
+
+        [HttpPost("test-login")]
+        public async Task<ActionResult<UserSessionInfo>> PostTestLogin(AuthenticationParam entity)
+        {
+            var result = await _authService.Login(entity);
 
             return result;
         }
