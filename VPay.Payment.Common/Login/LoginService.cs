@@ -6,10 +6,6 @@ namespace VPay.Payment.Common.Login
 {
     public class LoginService
     {
-        public LoginService(string name, string password, string uniqueid, string recordid)
-        {
-
-        }
 
         public string Username { get; set; }
         public string Uniqueid { get; set; }

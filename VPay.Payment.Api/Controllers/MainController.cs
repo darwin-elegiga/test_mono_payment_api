@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ namespace VPay.Payment.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MainController : ControllerBase
     {
         public MainController()
@@ -21,6 +23,7 @@ namespace VPay.Payment.Api.Controllers
         }
 
         [HttpGet("version")]
+        [AllowAnonymous]
         public string GetVer()
         {
             return version;
@@ -39,6 +42,7 @@ namespace VPay.Payment.Api.Controllers
         private string version;
 
         [HttpGet("echo")]
+        [AllowAnonymous]
         public Task<string> Echo()
         {
             return Task.FromResult("echo");
