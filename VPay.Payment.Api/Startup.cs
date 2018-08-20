@@ -2,20 +2,15 @@
 using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using VPay.Payment.Api.Auth;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.Models;
-using VPay.Payment.Common.MySql;
 
 namespace VPay.Payment.Api
 {
@@ -45,26 +40,13 @@ namespace VPay.Payment.Api
                 .AddApiVersioningService()
                 .AddOptions()
                 .AddSwaggerGenService()
+                .SetupAuth()
                 .SetupDb2(Configuration)
                 .SetupMySql(Configuration);
-
-
-            services
-                .AddAuthorization()
-                .AddAuthentication(VPayAuthenticationDefaults.AuthenticationScheme)
-                .AddBasic<AuthService>();
-
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            });
-
-
+            
             services.Configure<PaymentConfig>(Configuration.GetSection("PaymentSettings"));
             services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<PaymentConfig>>().Value);
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IHealthCheckService, HealthCheckService>();
         }
 

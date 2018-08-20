@@ -89,6 +89,18 @@ namespace VPay.Payment
             return userSession;
         }
 
+        public async Task<bool> IsAuthorized(string userId, string webServiceName, string action)
+        {
+            var result = await _db.CheckUserSecurity(new SecurityCheckParam()
+            {
+                UserId = userId,
+                Action = action,
+                WebServiceName = webServiceName
+            });
+
+            return result?.Code == "0000";
+        }
+
         public async Task<LoginService> DoLogin(string name, string password, string recordid, string recordtype, string source)
         {
             // Force userid to uppercase

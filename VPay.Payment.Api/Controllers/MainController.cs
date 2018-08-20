@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
 using VPay.Payment.Common.DataWebService;
 
@@ -13,7 +14,6 @@ namespace VPay.Payment.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class MainController : ControllerBase
     {
         public MainController()
@@ -55,6 +55,7 @@ namespace VPay.Payment.Api.Controllers
         }
 
         [HttpGet("TransactionDetails")]
+        [ServicePermissionAuthorize(ServicePermission.GetPan)]
         public Task<string> GetTransactionDetails()
         {
             return Task.FromResult("GetTransactionDetails");
