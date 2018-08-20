@@ -113,6 +113,39 @@ namespace VPay.Payment.Db2
 
         }
 
+        public async Task<SecurityCheckResult> CheckUserSecurity(SecurityCheckParam param)
+        {
+            var connection = await GetOpenConnection();
+
+            var secObjName = $"UNIVERSE|{param.SecurityGroup}|{param.WebServiceName}".ToUpper();
+
+            using (var cmd = new OdbcCommand("CALL VPAYSEC.SP_Check_Object_Security(?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PUSERNM", param.UserId.ToUpper());
+                cmd.Parameters.AddWithValue("PPATH", secObjName);
+                cmd.Parameters.AddWithValue("PACTION", param.Action.ToUpper());
+
+                var resultParam = cmd.Parameters.Add("PRETCODE", OdbcType.Char, 4);
+                resultParam.Direction = ParameterDirection.InputOutput;
+                resultParam.Value = "0000";
+
+                var descParameter = cmd.Parameters.Add("PRETDESC", OdbcType.Char, 256);
+                descParameter.Direction = ParameterDirection.InputOutput;
+                descParameter.Value = "";
+                
+                await cmd.ExecuteNonQueryAsync();
+
+                return new SecurityCheckResult()
+                {
+                    Code = resultParam.Value?.ToString().Trim(),
+                    Description = descParameter.Value?.ToString().Trim()
+                };
+            }
+
+        }
+
         private async Task<OdbcConnection> GetOpenConnection()
         {
 

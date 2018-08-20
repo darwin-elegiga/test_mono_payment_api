@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
 using VPay.Payment.Common.DataWebService;
 
@@ -13,7 +14,6 @@ namespace VPay.Payment.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class MainController : ControllerBase
     {
         public MainController()
@@ -49,33 +49,42 @@ namespace VPay.Payment.Api.Controllers
         }
 
         [HttpGet("ReasonCodes")]
+        [ServicePermissionAuthorize(ServicePermission.GetPan)]
         public Task<string> GetReasonCodes()
         {
             return Task.FromResult("ReasonCodes");
         }
 
         [HttpGet("TransactionDetails")]
+        [ServicePermissionAuthorize(ServicePermission.GetPan)]
         public Task<string> GetTransactionDetails()
         {
             return Task.FromResult("GetTransactionDetails");
         }
 
-        //public Task GetPanNumber()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("PanNumber")]
+        [ServicePermissionAuthorize(ServicePermission.GetPan)]
+        public Task<string> GetPanNumber()
+        {
+            return Task.FromResult("GetPanNumber");
+        }
 
-        //public Task OpenPreAuth()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("OpenPreAuth")]
+        [ServicePermissionAuthorize(ServicePermission.OpenPreAuth)]
+        public Task<string> OpenPreAuth()
+        {
+            return Task.FromResult("OpenPreAuth");
+        }
 
-        //public Task LoadPan()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("LoadPan")]
+        [ServicePermissionAuthorize(ServicePermission.LoadPan)]
+        public Task<string> LoadPan()
+        {
+            return Task.FromResult("LoadPan");
+        }
 
         [HttpGet("BalanceRequest")]
+        [ServicePermissionAuthorize(ServicePermission.BalanceRequest)]
         public Task<StandardResponse> BalanceRequest()
         {
             AuthenticationValues av = new AuthenticationValues();
@@ -91,40 +100,54 @@ namespace VPay.Payment.Api.Controllers
             return Task.FromResult(returnValue);
         }
 
-        //public Task UnloadPan()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("UnloadPan")]
+        [ServicePermissionAuthorize(ServicePermission.Unload)]
+        public Task<string> UnloadPan()
+        {
+            return Task.FromResult("UnloadPan");
+        }
 
-        //public Task StopPay()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("StopPay")]
+        [ServicePermissionAuthorize(ServicePermission.StopPay)]
+        public Task<string> StopPay()
+        {
+            return Task.FromResult("StopPay");
+        }
 
-        //public Task CancelFax()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("CancelFax")]
+        [ServicePermissionAuthorize(ServicePermission.CancelFax)]
+        public Task<string> CancelFax()
+        {
+            return Task.FromResult("CancelFax");
+        }
 
-        //public Task ChangeFaxNumber()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("ChangeFaxNumber")]
+        [ServicePermissionAuthorize(ServicePermission.ChangeFaxNumber)]
+        public Task<string> ChangeFaxNumber()
+        {
+            return Task.FromResult("ChangeFaxNumber");
+        }
 
-        //public Task HoldFax()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("HoldFax")]
+        [ServicePermissionAuthorize(ServicePermission.HoldFax)]
+        public Task<string> HoldFax()
+        {
+            return Task.FromResult("HoldFax");
+        }
 
-        //public Task ReleaseFax()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("ReleaseFax")]
+        [ServicePermissionAuthorize(ServicePermission.ReleaseFax)]
+        public Task<string> ReleaseFax()
+        {
+            return Task.FromResult("ReleaseFax");
+        }
 
-        //public Task ResendFax()
-        //{
-        //    return Task.CompletedTask;
-        //}
+        [HttpGet("ResendFax")]
+        [ServicePermissionAuthorize(ServicePermission.ResendFax)]
+        public Task<string> ResendFax()
+        {
+            return Task.FromResult("ResendFax");
+        }
 
         private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
             string secGrp, string action, CustomData ct)

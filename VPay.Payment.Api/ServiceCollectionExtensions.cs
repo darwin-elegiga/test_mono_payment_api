@@ -4,6 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
@@ -116,6 +120,27 @@ namespace VPay.Payment.Api
                 c.IncludeXmlComments(xmlPath);
             });
 
+
+            return services;
+        }
+
+        public static IServiceCollection SetupAuth(this IServiceCollection services)
+        {
+            services
+                .AddAuthorization()
+                .AddAuthentication(VPayAuthenticationDefaults.AuthenticationScheme)
+                .AddVPay<AuthService>();
+
+            services.AddSingleton<IAuthorizationPolicyProvider, ServicePermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, ServiceMethodHandler>();
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             return services;
         }
