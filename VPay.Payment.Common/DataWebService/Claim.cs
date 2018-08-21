@@ -135,5 +135,28 @@ namespace VPay.Payment.Common.DataWebService
 
             return isEverythingEmpty;
         }
+
+        public string ToISeriesString()
+        {
+            StringBuilder builder = new StringBuilder("");
+
+            builder.Append("CLAIMDATA ".PadRight(10));
+            builder.Append(UserKey.PadRight(_usrKeyLen));
+            builder.Append(UserField1.PadRight(_usrFd1Len));
+            builder.Append(UserField2.PadRight(_usrFd2Len));
+            builder.Append(UserField3.PadRight(_usrFd3Len));
+            builder.Append(CurrencyType.PadRight(_curTypLen));
+            builder.Append(Amount.PadLeft(_amountLen));
+            builder.Append(ClaimDeductible.PadLeft(_clmDedLen));
+            builder.Append(ClaimDate.PadRight(_clmDteLen));
+            builder.Append(ClaimOdometer.PadRight(_clmOdoLen));
+            builder.Append(ClaimDescription.PadRight(_clmDscLen));
+            builder.Append(RequesterId.PadRight(_rqstIdLen));
+            builder.Append(RequesterName.PadRight(_rqstNmLen));
+            builder.Append(RepairOrderId.PadRight(_repOrdLen));
+            builder.Append(ClaimNotes.PadRight(_clmNotLen));
+
+            return builder.ToString();
+        }
     }
 }

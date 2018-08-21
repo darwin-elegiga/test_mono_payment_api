@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VPay.Payment.Common;
 
 namespace VPay.Payment.Common.DataWebService
 {
@@ -127,6 +128,29 @@ namespace VPay.Payment.Common.DataWebService
             }
 
             return isEverythingEmpty;
+        }
+
+        public string ToISeriesString()
+        {
+            StringBuilder builder = new StringBuilder("");
+
+            builder.Append("COMMONDATA".PadRight(10));
+            builder.Append(TransNumber.PadLeft(_trnNbrLen));
+            builder.Append(SeClaimID.PadRight(_clamIdLen));
+            builder.Append(TpaClaimID.PadRight(_tpaClmLen));
+            builder.Append(ProgramID.PadRight(_progrmLen));
+            builder.Append(ReasonCode.PadRight(_rsCodeLen));
+            builder.Append(ReasonDesc.PadRight(_rsDescLen));
+            builder.Append(ResponseCode.PadRight(_rpCodeLen));
+            builder.Append(ResponseDesc.PadRight(_rpDescLen));
+            builder.Append(SuccessCode.PadRight(_scCodeLen));
+            builder.Append(SuccessDesc.PadRight(_scDescLen));
+            builder.Append(User.PadRight(_userLen));
+            builder.Append(PassWord.PadRight(_passwdLen));
+            builder.Append(TimeStamp.PadRight(_timeStLen));
+            builder.Append(Token.PadRight(_tokenLen));
+
+            return builder.ToString();
         }
     }
 }

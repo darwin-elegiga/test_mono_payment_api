@@ -103,5 +103,21 @@ namespace VPay.Payment.Common.DataWebService
 
             return isEverythingEmpty;
         }
+
+        public string ToISeriesString()
+        {
+            StringBuilder builder = new StringBuilder("");
+
+            builder.Append("MERCHANT  ".PadRight(10));
+            builder.Append(PayeeCode.PadRight(_payCodLen));
+            builder.Append(PayeeName.PadRight(_payNamLen));
+            builder.Append(ContactPerson.PadRight(_cntactLen));
+            builder.Append(PostalCode.PadRight(_merZipLen));
+            builder.Append(Telephone.PadRight(_merPhnLen));
+            builder.Append(Fax.PadRight(_merFaxLen));
+            builder.Append(EmailAddress.PadRight(_merEmlLen));   // m005
+
+            return builder.ToString();
+        }
     }
 }

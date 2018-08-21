@@ -139,5 +139,31 @@ namespace VPay.Payment.Common.DataWebService
 
             return isEverythingEmpty;
         }
+
+        public string ToISeriesString()
+        {
+            StringBuilder builder = new StringBuilder("");
+
+            builder.Append("PAYMENT".PadRight(10));
+            builder.Append(AcctngCode.PadRight(_actCodLen));
+            builder.Append(AcctngDesc.PadRight(_actDscLen));
+            builder.Append(AccountNumber.PadRight(_actNbrLen));
+            builder.Append(Action.PadRight(_actionLen));
+            builder.Append(AvailableBalance.PadLeft(_avlBalLen));
+            builder.Append(BillCode.PadRight(_billCdLen));
+            builder.Append(Client.PadRight(_clientLen));
+            builder.Append(CurrencyCode.PadRight(_curCodLen));
+            builder.Append(CurrentBalance.PadLeft(_curBalLen));
+            builder.Append(Free.PadRight(_freeLen));
+            builder.Append(FutureUse.PadRight(_futUseLen));
+            builder.Append(Id.PadRight(_idLen));
+            builder.Append(LoadAmount.PadLeft(_lodAmtLen));
+            builder.Append(PanNumber.PadRight(_panNbrLen));
+            builder.Append(RequestedAmount.PadLeft(_reqAmtLen));
+            builder.Append(RoutingNumber.PadLeft(_rtgNbrLen));
+            builder.Append(Type.PadRight(_typeLen));
+
+            return builder.ToString();
+        }
     }
 }

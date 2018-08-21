@@ -140,5 +140,33 @@ namespace VPay.Payment.Common.DataWebService
 
             return isEverythingEmpty;
         }
+
+        public string ToISeriesString()
+        {
+            StringBuilder builder = new StringBuilder("");
+
+            builder.Append("CHECKDATA ".PadRight(10));
+            builder.Append(Number.PadRight(_chkNumLen));
+            builder.Append(PpChkNum.PadRight(_cppNumLen));
+            builder.Append(SwChkNum.PadRight(_cswNumLen));
+            builder.Append(ChkNum1.PadRight(_chkNm1Len));
+            builder.Append(ChkNum2.PadRight(_chkNm2Len));
+            builder.Append(Date.PadRight(_chkDatLen));
+            builder.Append(Address1.PadRight(_chkAd1Len));
+            builder.Append(Address2.PadRight(_chkAd2Len));
+            builder.Append(Address3.PadRight(_chkAd3Len));
+            builder.Append(City.PadRight(_chkCtyLen));
+            builder.Append(StateOrProvince.PadRight(_chkStpLen));
+            builder.Append(Zip.PadRight(_chkZipLen));
+            builder.Append(County.PadRight(_chkCntLen));
+            builder.Append(Region.PadRight(_chkRgnLen));
+            builder.Append(Country.PadRight(_chkCtrLen));
+            // m005
+            // builder.Append(EmailAddress.PadRight(_chkEmlLen));
+            builder.Append(Memo.PadRight(_chkMemLen));
+
+
+            return builder.ToString();
+        }
     }
 }

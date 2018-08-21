@@ -142,5 +142,32 @@ namespace VPay.Payment.Common.DataWebService
 
             return isEverythingEmpty;
         }
+
+        public string ToISeriesString()
+        {
+            StringBuilder builder = new StringBuilder("");
+
+            builder.Append("COVERDITEM".PadRight(10));
+            builder.Append(ItemType.PadRight(_itmTypLen));
+            builder.Append(ItemId.PadRight(_itemIdLen));
+            builder.Append(ItemYear.PadRight(_itemYrLen));
+            builder.Append(Manufacturer.PadRight(_itmMfcLen));
+            builder.Append(Model.PadRight(_modelLen));
+            builder.Append(BookStateOrProvince.PadRight(_itmStpLen));
+            builder.Append(PostalCode.PadRight(_itmZipLen));
+            builder.Append(PlanCode.PadRight(_plnCodLen));
+            builder.Append(PlanDescription.PadRight(_plnDscLen));
+            builder.Append(Deductible.PadRight(_deductLen));
+            builder.Append(NewUsed.PadRight(_newUsdLen));
+            builder.Append(BeginDate.PadRight(_begDatLen));
+            builder.Append(ExpireDate.PadRight(_expDatLen));
+            builder.Append(OdometerType.PadRight(_odoTypLen));
+            builder.Append(BeginOdometer.PadRight(_odoBegLen));
+            builder.Append(ExpireOdometer.PadRight(_odoExpLen));
+            builder.Append(OwnerLastName.PadRight(_ownLnmLen));
+            builder.Append(OwnerFirstName.PadRight(_ownFnmLen));
+
+            return builder.ToString();
+        }
     }
 }

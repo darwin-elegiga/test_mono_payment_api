@@ -41,68 +41,15 @@ namespace VPay.Payment.Common.CommunicationStrings
         {
             StringBuilder builder = new StringBuilder("");
 
-            if (!CommonSection.IsEmpty())
-            {
-                builder.Append("CommonData [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
-
-            if (!CardSection.IsEmpty())
-            {
-                builder.Append("CardData [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
-
-            if (!CheckSection.IsEmpty())
-            {
-                builder.Append("CheckData [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
-
-            if (!ClaimSection.IsEmpty())
-            {
-                builder.Append("Claim [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
-
-            if (!CorrespondenceSection.IsEmpty())
-            {
-                builder.Append("CorrespondenceData [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
-
-            if (!CoveredItemSection.IsEmpty())
-            {
-                builder.Append("Covered Item [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
-
-            if (!MerchantSection.IsEmpty())
-            {
-                builder.Append("Merchant [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
-
-            if (!PaymentSection.IsEmpty())
-            {
-                builder.Append("Payment [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
-
-            if (!SwitchTransactionSection.IsEmpty())
-            {
-                builder.Append("SwitchTransaction [ ");
-                // etc
-                builder.Append(" ]\n");
-            }
+            builder.Append(CommonSection.ToISeriesString());
+            builder.Append(CardSection.ToISeriesString());
+            builder.Append(CheckSection.ToISeriesString());
+            builder.Append(ClaimSection.ToISeriesString());
+            builder.Append(CorrespondenceSection.ToISeriesString());
+            builder.Append(CoveredItemSection.ToISeriesString());
+            builder.Append(MerchantSection.ToISeriesString());
+            builder.Append(PaymentSection.ToISeriesString());
+            builder.Append(SwitchTransactionSection.ToISeriesString());
 
             return builder.ToString();
         }
