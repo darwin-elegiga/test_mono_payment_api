@@ -138,5 +138,30 @@ namespace VPay.Payment.Common.DataWebService
 
             return isEverythingEmpty;
         }
+
+        public string ToISeriesString()
+        {
+            StringBuilder builder = new StringBuilder("");
+
+            builder.Append("CARDDATA  ".PadRight(10));
+            builder.Append(CardType.PadRight(_crdTypLen));
+            builder.Append(CardNumber.PadRight(_crdNumLen));
+            builder.Append(CardCvv2.PadRight(_crCvv2Len));
+            builder.Append(CardExpiration.PadRight(_crdExpLen));
+            builder.Append(LoadTransId.PadRight(_lodTrnLen));
+            builder.Append(LoadAmount.PadRight(_lodAmtLen));
+            builder.Append(LoadFee.PadRight(_lodFeeLen));
+            builder.Append(PayeeName.PadRight(_payNamLen));
+            builder.Append(CardholderName.PadRight(_crdNamLen));
+            builder.Append(CardholderAddress.PadRight(_crdAdrLen));
+            builder.Append(CardPostalCode.PadRight(_crdZipLen));
+            builder.Append(UnloadCode.PadRight(_unCodeLen));
+            builder.Append(UnloadDesc.PadRight(_unDescLen));
+            builder.Append(VcRef.PadRight(_vcRefLen));
+            builder.Append(DisplayCvv2.PadRight(_dsCvv2Len));
+            builder.Append(MaskPan.PadRight(_maskPLen));
+
+            return builder.ToString();
+        }
     }
 }

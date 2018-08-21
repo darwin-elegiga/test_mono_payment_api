@@ -113,5 +113,25 @@ namespace VPay.Payment.Common.DataWebService
 
             return isEverythingEmpty;
         }
+
+        public string ToISeriesString()
+        {
+            StringBuilder builder = new StringBuilder("");
+
+            builder.Append("SWITCHTRAN".PadRight(10));
+            builder.Append(AcquireID.PadRight(_acqireLen));
+            builder.Append(AuthCode.PadLeft(_athCodLen));
+            builder.Append(AvailableBal.PadLeft(_avlBalLen));
+            builder.Append(CaptureTS.PadRight(_captTSLen));
+            builder.Append(CurrentBal.PadLeft(_curBalLen));
+            builder.Append(MerchantID.PadRight(_mrchntLen));
+            builder.Append(OlsLogID.PadRight(_olsLogLen));
+            builder.Append(Stan.PadRight(_stanLen));
+            builder.Append(Switch.PadRight(_switchLen));
+            builder.Append(TerminalID.PadRight(_trmnIdLen));
+            builder.Append(TransactionTS.PadRight(_trnsTSLen));
+
+            return builder.ToString();
+        }
     }
 }
