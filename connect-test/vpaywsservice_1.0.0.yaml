@@ -18,7 +18,7 @@ securityDefinitions:
     in: header
     description: ''
 security:
-  - clientID: []
+  - {}
 x-ibm-configuration:
   type: wsdl
   phase: realized
@@ -34,9 +34,143 @@ x-ibm-configuration:
     soap-version: '1.1'
   assembly:
     execute:
-      - proxy:
-          title: proxy
-          target-url: 'http://10.200.93.102:8080/VPayWS/VPayWSService'
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - Echo
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      body:
+                        schema:
+                          $ref: '#/definitions/EchoInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/EchoRequestApi'
+                        variable: message.body
+                        content: application/json
+                    actions:
+                      - set: output.es
+                        from: body.Envelope.Body.Echo.es
+                      - set: output.av.passphrase
+                        from: body.Envelope.Body.Echo.av.passphrase
+                      - set: output.av.id
+                        from: body.Envelope.Body.Echo.av.id
+                    version: 1.0.0
+                - gatewayscript:
+                    title: gatewayscript
+                    version: 1.0.0
+                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\n"
+                - invoke:
+                    title: invoke
+                    timeout: 60
+                    verb: POST
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error:
+                      - null
+                    version: 1.0.0
+                    target-url: 'http://10.120.202.99:32772/api/Main/Echo'
+                    output: echo_invoke
+                - map:
+                    title: map
+                    inputs:
+                      response:
+                        schema:
+                          description: ''
+                          type: object
+                          properties:
+                            commonData:
+                              type: object
+                              properties:
+                                transNumber:
+                                  type: string
+                                  name: transNumber
+                                seClaimID:
+                                  type: string
+                                  name: seClaimID
+                                tpaClaimID:
+                                  type: string
+                                  name: tpaClaimID
+                                programID:
+                                  type: string
+                                  name: programID
+                                reasonCode:
+                                  type: string
+                                  name: reasonCode
+                                reasonDesc:
+                                  type: string
+                                  name: reasonDesc
+                                responseCode:
+                                  type: string
+                                  name: responseCode
+                                responseDesc:
+                                  type: string
+                                  name: responseDesc
+                                successCode:
+                                  type: string
+                                  name: successCode
+                                successDesc:
+                                  type: string
+                                  name: successDesc
+                                user:
+                                  type: string
+                                  name: user
+                                passWord:
+                                  type: string
+                                  name: passWord
+                                timeStamp:
+                                  type: string
+                                  name: timeStamp
+                                token:
+                                  type: string
+                                  name: token
+                              name: commonData
+                          example: "{\r\n  \"commonData\": {\r\n    \"transNumber\": \"\",\r\n    \"seClaimID\": \"\",\r\n    \"tpaClaimID\": \"\",\r\n    \"programID\": \"\",\r\n    \"reasonCode\": \"\",\r\n    \"reasonDesc\": \"\",\r\n    \"responseCode\": \"\",\r\n    \"responseDesc\": \"string\",\r\n    \"successCode\": \"\",\r\n    \"successDesc\": \"\",\r\n    \"user\": \"\",\r\n    \"passWord\": \"\",\r\n    \"timeStamp\": \"\",\r\n    \"token\": \"\"\r\n  }\r\n}"
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      response:
+                        schema:
+                          $ref: '#/definitions/EchoOutput'
+                        variable: message.body
+                        content: text/xml
+                    actions:
+                      - set: >-
+                          response.Envelope.Body.EchoResponse.commonData.responseDesc
+                        from: response.commonData.responseDesc
+                      - set: >-
+                          response.Envelope.Body.EchoResponse.commonData.transNumber
+                        from: response.commonData.transNumber
+                      - set: >-
+                          response.Envelope.Body.EchoResponse.commonData.responseCode
+                        from: response.commonData.responseCode
+                      - set: >-
+                          response.Envelope.Body.EchoResponse.commonData.successCode
+                        from: response.commonData.successCode
+                      - set: >-
+                          response.Envelope.Body.EchoResponse.commonData.successDesc
+                        from: response.commonData.successDesc
+                      - set: >-
+                          response.Envelope.Body.EchoResponse.commonData.reasonCode
+                        from: response.commonData.reasonCode
+                    version: 1.0.0
+            - operations:
+                - LoadPan
+                - getVer
+                - GetTransactionDetails
+                - BalanceRequest
+              execute:
+                - proxy:
+                    title: proxy
+                    target-url: 'http://10.200.93.102:8080/VPayWS/VPayWSService'
+          otherwise: []
+          version: 1.0.0
 paths:
   /Echo:
     post:
@@ -9268,4 +9402,12 @@ definitions:
       namespace: 'http://webinterface.vpay.com/'
       prefix: tns
     x-xsi-type-uniquename: faxJob_tns
+  EchoRequestApi:
+    properties:
+      av:
+        $ref: '#/definitions/authenticationValues_tns'
+      es:
+        type: string
+    additionalProperties: false
+    description: This is the request to the echo
 host: $(catalog.host)

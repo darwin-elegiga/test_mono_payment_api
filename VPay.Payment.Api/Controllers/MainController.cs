@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using VPay.Payment.Api.Auth;
+using VPay.Payment.Api.Dtos;
 using VPay.Payment.Common;
 using VPay.Payment.Common.DataWebService;
 
@@ -41,11 +42,21 @@ namespace VPay.Payment.Api.Controllers
         // Add version tag
         private string version;
 
-        [HttpGet("echo")]
+        [HttpPost("echo")]
         [AllowAnonymous]
-        public Task<string> Echo()
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(StandardResponse), 200)]
+        public Task<StandardResponse> PostEcho(EchoRequest entity)
         {
-            return Task.FromResult("echo");
+            return Task.FromResult(new StandardResponse()
+            {
+                CommonData = new CommonData()
+                {
+                    ResponseDesc = entity.Es,
+                    SuccessCode = "0",
+                    ReasonCode = "0"
+                }
+            });
         }
 
         [HttpGet("ReasonCodes")]
