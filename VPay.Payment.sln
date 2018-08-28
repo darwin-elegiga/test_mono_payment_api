@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.MySql", "VPay.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Troubleshooting", "Troubleshooting", "{D77EE203-4187-4DEF-B390-F0535D739C2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerifyString", "..\VerifyString\VerifyString.csproj", "{18812A34-5326-477B-880C-295F2F110953}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerifyString", "Troubleshooting\VerifyString\VerifyString.csproj", "{18812A34-5326-477B-880C-295F2F110953}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
