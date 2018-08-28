@@ -169,5 +169,39 @@ namespace VPay.Payment.Common.DataWebService
 
             return builder.ToString();
         }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "COVERDITEM") return; // TODO: Handle weird errors better
+
+            ItemType = ReadNext(ref iSeriesString, ref index, _itmTypLen);
+            ItemId = ReadNext(ref iSeriesString, ref index, _itemIdLen);
+            ItemYear = ReadNext(ref iSeriesString, ref index, _itemYrLen);
+            Manufacturer = ReadNext(ref iSeriesString, ref index, _itmMfcLen);
+            Model = ReadNext(ref iSeriesString, ref index, _modelLen);
+            BookStateOrProvince = ReadNext(ref iSeriesString, ref index, _itmStpLen);
+            PostalCode = ReadNext(ref iSeriesString, ref index, _itmZipLen);
+            PlanCode = ReadNext(ref iSeriesString, ref index, _plnCodLen);
+            PlanDescription = ReadNext(ref iSeriesString, ref index, _plnDscLen);
+            Deductible = ReadNext(ref iSeriesString, ref index, _deductLen);
+            NewUsed = ReadNext(ref iSeriesString, ref index, _newUsdLen);
+            BeginDate = ReadNext(ref iSeriesString, ref index, _begDatLen);
+            ExpireDate = ReadNext(ref iSeriesString, ref index, _expDatLen);
+            OdometerType = ReadNext(ref iSeriesString, ref index, _odoTypLen);
+            BeginOdometer = ReadNext(ref iSeriesString, ref index, _odoBegLen);
+            ExpireOdometer = ReadNext(ref iSeriesString, ref index, _odoExpLen);
+            OwnerLastName = ReadNext(ref iSeriesString, ref index, _ownLnmLen);
+            OwnerFirstName = ReadNext(ref iSeriesString, ref index, _ownFnmLen);
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
+        }
     }
 }

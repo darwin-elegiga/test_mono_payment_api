@@ -168,5 +168,40 @@ namespace VPay.Payment.Common.DataWebService
 
             return builder.ToString();
         }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "CHECKDATA ") return; // TODO: Handle weird errors better
+
+            Number = ReadNext(ref iSeriesString, ref index, _chkNumLen);
+            PpChkNum = ReadNext(ref iSeriesString, ref index, _cppNumLen);
+            SwChkNum = ReadNext(ref iSeriesString, ref index, _cswNumLen);
+            ChkNum1 = ReadNext(ref iSeriesString, ref index, _chkNm1Len);
+            ChkNum2 = ReadNext(ref iSeriesString, ref index, _chkNm2Len);
+            Date = ReadNext(ref iSeriesString, ref index, _chkDatLen);
+            Address1 = ReadNext(ref iSeriesString, ref index, _chkAd1Len);
+            Address2 = ReadNext(ref iSeriesString, ref index, _chkAd2Len);
+            Address3 = ReadNext(ref iSeriesString, ref index, _chkAd3Len);
+            City = ReadNext(ref iSeriesString, ref index, _chkCtyLen);
+            StateOrProvince = ReadNext(ref iSeriesString, ref index, _chkStpLen);
+            Zip = ReadNext(ref iSeriesString, ref index, _chkZipLen);
+            County = ReadNext(ref iSeriesString, ref index, _chkCntLen);
+            Region = ReadNext(ref iSeriesString, ref index, _chkRgnLen);
+            Country = ReadNext(ref iSeriesString, ref index, _chkCtrLen);
+            // m005
+            // EmailAddress = ReadNext(ref iSeriesString, ref index, _chkEmlLen);
+            Memo = ReadNext(ref iSeriesString, ref index, _chkMemLen);
+
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
+        }
     }
 }

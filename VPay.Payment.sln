@@ -29,6 +29,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.Db2", "VPay.Pa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPay.Payment.MySql", "VPay.Payment.MySql\VPay.Payment.MySql.csproj", "{EF866D74-948F-458E-B1D6-D7A89EE38FE7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Troubleshooting", "Troubleshooting", "{D77EE203-4187-4DEF-B390-F0535D739C2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerifyString", "..\VerifyString\VerifyString.csproj", "{18812A34-5326-477B-880C-295F2F110953}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,10 @@ Global
 		{EF866D74-948F-458E-B1D6-D7A89EE38FE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF866D74-948F-458E-B1D6-D7A89EE38FE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF866D74-948F-458E-B1D6-D7A89EE38FE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18812A34-5326-477B-880C-295F2F110953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18812A34-5326-477B-880C-295F2F110953}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18812A34-5326-477B-880C-295F2F110953}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18812A34-5326-477B-880C-295F2F110953}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +82,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{60DB8381-E335-4D93-8EF2-CA3B19DF6821} = {E9E9420C-73E8-49CF-9073-D75EB7F3AFBF}
 		{C3456BB9-EED6-42BB-A918-00D7EAB46D28} = {E9E9420C-73E8-49CF-9073-D75EB7F3AFBF}
+		{18812A34-5326-477B-880C-295F2F110953} = {D77EE203-4187-4DEF-B390-F0535D739C2A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2220BD7D-97B5-4EE8-A6FC-938957818909}

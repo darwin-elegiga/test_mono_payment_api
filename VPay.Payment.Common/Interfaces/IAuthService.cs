@@ -14,5 +14,7 @@ namespace VPay.Payment.Common
         Task<UserSessionInfo> Login(AuthenticationParam param);
 
         Task<bool> IsAuthorized(string userId, string webServiceName, string action);
+
+        Task<SecurityCheckResult> GetBalanceRequest(StandardRequest sr);
     }
 }

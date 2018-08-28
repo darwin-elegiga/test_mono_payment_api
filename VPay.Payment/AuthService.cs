@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Payment.Common;
+using VPay.Payment.Common.CommunicationStrings;
 using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.Login;
@@ -99,6 +100,26 @@ namespace VPay.Payment
             });
 
             return result?.Code == "0000";
+        }
+
+        public async Task<SecurityCheckResult> GetBalanceRequest(StandardRequest sr)
+        {
+            var stringManipule = new ServiceString(
+                sr.CommonData ?? new CommonData(),
+                sr.CardData ?? new CardData(),
+                sr.CheckData ?? new CheckData(),
+                sr.Claim ?? new Claim(),
+                sr.CorrespondenceData ?? new CorrespondenceData(),
+                sr.CoveredItem ?? new CoveredItem(),
+                sr.Merchant ?? new Merchant(),
+                sr.Payment ?? new Common.DataWebService.Payment(),
+                sr.SwitchTransaction ?? new SwitchTransaction());
+
+
+            var result = await _db.BalanceRequest("WSQATEST", "QATEST01WS18", "10.120.202.129",
+                stringManipule.GenerateStringForISeriesCall());
+
+            return result;
         }
 
         public async Task<LoginService> DoLogin(string name, string password, string recordid, string recordtype, string source)

@@ -158,5 +158,35 @@ namespace VPay.Payment.Common.DataWebService
 
             return builder.ToString();
         }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "CLAIMDATA ") return; // TODO: Handle weird errors better
+
+            UserKey = ReadNext(ref iSeriesString, ref index, _usrKeyLen);
+            UserField1 = ReadNext(ref iSeriesString, ref index, _usrFd1Len);
+            UserField2 = ReadNext(ref iSeriesString, ref index, _usrFd2Len);
+            UserField3 = ReadNext(ref iSeriesString, ref index, _usrFd3Len);
+            CurrencyType = ReadNext(ref iSeriesString, ref index, _curTypLen);
+            Amount = ReadNext(ref iSeriesString, ref index, _amountLen);
+            ClaimDeductible = ReadNext(ref iSeriesString, ref index, _clmDedLen);
+            ClaimDate = ReadNext(ref iSeriesString, ref index, _clmDteLen);
+            ClaimOdometer = ReadNext(ref iSeriesString, ref index, _clmOdoLen);
+            ClaimDescription = ReadNext(ref iSeriesString, ref index, _clmDscLen);
+            RequesterId = ReadNext(ref iSeriesString, ref index, _rqstIdLen);
+            RequesterName = ReadNext(ref iSeriesString, ref index, _rqstNmLen);
+            RepairOrderId = ReadNext(ref iSeriesString, ref index, _repOrdLen);
+            ClaimNotes = ReadNext(ref iSeriesString, ref index, _clmNotLen);
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
 using VPay.Payment.Common.DataWebService;
+using VPay.Payment.Common.CommunicationStrings;
 
 namespace VPay.Payment.Api.Controllers
 {
@@ -16,8 +18,14 @@ namespace VPay.Payment.Api.Controllers
     [ApiController]
     public class MainController : ControllerBase
     {
-        public MainController()
+        private readonly IHttpContextAccessor _accessor;
+        private readonly IAuthService _authService;
+
+        public MainController(IHttpContextAccessor accessor, IAuthService authService)
         {
+            _accessor = accessor;
+            _authService = authService;
+
             // TODO:  Initialize private variables
             version = "2018-08-10";
         }
@@ -85,19 +93,30 @@ namespace VPay.Payment.Api.Controllers
 
         [HttpGet("BalanceRequest")]
         [ServicePermissionAuthorize(ServicePermission.BalanceRequest)]
-        public Task<StandardResponse> BalanceRequest()
+        public async Task<StandardResponse> BalanceRequest()
         {
             AuthenticationValues av = new AuthenticationValues();
-            StandardRequest sr = new StandardRequest();
+            StandardRequest sr = new StandardRequest()
+            {
+                CommonData = new CommonData()
+                {
+                    TransNumber = "55123182",
+                    User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
+                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
+                    PassWord = "yraheem197"
+                }
+            };
 
             string webSvc = "BALREQUEST";
             string svcName = "BalRequest";
             string action = "READ";
             string secGrp = "WSPUBLIC";
 
+            var result = await _authService.GetBalanceRequest(sr);
+
             StandardResponse returnValue = Run(av, sr, webSvc, svcName, secGrp, action);
 
-            return Task.FromResult(returnValue);
+            return returnValue;
         }
 
         [HttpGet("UnloadPan")]
@@ -152,6 +171,8 @@ namespace VPay.Payment.Api.Controllers
         private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
             string secGrp, string action, CustomData ct)
         {
+            ExecuteTemporaryTestCode1();
+
             return null;
         }
 
@@ -159,6 +180,11 @@ namespace VPay.Payment.Api.Controllers
             string secGrp, string action)
         {
             return Run(av, sr, webSvc, svcName, secGrp, action, new CustomData());
+        }
+
+        private void ExecuteTemporaryTestCode1()
+        {
+
         }
 
     }
