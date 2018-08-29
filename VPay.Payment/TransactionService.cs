@@ -21,22 +21,14 @@ namespace VPay.Payment
         }
 
 
-        public async Task<SecurityCheckResult> GetBalanceRequest(StandardRequest sr)
+        public async Task<StandardResponse> GetBalanceRequest(StandardRequest sr)
         {
-            var stringManipule = new ServiceString(
-                sr.CommonData ?? new CommonData(),
-                sr.CardData ?? new CardData(),
-                sr.CheckData ?? new CheckData(),
-                sr.Claim ?? new Claim(),
-                sr.CorrespondenceData ?? new CorrespondenceData(),
-                sr.CoveredItem ?? new CoveredItem(),
-                sr.Merchant ?? new Merchant(),
-                sr.Payment ?? new Common.DataWebService.Payment(),
-                sr.SwitchTransaction ?? new SwitchTransaction());
+            var stringManipule = new ServiceString(sr);
 
-
-            var result = await _dbPaymentOps.BalanceRequest("WSQATEST", "QATEST01WS18", "10.120.202.129",
+            var dbResult = await _dbPaymentOps.BalanceRequest("WSQATEST", "QATEST01WS18", "10.120.202.129",
                 stringManipule.GenerateStringForISeriesCall());
+
+            var result = ServiceString.ParseToStandardResponse(dbResult);
 
             return result;
         }

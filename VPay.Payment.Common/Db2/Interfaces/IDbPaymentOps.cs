@@ -11,6 +11,6 @@ namespace VPay.Payment.Common.Db2
 
         Task<SecurityCheckResult> CheckUserSecurity(SecurityCheckParam param);
 
-        Task<SecurityCheckResult> BalanceRequest(string auth, string password, string ip, string data);
+        Task<string> BalanceRequest(string auth, string password, string ip, string data);
     }
 }

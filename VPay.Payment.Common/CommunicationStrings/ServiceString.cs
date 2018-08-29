@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using VPay.Payment.Common.DataWebService;
 
 namespace VPay.Payment.Common.CommunicationStrings
@@ -33,6 +31,20 @@ namespace VPay.Payment.Common.CommunicationStrings
             MerchantSection = merchant;
             PaymentSection = payment;
             SwitchTransactionSection = switchTransaction;
+        }
+
+        public ServiceString(StandardRequest standardRequest) : this(
+            standardRequest.CommonData ?? new CommonData(),
+            standardRequest.CardData ?? new CardData(),
+            standardRequest.CheckData ?? new CheckData(),
+            standardRequest.Claim ?? new Claim(),
+            standardRequest.CorrespondenceData ?? new CorrespondenceData(),
+            standardRequest.CoveredItem ?? new CoveredItem(),
+            standardRequest.Merchant ?? new Merchant(),
+            standardRequest.Payment ?? new Common.DataWebService.Payment(),
+            standardRequest.SwitchTransaction ?? new SwitchTransaction())
+        {
+
         }
 
         public CommonData CommonSection { get; set; }
@@ -71,6 +83,25 @@ namespace VPay.Payment.Common.CommunicationStrings
             string builderResult = builder.ToString();
 
             return builderResult;
+        }
+
+        public static StandardResponse ParseToStandardResponse(string responseString)
+        {
+            var serviceString = new ServiceString();
+            serviceString.PopulateDataFromISeriesResponse(responseString);
+
+            return new StandardResponse()
+            {
+                CommonData = serviceString.CommonSection,
+                CardData = serviceString.CardSection,
+                CheckData = serviceString.CheckSection,
+                Claim = serviceString.ClaimSection,
+                CorrespondenceData = serviceString.CorrespondenceSection,
+                CoveredItem = serviceString.CoveredItemSection,
+                Merchant = serviceString.MerchantSection,
+                Payment = serviceString.PaymentSection,
+                SwitchTransaction = serviceString.SwitchTransactionSection
+            };
         }
 
         public void PopulateDataFromISeriesResponse(string responseString)
