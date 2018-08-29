@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Payment.Common;
+using VPay.Payment.Common.CommunicationStrings;
 using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.Login;

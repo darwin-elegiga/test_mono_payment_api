@@ -119,5 +119,28 @@ namespace VPay.Payment.Common.DataWebService
 
             return builder.ToString();
         }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "MERCHANT  ") return; // TODO: Handle weird errors better
+
+            PayeeCode = ReadNext(ref iSeriesString, ref index, _payCodLen);
+            PayeeName = ReadNext(ref iSeriesString, ref index, _payNamLen);
+            ContactPerson = ReadNext(ref iSeriesString, ref index, _cntactLen);
+            PostalCode = ReadNext(ref iSeriesString, ref index, _merZipLen);
+            Telephone = ReadNext(ref iSeriesString, ref index, _merPhnLen);
+            Fax = ReadNext(ref iSeriesString, ref index, _merFaxLen);
+            EmailAddress = ReadNext(ref iSeriesString, ref index, _merEmlLen);   // m005
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
+        }
     }
 }

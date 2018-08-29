@@ -10,5 +10,7 @@ namespace VPay.Payment.Common.Db2
         Task<RemoteLoginResult> RemoteLogin(string username, string password, string source);
 
         Task<SecurityCheckResult> CheckUserSecurity(SecurityCheckParam param);
+
+        Task<SecurityCheckResult> BalanceRequest(string auth, string password, string ip, string data);
     }
 }

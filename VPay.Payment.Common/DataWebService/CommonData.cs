@@ -63,7 +63,12 @@ namespace VPay.Payment.Common.DataWebService
         public string User { get; set; }
         public string PassWord { get; set; }
         public string TimeStamp { get; set; }
-        public string Token { get; set; }
+
+        public string Token
+        {
+            get;
+            set;
+        }
 
         // Working Members Not In Wsdl
         public string ParseResult { get; set; }
@@ -151,6 +156,36 @@ namespace VPay.Payment.Common.DataWebService
             builder.Append(Token.PadRight(_tokenLen));
 
             return builder.ToString();
+        }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "COMMONDATA") return; // TODO: Handle weird errors better
+
+            TransNumber = ReadNext(ref iSeriesString, ref index, _trnNbrLen);
+            SeClaimID = ReadNext(ref iSeriesString, ref index, _clamIdLen);
+            TpaClaimID = ReadNext(ref iSeriesString, ref index, _tpaClmLen);
+            ProgramID = ReadNext(ref iSeriesString, ref index, _progrmLen);
+            ReasonCode = ReadNext(ref iSeriesString, ref index, _rsCodeLen);
+            ReasonDesc = ReadNext(ref iSeriesString, ref index, _rsDescLen);
+            ResponseCode = ReadNext(ref iSeriesString, ref index, _rpCodeLen);
+            ResponseDesc = ReadNext(ref iSeriesString, ref index, _rpDescLen);
+            SuccessCode = ReadNext(ref iSeriesString, ref index, _scCodeLen);
+            SuccessDesc = ReadNext(ref iSeriesString, ref index, _scDescLen);
+            User = ReadNext(ref iSeriesString, ref index, _userLen);
+            PassWord = ReadNext(ref iSeriesString, ref index, _passwdLen);
+            TimeStamp = ReadNext(ref iSeriesString, ref index, _timeStLen);
+            Token = ReadNext(ref iSeriesString, ref index, _tokenLen);
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
         }
     }
 }
