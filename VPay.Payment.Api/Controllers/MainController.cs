@@ -20,12 +20,12 @@ namespace VPay.Payment.Api.Controllers
     public class MainController : ControllerBase
     {
         private readonly IHttpContextAccessor _accessor;
-        private readonly IAuthService _authService;
+        private readonly ITransactionService _transactionService;
 
-        public MainController(IHttpContextAccessor accessor, IAuthService authService)
+        public MainController(IHttpContextAccessor accessor, ITransactionService transactionService)
         {
             _accessor = accessor;
-            _authService = authService;
+            _transactionService = transactionService;
 
             // TODO:  Initialize private variables
             version = "2018-08-10";
@@ -123,7 +123,7 @@ namespace VPay.Payment.Api.Controllers
             string action = "READ";
             string secGrp = "WSPUBLIC";
 
-            var result = await _authService.GetBalanceRequest(sr);
+            var result = await _transactionService.GetBalanceRequest(sr);
 
             StandardResponse returnValue = Run(av, sr, webSvc, svcName, secGrp, action);
 
