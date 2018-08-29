@@ -75,7 +75,7 @@ x-ibm-configuration:
                     stop-on-error:
                       - null
                     version: 1.0.0
-                    target-url: 'http://10.120.202.99:32772/api/Main/Echo'
+                    target-url: 'http://10.120.202.99:32768/api/Main/Echo'
                     output: echo_invoke
                 - map:
                     title: map
@@ -161,16 +161,208 @@ x-ibm-configuration:
                         from: response.commonData.reasonCode
                     version: 1.0.0
             - operations:
+                - BalanceRequest
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/BalanceRequestInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          description: ''
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              name: id
+                            passPhrase:
+                              type: string
+                              name: passPhrase
+                            userName:
+                              type: string
+                              name: userName
+                            password:
+                              type: string
+                              name: password
+                          example: |-
+                            {
+                                "id": "string",
+                                "passPhrase": "string",
+                                "userName": "userName",
+                                "password": "password"
+                            }
+                        variable: saved
+                        content: application/json
+                    actions:
+                      - set: output.id
+                        from: input.Envelope.Body.BalanceRequest.av.id
+                      - set: output.passPhrase
+                        from: input.Envelope.Body.BalanceRequest.av.passphrase
+                      - set: output.password
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.passWord
+                      - set: output.userName
+                        from: input.Envelope.Body.BalanceRequest.sr.commonData.user
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/BalanceRequestInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/standardRequest_tns'
+                        variable: message.body
+                        content: application/json
+                    actions:
+                      - set: output.commonData.passWord
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.passWord
+                      - set: output.commonData.programID
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.programID
+                      - set: output.commonData.reasonCode
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.reasonCode
+                      - set: output.commonData.reasonDesc
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.reasonDesc
+                      - set: output.commonData.responseCode
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.responseCode
+                      - set: output.commonData.responseDesc
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.responseDesc
+                      - set: output.commonData.seClaimID
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.seClaimID
+                      - set: output.commonData.successCode
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.successCode
+                      - set: output.commonData.successDesc
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.successDesc
+                      - set: output.commonData.timeStamp
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.timeStamp
+                      - set: output.commonData.token
+                        from: input.Envelope.Body.BalanceRequest.sr.commonData.token
+                      - set: output.commonData.transNumber
+                        from: >-
+                          input.Envelope.Body.BalanceRequest.sr.commonData.transNumber
+                    version: 1.0.0
+                - gatewayscript:
+                    title: gatewayscript
+                    version: 1.0.0
+                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\n"
+                - invoke:
+                    title: invoke
+                    timeout: 300
+                    verb: POST
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error:
+                      - null
+                    version: 1.0.0
+                    target-url: 'http://10.120.202.99:32768/api/Main/BalanceRequest'
+                    output: echo_invoke
+                    username: '$(saved.id):$(saved.passPhrase)'
+                    password: '$(saved.userName):$(saved.password)'
+                - if:
+                    title: if
+                    condition: >-
+                      apim.getvariable('message.status.code') == 401 ||
+                      apim.getvariable('message.status.code') == 403
+                    execute:
+                      - gatewayscript:
+                          title: gatewayscript
+                          version: 1.0.0
+                          source: >
+                            var body = {"commonData": {"successCode": "0002",
+                            "successDesc":"Not Authorized"}};
+
+                            apim.setvariable('echo_invoke.body', body);
+
+                            apim.setvariable('message.status.code', '200');
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/BalanceRequestOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.reasonCode
+                        from: input.commonData.reasonCode
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.reasonDesc
+                        from: input.commonData.reasonDesc
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.responseCode
+                        from: input.commonData.responseCode
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.responseDesc
+                        from: input.commonData.responseDesc
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.successCode
+                        from: input.commonData.successCode
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.successDesc
+                        from: input.commonData.successDesc
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.timeStamp
+                        from: input.commonData.timeStamp
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.seClaimID
+                        from: input.commonData.seClaimID
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.token
+                        from: input.commonData.token
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.tpaClaimID
+                        from: input.commonData.tpaClaimID
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.transNumber
+                        from: input.commonData.transNumber
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.user
+                        from: input.commonData.user
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.programID
+                        from: input.commonData.programID
+                      - set: >-
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.passWord
+                        from: input.commonData.passWord
+                    version: 1.0.0
+            - operations:
                 - LoadPan
                 - getVer
                 - GetTransactionDetails
-                - BalanceRequest
               execute:
                 - proxy:
                     title: proxy
                     target-url: 'http://10.200.93.102:8080/VPayWS/VPayWSService'
           otherwise: []
           version: 1.0.0
+    catch: []
 paths:
   /Echo:
     post:

@@ -94,19 +94,20 @@ namespace VPay.Payment.Api.Controllers
             return Task.FromResult("LoadPan");
         }
 
-        [HttpGet("BalanceRequest")]
+        [HttpPost("BalanceRequest")]
         [ServicePermissionAuthorize(ServicePermission.BalanceRequest)]
-        public Task<StandardResponse> BalanceRequest()
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(StandardResponse), 200)]
+        public Task<StandardResponse> BalanceRequest(StandardRequest entity)
         {
             AuthenticationValues av = new AuthenticationValues();
-            StandardRequest sr = new StandardRequest();
 
             string webSvc = "BALREQUEST";
             string svcName = "BalRequest";
             string action = "READ";
             string secGrp = "WSPUBLIC";
 
-            StandardResponse returnValue = Run(av, sr, webSvc, svcName, secGrp, action);
+            StandardResponse returnValue = Run(av, entity, webSvc, svcName, secGrp, action);
 
             return Task.FromResult(returnValue);
         }
@@ -163,7 +164,14 @@ namespace VPay.Payment.Api.Controllers
         private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
             string secGrp, string action, CustomData ct)
         {
-            return null;
+            return new StandardResponse()
+            {
+                CommonData = new CommonData()
+                {
+                    TransNumber = sr.CommonData.TransNumber,
+                    ResponseCode = "0000"
+                }
+            };
         }
 
         private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
