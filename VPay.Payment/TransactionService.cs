@@ -23,19 +23,101 @@ namespace VPay.Payment
             _logger = logger;
         }
 
-
-        public async Task<StandardResponse> GetBalanceRequest(StandardRequest sr)
+        public async Task<StandardResponse> GetReasonCodes(StandardRequest standardRequest)
         {
-            var stringManipule = new ServiceString(_config.UseCheckEmail, sr);
+            StandardResponse resultOfISeriesCall = null;
 
-            var dbResult = await _dbPaymentOps.BalanceRequest("WSQATEST", "QATEST01WS18", "10.120.202.129",
-                stringManipule.GenerateStringForISeriesCall());
-
-            var result = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, dbResult);
-
-            return result;
+            return resultOfISeriesCall;
         }
 
+        public async Task<StandardResponse> GetTransactionDetails(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> LoadPan(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest)
+        {
+            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+
+            string textResultOfDb2Call = await _dbPaymentOps.BalanceRequest("WSQATEST", "QATEST01WS18", "10.120.202.129",
+                serviceStringHelper.GenerateStringForISeriesCall());
+
+            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> UnloadPan(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> StopPay(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> CancelFax(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> ChangeFaxNumber(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> HoldFax(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> ReleaseFax(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
+
+        public async Task<StandardResponse> ResendFax(StandardRequest standardRequest)
+        {
+            StandardResponse resultOfISeriesCall = null;
+
+            return resultOfISeriesCall;
+        }
 
     }
 }
