@@ -6,6 +6,9 @@ namespace VPay.Payment.Common.DataWebService
 {
     public class CheckData
     {
+
+        private bool _useEmailAddress = false;
+
         public CheckData()
         {
             Number = "";
@@ -107,6 +110,17 @@ namespace VPay.Payment.Common.DataWebService
                      _chkDatLen + _chkAd1Len + _chkAd2Len + _chkAd3Len + _chkCtyLen +
                      _chkStpLen + _chkZipLen + _chkCntLen + _chkRgnLen + _chkCtrLen +
                      _chkMemLen; // m005
+
+            if (_useEmailAddress)
+            {
+                TotLen += _chkEmlLen;
+            }
+        }
+
+        public void SetUseEmailAddress(bool useEmailAddress)
+        {
+            _useEmailAddress = useEmailAddress;
+            InitializeTotLen();
         }
 
         public override string ToString()
@@ -161,8 +175,12 @@ namespace VPay.Payment.Common.DataWebService
             builder.Append(County.PadRight(_chkCntLen));
             builder.Append(Region.PadRight(_chkRgnLen));
             builder.Append(Country.PadRight(_chkCtrLen));
+
             // m005
-            // builder.Append(EmailAddress.PadRight(_chkEmlLen));
+            if (_useEmailAddress)
+            {
+                builder.Append(EmailAddress.PadRight(_chkEmlLen));
+            }
             builder.Append(Memo.PadRight(_chkMemLen));
 
 
@@ -189,8 +207,14 @@ namespace VPay.Payment.Common.DataWebService
             County = ReadNext(ref iSeriesString, ref index, _chkCntLen);
             Region = ReadNext(ref iSeriesString, ref index, _chkRgnLen);
             Country = ReadNext(ref iSeriesString, ref index, _chkCtrLen);
+
             // m005
-            // EmailAddress = ReadNext(ref iSeriesString, ref index, _chkEmlLen);
+            if (_useEmailAddress)
+            {
+                EmailAddress = ReadNext(ref iSeriesString, ref index, _chkEmlLen);
+            }
+
+            // m005
             Memo = ReadNext(ref iSeriesString, ref index, _chkMemLen);
 
         }

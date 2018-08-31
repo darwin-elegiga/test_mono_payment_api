@@ -48,6 +48,7 @@ namespace VPay.Payment.Api
             services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<PaymentConfig>>().Value);
 
             services.AddTransient<IHealthCheckService, HealthCheckService>();
+            services.AddTransient<ITransactionService, TransactionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

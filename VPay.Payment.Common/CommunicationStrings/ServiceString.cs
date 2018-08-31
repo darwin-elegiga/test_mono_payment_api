@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using VPay.Payment.Common.DataWebService;
+using VPay.Payment.Common.Models;
 
 namespace VPay.Payment.Common.CommunicationStrings
 {
     public class ServiceString
     {
-        public ServiceString()
+        private readonly bool _useCheckEmail;
+
+        public ServiceString(bool useCheckEmail)
         {
+            _useCheckEmail = useCheckEmail;
             CommonSection = new CommonData();
             CardSection = new CardData();
             CheckSection = new CheckData();
@@ -18,12 +20,16 @@ namespace VPay.Payment.Common.CommunicationStrings
             MerchantSection = new Merchant();
             PaymentSection = new DataWebService.Payment();
             SwitchTransactionSection = new SwitchTransaction();
+
+            CheckSection.SetUseEmailAddress(useCheckEmail);
+            MerchantSection.SetUseEmailAddress(!useCheckEmail);
         }
 
-        public ServiceString(CommonData commonData, CardData cardData, CheckData checkData, Claim claim,
+        public ServiceString(bool useCheckEmail, CommonData commonData, CardData cardData, CheckData checkData, Claim claim,
             CorrespondenceData correspondenceData, CoveredItem coveredItem, Merchant merchant,
             DataWebService.Payment payment, SwitchTransaction switchTransaction)
         {
+            _useCheckEmail = useCheckEmail;
             CommonSection = commonData;
             CardSection = cardData;
             CheckSection = checkData;
@@ -33,6 +39,24 @@ namespace VPay.Payment.Common.CommunicationStrings
             MerchantSection = merchant;
             PaymentSection = payment;
             SwitchTransactionSection = switchTransaction;
+
+            CheckSection.SetUseEmailAddress(useCheckEmail);
+            MerchantSection.SetUseEmailAddress(!useCheckEmail);
+        }
+
+        public ServiceString(bool useCheckEmail, StandardRequest standardRequest) : this(
+            useCheckEmail,
+            standardRequest.CommonData ?? new CommonData(),
+            standardRequest.CardData ?? new CardData(),
+            standardRequest.CheckData ?? new CheckData(),
+            standardRequest.Claim ?? new Claim(),
+            standardRequest.CorrespondenceData ?? new CorrespondenceData(),
+            standardRequest.CoveredItem ?? new CoveredItem(),
+            standardRequest.Merchant ?? new Merchant(),
+            standardRequest.Payment ?? new Common.DataWebService.Payment(),
+            standardRequest.SwitchTransaction ?? new SwitchTransaction())
+        {
+
         }
 
         public CommonData CommonSection { get; set; }
@@ -71,6 +95,25 @@ namespace VPay.Payment.Common.CommunicationStrings
             string builderResult = builder.ToString();
 
             return builderResult;
+        }
+
+        public static StandardResponse ParseToStandardResponse(bool useCheckEmail, string responseString)
+        {
+            var serviceString = new ServiceString(useCheckEmail);
+            serviceString.PopulateDataFromISeriesResponse(responseString);
+
+            return new StandardResponse()
+            {
+                CommonData = serviceString.CommonSection,
+                CardData = serviceString.CardSection,
+                CheckData = serviceString.CheckSection,
+                Claim = serviceString.ClaimSection,
+                CorrespondenceData = serviceString.CorrespondenceSection,
+                CoveredItem = serviceString.CoveredItemSection,
+                Merchant = serviceString.MerchantSection,
+                Payment = serviceString.PaymentSection,
+                SwitchTransaction = serviceString.SwitchTransactionSection
+            };
         }
 
         public void PopulateDataFromISeriesResponse(string responseString)

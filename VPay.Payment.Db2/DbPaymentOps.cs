@@ -146,7 +146,7 @@ namespace VPay.Payment.Db2
 
         }
 
-        public async Task<SecurityCheckResult> BalanceRequest(string auth, string password, string ip, string data)
+        public async Task<string> BalanceRequest(string auth, string password, string ip, string data)
         {
             var connection = await GetOpenConnection();
 
@@ -157,23 +157,15 @@ namespace VPay.Payment.Db2
                 cmd.Parameters.AddWithValue("PAUTHID", auth);
                 cmd.Parameters.AddWithValue("PPWD", password);
                 cmd.Parameters.AddWithValue("PIP", ip);
+                cmd.Parameters.AddWithValue("PREQSTR", data);
 
-                OdbcParameter resultParam = cmd.Parameters.AddWithValue("PREQSTR", data);
-
-                OdbcParameter descParameter = cmd.Parameters.Add("PRSPSTR", OdbcType.Char, 4000);
+                var descParameter = cmd.Parameters.Add("PRSPSTR", OdbcType.Char, 4000);
                 descParameter.Direction = ParameterDirection.Output;
 
                 await cmd.ExecuteNonQueryAsync();
 
-                var returnValue = new SecurityCheckResult()
-                {
-                    Code = resultParam.Value?.ToString().Trim(),
-                    Description = descParameter.Value?.ToString().Trim()
-                };
-
-                return returnValue;
+                return descParameter.Value?.ToString().Trim();
             }
-
         }
 
         private async Task<OdbcConnection> GetOpenConnection()

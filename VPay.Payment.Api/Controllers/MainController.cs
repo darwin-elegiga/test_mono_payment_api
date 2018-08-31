@@ -104,30 +104,22 @@ namespace VPay.Payment.Api.Controllers
 
         [HttpGet("BalanceRequest")]
         [ServicePermissionAuthorize(ServicePermission.BalanceRequest)]
-        public async Task<StandardResponse> BalanceRequest()
+        public async Task<StandardResponse> BalanceRequest(string transNumber)
         {
-            AuthenticationValues av = new AuthenticationValues();
-            StandardRequest sr = new StandardRequest()
+            var sr = new StandardRequest()
             {
                 CommonData = new CommonData()
                 {
-                    TransNumber = "55123182",
+                    TransNumber = transNumber,
                     User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
                     Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
                     PassWord = "yraheem197"
                 }
             };
 
-            string webSvc = "BALREQUEST";
-            string svcName = "BalRequest";
-            string action = "READ";
-            string secGrp = "WSPUBLIC";
-
             var result = await _transactionService.GetBalanceRequest(sr);
 
-            StandardResponse returnValue = Run(av, sr, webSvc, svcName, secGrp, action);
-
-            return returnValue;
+            return result;
         }
 
         [HttpGet("UnloadPan")]
