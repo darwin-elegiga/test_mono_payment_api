@@ -12,13 +12,15 @@ namespace VPay.Payment
     {
 
         private readonly IDbPaymentOps _dbPaymentOps;
+        private readonly IUserInfo _user;
         private readonly PaymentConfig _config;
         private readonly ILogger _logger;
 
 
-        public TransactionService(IDbPaymentOps dbPaymentOps, PaymentConfig config, ILogger<TransactionService> logger)
+        public TransactionService(IDbPaymentOps dbPaymentOps, IUserInfo user, PaymentConfig config, ILogger<TransactionService> logger)
         {
             _dbPaymentOps = dbPaymentOps;
+            _user = user;
             _config = config;
             _logger = logger;
         }
@@ -91,11 +93,28 @@ namespace VPay.Payment
             return resultOfISeriesCall;
         }
 
-        public async Task<StandardResponse> ChangeFaxNumber(StandardRequest standardRequest)
+        public async Task<StandardResponse> ChangeFaxNumber(int faxCode, string faxNumber)
         {
-            StandardResponse resultOfISeriesCall = null;
+            var dbResult = await _dbPaymentOps.ChangeFaxNumber(_user.Token, faxCode, faxNumber);
 
-            return resultOfISeriesCall;
+            var sReq = new StandardResponse()
+            {
+                CommonData = new CommonData()
+                {
+                    SuccessCode = dbResult.SuccessCode,
+                    SuccessDesc = dbResult.SuccessDescription
+                },
+                CardData = new CardData(),
+                CheckData = new CheckData(),
+                Claim = new Claim(),
+                CorrespondenceData = new CorrespondenceData(),
+                CoveredItem = new CoveredItem(),
+                Merchant = new Merchant(),
+                Payment = new Common.DataWebService.Payment(),
+                SwitchTransaction = new SwitchTransaction()
+            };
+
+            return sReq;
         }
 
         public async Task<StandardResponse> HoldFax(StandardRequest standardRequest)

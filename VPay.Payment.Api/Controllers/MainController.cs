@@ -143,11 +143,14 @@ namespace VPay.Payment.Api.Controllers
             return Task.FromResult("CancelFax");
         }
 
-        [HttpGet("ChangeFaxNumber")]
+        [HttpPost("ChangeFaxNumber")]
         [ServicePermissionAuthorize(ServicePermission.ChangeFaxNumber)]
-        public Task<string> ChangeFaxNumber()
+        public async Task<StandardResponse> ChangeFaxNumber(ChangeFaxNumberRequest entity)
         {
-            return Task.FromResult("ChangeFaxNumber");
+
+            var result = await _transactionService.ChangeFaxNumber(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
+
+            return result;
         }
 
         [HttpGet("HoldFax")]

@@ -14,7 +14,7 @@ namespace VPay.Payment.Common
         Task<StandardResponse> UnloadPan(StandardRequest standardRequest);
         Task<StandardResponse> StopPay(StandardRequest standardRequest);
         Task<StandardResponse> CancelFax(StandardRequest standardRequest);
-        Task<StandardResponse> ChangeFaxNumber(StandardRequest standardRequest);
+        Task<StandardResponse> ChangeFaxNumber(int faxCode, string faxNumber);
         Task<StandardResponse> HoldFax(StandardRequest standardRequest);
         Task<StandardResponse> ReleaseFax(StandardRequest standardRequest);
         Task<StandardResponse> ResendFax(StandardRequest standardRequest);

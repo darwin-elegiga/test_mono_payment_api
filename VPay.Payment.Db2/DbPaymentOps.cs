@@ -4,6 +4,7 @@ using System.Data.Odbc;
 using System.Threading.Tasks;
 using VPay.Payment.Common;
 using VPay.Payment.Common.Db2;
+using VPay.Payment.Db2.Helpers;
 
 namespace VPay.Payment.Db2
 {
@@ -11,11 +12,11 @@ namespace VPay.Payment.Db2
     {
         private readonly Db2ConnectionConfig _connectionConfig;
         private OdbcConnection _dbConnection;
-        
+
         public DbPaymentOps(Db2ConnectionConfig connectionConfig)
         {
             _connectionConfig = connectionConfig ?? throw new ArgumentNullException(nameof(connectionConfig));
-            
+
         }
 
         public string Component { get; } = "Db2";
@@ -62,7 +63,7 @@ namespace VPay.Payment.Db2
                 resultParam.Value = "";
 
                 await cmd.ExecuteNonQueryAsync();
-                
+
                 return new AuthenticationResult()
                 {
                     Result = resultParam.Value?.ToString().Trim(),
@@ -79,7 +80,7 @@ namespace VPay.Payment.Db2
             using (var cmd = new OdbcCommand("CALL VPAYSEC.VPAY_REMOTE_LOGIN(?,?,?,?,?,?,?)", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                
+
                 cmd.Parameters.AddWithValue("USERID", username);
                 cmd.Parameters.AddWithValue("PASSWORD", password);
 
@@ -134,7 +135,7 @@ namespace VPay.Payment.Db2
                 var descParameter = cmd.Parameters.Add("PRETDESC", OdbcType.Char, 256);
                 descParameter.Direction = ParameterDirection.InputOutput;
                 descParameter.Value = "";
-                
+
                 await cmd.ExecuteNonQueryAsync();
 
                 return new SecurityCheckResult()
@@ -168,6 +169,124 @@ namespace VPay.Payment.Db2
             }
         }
 
+        public async Task<FaxMethodResult> CancelFax(string token, int faxCode)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_CANCEL_FAX_JOB(?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
+                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
+                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 256, ParameterDirection.InputOutput);
+                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return new FaxMethodResult
+                {
+                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
+                    SuccessDescription = successDescParam.Value?.ToString().Trim()
+                };
+            }
+        }
+
+        public async Task<FaxMethodResult> ChangeFaxNumber(string token, int faxCode, string phoneNumber)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_CHANGE_FAX_NUMBER(?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
+                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
+                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 256, ParameterDirection.InputOutput);
+                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
+                cmd.Parameters.AddWithValue("PFAXNUM", phoneNumber);
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return new FaxMethodResult
+                {
+                    SuccessCode = successCodeParam.Value?.ToString(),
+                    SuccessDescription = successDescParam.Value?.ToString()
+                };
+            }
+        }
+
+        public async Task<FaxMethodResult> HoldFax(string token, int faxCode)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_PUT_FAX_JOB_ON_HOLD(?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
+                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
+                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 256, ParameterDirection.InputOutput);
+                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return new FaxMethodResult
+                {
+                    SuccessCode = successCodeParam.Value?.ToString(),
+                    SuccessDescription = successDescParam.Value?.ToString()
+                };
+            }
+        }
+
+        public async Task<FaxMethodResult> ReleaseFax(string token, int faxCode)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_RELEASE_FAX_JOB(?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
+                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
+                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 256, ParameterDirection.InputOutput);
+                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return new FaxMethodResult
+                {
+                    SuccessCode = successCodeParam.Value?.ToString(),
+                    SuccessDescription = successDescParam.Value?.ToString()
+                };
+            }
+        }
+
+        public async Task<FaxMethodResult> ResendFax(string token, int faxCode, string phoneNumber)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_CHANGE_FAX_NUMBER(?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
+                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
+                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 128, ParameterDirection.InputOutput);
+                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
+                var phoneNumberParam = cmd.Parameters.AddWithValue("PPHNNUM", phoneNumber, OdbcType.Char, 20, ParameterDirection.InputOutput);
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return new FaxMethodResult
+                {
+                    SuccessCode = successCodeParam.Value?.ToString(),
+                    SuccessDescription = successDescParam.Value?.ToString(),
+                    PhoneNumber = phoneNumberParam.Value?.ToString()
+                };
+            }
+        }
+
         private async Task<OdbcConnection> GetOpenConnection()
         {
 
@@ -190,6 +309,6 @@ namespace VPay.Payment.Db2
 
             return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password};System={connectionConfig.Hostname};DefaultLibraries={connectionConfig.DefaultLibraries}";
         }
-        
+
     }
 }
