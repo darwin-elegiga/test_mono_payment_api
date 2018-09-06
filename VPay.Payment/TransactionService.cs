@@ -86,11 +86,28 @@ namespace VPay.Payment
             return resultOfISeriesCall;
         }
 
-        public async Task<StandardResponse> CancelFax(StandardRequest standardRequest)
+        public async Task<StandardResponse> CancelFax(int faxCode)
         {
-            StandardResponse resultOfISeriesCall = null;
+            var dbResult = await _dbPaymentOps.CancelFax(_user.Token, faxCode);
 
-            return resultOfISeriesCall;
+            var sReq = new StandardResponse()
+            {
+                CommonData = new CommonData()
+                {
+                    SuccessCode = dbResult.SuccessCode,
+                    SuccessDesc = dbResult.SuccessDescription
+                },
+                CardData = new CardData(),
+                CheckData = new CheckData(),
+                Claim = new Claim(),
+                CorrespondenceData = new CorrespondenceData(),
+                CoveredItem = new CoveredItem(),
+                Merchant = new Merchant(),
+                Payment = new Common.DataWebService.Payment(),
+                SwitchTransaction = new SwitchTransaction()
+            };
+
+            return sReq;
         }
 
         public async Task<StandardResponse> ChangeFaxNumber(int faxCode, string faxNumber)
@@ -117,25 +134,79 @@ namespace VPay.Payment
             return sReq;
         }
 
-        public async Task<StandardResponse> HoldFax(StandardRequest standardRequest)
+        public async Task<StandardResponse> HoldFax(int faxCode)
         {
-            StandardResponse resultOfISeriesCall = null;
+            var dbResult = await _dbPaymentOps.HoldFax(_user.Token, faxCode);
 
-            return resultOfISeriesCall;
+            var sReq = new StandardResponse()
+            {
+                CommonData = new CommonData()
+                {
+                    SuccessCode = dbResult.SuccessCode,
+                    SuccessDesc = dbResult.SuccessDescription
+                },
+                CardData = new CardData(),
+                CheckData = new CheckData(),
+                Claim = new Claim(),
+                CorrespondenceData = new CorrespondenceData(),
+                CoveredItem = new CoveredItem(),
+                Merchant = new Merchant(),
+                Payment = new Common.DataWebService.Payment(),
+                SwitchTransaction = new SwitchTransaction()
+            };
+
+            return sReq;
         }
 
-        public async Task<StandardResponse> ReleaseFax(StandardRequest standardRequest)
+        public async Task<StandardResponse> ReleaseFax(int faxCode)
         {
-            StandardResponse resultOfISeriesCall = null;
+            var dbResult = await _dbPaymentOps.ReleaseFax(_user.Token, faxCode);
 
-            return resultOfISeriesCall;
+            var sReq = new StandardResponse()
+            {
+                CommonData = new CommonData()
+                {
+                    SuccessCode = dbResult.SuccessCode,
+                    SuccessDesc = dbResult.SuccessDescription
+                },
+                CardData = new CardData(),
+                CheckData = new CheckData(),
+                Claim = new Claim(),
+                CorrespondenceData = new CorrespondenceData(),
+                CoveredItem = new CoveredItem(),
+                Merchant = new Merchant(),
+                Payment = new Common.DataWebService.Payment(),
+                SwitchTransaction = new SwitchTransaction()
+            };
+
+            return sReq;
         }
 
-        public async Task<StandardResponse> ResendFax(StandardRequest standardRequest)
+        public async Task<StandardResponse> ResendFax(int faxCode, string faxNumber)
         {
-            StandardResponse resultOfISeriesCall = null;
+            var dbResult = await _dbPaymentOps.ResendFax(_user.Token, faxCode, faxNumber ?? "");
 
-            return resultOfISeriesCall;
+            var sReq = new StandardResponse()
+            {
+                CommonData = new CommonData()
+                {
+                    SuccessCode = dbResult.SuccessCode,
+                    SuccessDesc = dbResult.SuccessDescription
+                },
+                CardData = new CardData(),
+                CheckData = new CheckData(),
+                Claim = new Claim(),
+                CorrespondenceData = new CorrespondenceData()
+                {
+                    PhoneNumber = dbResult.PhoneNumber
+                },
+                CoveredItem = new CoveredItem(),
+                Merchant = new Merchant(),
+                Payment = new Common.DataWebService.Payment(),
+                SwitchTransaction = new SwitchTransaction()
+            };
+
+            return sReq;
         }
 
     }

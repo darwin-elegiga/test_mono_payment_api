@@ -4,10 +4,8 @@ using Newtonsoft.Json;
 
 namespace VPay.Payment.Api.Dtos
 {
-    public class ChangeFaxNumberRequest
+    public class ChangeFaxNumberRequest : FaxRequest
     {
-        public int? FaxCode { get; set; }
-
         public string FaxNumber { get; set; }
 
         [JsonIgnore]

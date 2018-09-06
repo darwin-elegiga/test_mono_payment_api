@@ -210,8 +210,8 @@ namespace VPay.Payment.Db2
 
                 return new FaxMethodResult
                 {
-                    SuccessCode = successCodeParam.Value?.ToString(),
-                    SuccessDescription = successDescParam.Value?.ToString()
+                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
+                    SuccessDescription = successDescParam.Value?.ToString().Trim()
                 };
             }
         }
@@ -233,8 +233,8 @@ namespace VPay.Payment.Db2
 
                 return new FaxMethodResult
                 {
-                    SuccessCode = successCodeParam.Value?.ToString(),
-                    SuccessDescription = successDescParam.Value?.ToString()
+                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
+                    SuccessDescription = successDescParam.Value?.ToString().Trim()
                 };
             }
         }
@@ -256,8 +256,8 @@ namespace VPay.Payment.Db2
 
                 return new FaxMethodResult
                 {
-                    SuccessCode = successCodeParam.Value?.ToString(),
-                    SuccessDescription = successDescParam.Value?.ToString()
+                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
+                    SuccessDescription = successDescParam.Value?.ToString().Trim()
                 };
             }
         }
@@ -266,7 +266,7 @@ namespace VPay.Payment.Db2
         {
             var connection = await GetOpenConnection();
 
-            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_CHANGE_FAX_NUMBER(?,?,?,?,?)", connection))
+            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_RESEND_FAX_JOB(?,?,?,?,?)", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -280,9 +280,9 @@ namespace VPay.Payment.Db2
 
                 return new FaxMethodResult
                 {
-                    SuccessCode = successCodeParam.Value?.ToString(),
-                    SuccessDescription = successDescParam.Value?.ToString(),
-                    PhoneNumber = phoneNumberParam.Value?.ToString()
+                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
+                    SuccessDescription = successDescParam.Value?.ToString().Trim(),
+                    PhoneNumber = phoneNumberParam.Value?.ToString().Trim()
                 };
             }
         }
