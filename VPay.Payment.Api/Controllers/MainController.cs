@@ -11,7 +11,6 @@ using VPay.Payment.Api.Auth;
 using VPay.Payment.Api.Dtos;
 using VPay.Payment.Common;
 using VPay.Payment.Common.DataWebService;
-using VPay.Payment.Common.CommunicationStrings;
 
 namespace VPay.Payment.Api.Controllers
 {
@@ -45,8 +44,7 @@ namespace VPay.Payment.Api.Controllers
         // private ValidateParm vparm;
         // Logging Object
         private ILogger li;
-        // WebService ISeries Pool
-        private WSiPool wsi;
+
         // Add version tag
         private string version;
 
@@ -136,58 +134,49 @@ namespace VPay.Payment.Api.Controllers
             return Task.FromResult("StopPay");
         }
 
-        [HttpGet("CancelFax")]
+        [HttpPost("CancelFax")]
         [ServicePermissionAuthorize(ServicePermission.CancelFax)]
-        public Task<string> CancelFax()
+        public async Task<StandardResponse> CancelFax(FaxRequest entity)
         {
-            return Task.FromResult("CancelFax");
+            var result = await _transactionService.CancelFax(entity.FaxCode.GetValueOrDefault(0));
+
+            return result;
         }
 
-        [HttpGet("ChangeFaxNumber")]
+        [HttpPost("ChangeFaxNumber")]
         [ServicePermissionAuthorize(ServicePermission.ChangeFaxNumber)]
-        public Task<string> ChangeFaxNumber()
+        public async Task<StandardResponse> ChangeFaxNumber(ChangeFaxNumberRequest entity)
         {
-            return Task.FromResult("ChangeFaxNumber");
+            var result = await _transactionService.ChangeFaxNumber(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
+
+            return result;
         }
 
-        [HttpGet("HoldFax")]
+        [HttpPost("HoldFax")]
         [ServicePermissionAuthorize(ServicePermission.HoldFax)]
-        public Task<string> HoldFax()
+        public async Task<StandardResponse> HoldFax(FaxRequest entity)
         {
-            return Task.FromResult("HoldFax");
+            var result = await _transactionService.HoldFax(entity.FaxCode.GetValueOrDefault(0));
+
+            return result;
         }
 
-        [HttpGet("ReleaseFax")]
+        [HttpPost("ReleaseFax")]
         [ServicePermissionAuthorize(ServicePermission.ReleaseFax)]
-        public Task<string> ReleaseFax()
+        public async Task<StandardResponse> ReleaseFax(FaxRequest entity)
         {
-            return Task.FromResult("ReleaseFax");
+            var result = await _transactionService.ReleaseFax(entity.FaxCode.GetValueOrDefault(0));
+
+            return result;
         }
 
-        [HttpGet("ResendFax")]
+        [HttpPost("ResendFax")]
         [ServicePermissionAuthorize(ServicePermission.ResendFax)]
-        public Task<string> ResendFax()
+        public async Task<StandardResponse> ResendFax(ResendFaxRequest entity)
         {
-            return Task.FromResult("ResendFax");
-        }
+            var result = await _transactionService.ResendFax(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
 
-        private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
-            string secGrp, string action, CustomData ct)
-        {
-            ExecuteTemporaryTestCode1();
-
-            return null;
-        }
-
-        private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
-            string secGrp, string action)
-        {
-            return Run(av, sr, webSvc, svcName, secGrp, action, new CustomData());
-        }
-
-        private void ExecuteTemporaryTestCode1()
-        {
-
+            return result;
         }
 
     }

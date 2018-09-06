@@ -36,6 +36,14 @@ namespace VPay.Payment.Api
                 .AddJsonSettings()
                 .AddFluentValidationSettings();
 
+            services.Configure<ApiBehaviorOptions>(options =>
+                {
+                    options.InvalidModelStateResponseFactory = actionContext =>
+                        {
+                            return new ValidationFailedResult(actionContext.ModelState);
+                        };
+                });
+
             services
                 .AddApiVersioningService()
                 .AddOptions()

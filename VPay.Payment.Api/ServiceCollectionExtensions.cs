@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -41,7 +40,7 @@ namespace VPay.Payment.Api
 
         public static IMvcBuilder AddFluentValidationSettings(this IMvcBuilder mvcBuilder)
         {
-            return mvcBuilder;
+            return mvcBuilder.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
         }
 
         public static IServiceCollection SetupDb2(this IServiceCollection services, IConfiguration configuration)
@@ -141,6 +140,7 @@ namespace VPay.Payment.Api
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IUserInfo, UserInfo>();
 
             return services;
         }
