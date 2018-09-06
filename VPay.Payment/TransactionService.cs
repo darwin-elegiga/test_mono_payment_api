@@ -90,7 +90,7 @@ namespace VPay.Payment
         {
             var dbResult = await _dbPaymentOps.CancelFax(_user.Token, faxCode);
 
-            var sReq = new StandardResponse()
+            var sResp = new StandardResponse()
             {
                 CommonData = new CommonData()
                 {
@@ -107,14 +107,14 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransaction()
             };
 
-            return sReq;
+            return sResp;
         }
 
         public async Task<StandardResponse> ChangeFaxNumber(int faxCode, string faxNumber)
         {
             var dbResult = await _dbPaymentOps.ChangeFaxNumber(_user.Token, faxCode, faxNumber);
 
-            var sReq = new StandardResponse()
+            var sResp = new StandardResponse()
             {
                 CommonData = new CommonData()
                 {
@@ -131,14 +131,14 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransaction()
             };
 
-            return sReq;
+            return sResp;
         }
 
         public async Task<StandardResponse> HoldFax(int faxCode)
         {
             var dbResult = await _dbPaymentOps.HoldFax(_user.Token, faxCode);
 
-            var sReq = new StandardResponse()
+            var sResp = new StandardResponse()
             {
                 CommonData = new CommonData()
                 {
@@ -155,14 +155,14 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransaction()
             };
 
-            return sReq;
+            return sResp;
         }
 
         public async Task<StandardResponse> ReleaseFax(int faxCode)
         {
             var dbResult = await _dbPaymentOps.ReleaseFax(_user.Token, faxCode);
 
-            var sReq = new StandardResponse()
+            var sResp = new StandardResponse()
             {
                 CommonData = new CommonData()
                 {
@@ -179,14 +179,14 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransaction()
             };
 
-            return sReq;
+            return sResp;
         }
 
         public async Task<StandardResponse> ResendFax(int faxCode, string faxNumber)
         {
             var dbResult = await _dbPaymentOps.ResendFax(_user.Token, faxCode, faxNumber ?? "");
 
-            var sReq = new StandardResponse()
+            var sResp = new StandardResponse()
             {
                 CommonData = new CommonData()
                 {
@@ -206,7 +206,7 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransaction()
             };
 
-            return sReq;
+            return sResp;
         }
 
     }
