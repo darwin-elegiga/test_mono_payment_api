@@ -82,21 +82,29 @@ namespace VPay.Payment.MySql
         {
             var conn = await GetOpenConnection();
 
-            using (var cmd = new MySqlCommand("CREATE_SESSION_TABLE_RECORD", conn))
+            try
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_User", entity.UserName);
-                cmd.Parameters.AddWithValue("p_Token", entity.Token);
-                cmd.Parameters.AddWithValue("p_Session", entity.SessionId);
-                cmd.Parameters.AddWithValue("p_Date", entity.DateHit);
-                cmd.Parameters.AddWithValue("p_Active", entity.Active);
-                cmd.Parameters.AddWithValue("p_Data", entity.Data);
+                using (var cmd = new MySqlCommand("CREATE_SESSION_TABLE_RECORD", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_User", entity.UserName);
+                    cmd.Parameters.AddWithValue("p_Token", entity.Token);
+                    cmd.Parameters.AddWithValue("p_Session", entity.SessionId);
+                    cmd.Parameters.AddWithValue("p_Date", entity.DateHit);
+                    cmd.Parameters.AddWithValue("p_Active", entity.Active);
+                    cmd.Parameters.AddWithValue("p_Data", entity.Data);
 
-                var read = await cmd.ExecuteNonQueryAsync();
+                    var read = await cmd.ExecuteNonQueryAsync();
 
-                return true;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
 
+            return false;
         }
 
         public async Task<Webucf> GetWebUfcByUserName(string userName)
