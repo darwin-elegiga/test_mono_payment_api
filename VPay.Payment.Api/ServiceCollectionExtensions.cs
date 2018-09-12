@@ -46,9 +46,6 @@ namespace VPay.Payment.Api
 
         public static IServiceCollection SetupDb2(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<Db2ConnectionConfig>(configuration.GetSection("Db2"));
-            services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<Db2ConnectionConfig>>().Value);
-
             services.Configure<OdbcConnectionConfig>(configuration.GetSection("Db2"));
             services.AddDb2OdbcConnection();
 
