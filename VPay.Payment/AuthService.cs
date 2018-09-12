@@ -3,19 +3,21 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using VPay.Data.Db2.Abstractions;
+using VPay.Data.Db2.Abstractions.Security;
 using VPay.Payment.Common;
-using VPay.Payment.Common.CommunicationStrings;
 using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.Login;
 using VPay.Payment.Common.Models;
 using VPay.Payment.Common.MySql;
+using SecurityCheckParam = VPay.Data.Db2.Abstractions.Security.SecurityCheckParam;
 
 namespace VPay.Payment
 {
     public class AuthService : IAuthService
     {
-        private readonly IDbPaymentOps _db;
+        private readonly IDb2Context _db;
         private readonly IMySqlPaymentOps _mySql;
         private readonly ILogger<AuthService> _logger;
         private readonly PaymentConfig _config;
@@ -25,7 +27,7 @@ namespace VPay.Payment
         /// </summary>
         private const int _tokenLength = 64;
 
-        public AuthService(IDbPaymentOps db, IMySqlPaymentOps mySql, ILogger<AuthService> logger, PaymentConfig config)
+        public AuthService(IDb2Context db, IMySqlPaymentOps mySql, ILogger<AuthService> logger, PaymentConfig config)
         {
             _db = db;
             _mySql = mySql;
@@ -37,21 +39,30 @@ namespace VPay.Payment
 
         public async Task<bool> IsAuthenticated(AuthenticationValues av, string ipAddress)
         {
-            var result = await _db.AuthenticateUser(new AuthenticationParam()
+            var result = await _db.Security.AuthenticateWebUserAsync(new AuthenticateUserParam()
             {
-                Id = av.Id,
-                PassPhrase = av.PassPhrase,
+                UserId = av.Id,
+                Password = av.PassPhrase,
                 IpAddress = ipAddress
             });
 
-            return result.Result == "0";
+            return result.ReturnCode == "0";
         }
 
         public async Task<AuthenticationResult> TestAuthentication(AuthenticationParam param)
         {
-            var result = await _db.AuthenticateUser(param);
+            var result = await _db.Security.AuthenticateWebUserAsync(new AuthenticateUserParam()
+            {
+                UserId = param.Id,
+                Password = param.PassPhrase,
+                IpAddress = param.IpAddress
+            });
 
-            return result;
+            return new AuthenticationResult()
+            {
+                Result = result.ReturnCode,
+                ErrorMessage = result.ErrorMessage
+            };
         }
 
         public async Task<UserSessionInfo> Login(AuthenticationParam param)
@@ -92,14 +103,16 @@ namespace VPay.Payment
 
         public async Task<bool> IsAuthorized(string userId, string webServiceName, string action)
         {
-            var result = await _db.CheckUserSecurity(new SecurityCheckParam()
+            var secObjName = $"UNIVERSE|WS_PUBLIC|{webServiceName}".ToUpper();
+
+            var result = await _db.Security.SecurityCheckAsync(new SecurityCheckParam()
             {
                 UserId = userId,
                 Action = action,
-                WebServiceName = webServiceName
+                SecurityObjectName = secObjName
             });
 
-            return result?.Code == "0000";
+            return result?.Result == "0000";
         }
 
         public async Task<LoginService> DoLogin(string name, string password, string recordid, string recordtype, string source)
@@ -132,17 +145,18 @@ namespace VPay.Payment
                 return null;
             }
 
-            var remoteLogin = await _db.RemoteLogin(name, password, source);
+           var remoteLogin = await _db.Security.RemoteLoginAsync(new RemoteLoginParam()
+            {
+                UserId = name,
+                Password = password,
+                Source = source
+            });
             
             if (!string.Equals(remoteLogin.ReturnCode, "OK"))
             {
                 _logger.LogWarning("Error Response from login [{ErrorMessage}] - Name: {UserName}", remoteLogin.ErrorMessage, name);
                 return null;
             }
-
-            //            this.setUniqueid(str_token);
-            //this.setRecordid(recordid);
-
             var sessionEntry = new SessionEntry()
             {
                 UserName = name,
@@ -159,7 +173,6 @@ namespace VPay.Payment
 
             if (!value)
             {
-                //    setLogError("No Session Record");
                 return null;
             }
 

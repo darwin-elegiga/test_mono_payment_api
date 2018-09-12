@@ -1,21 +1,21 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.Odbc;
 using System.Threading.Tasks;
+using VPay.Data.Db2.Abstractions;
 using VPay.Payment.Common;
 using VPay.Payment.Common.Db2;
-using VPay.Payment.Db2.Helpers;
 
 namespace VPay.Payment.Db2
 {
     public class DbPaymentOps : IDbPaymentOps, IHealthCheck
     {
-        private readonly Db2ConnectionConfig _connectionConfig;
-        private OdbcConnection _dbConnection;
+        private readonly IDataConnection<OdbcConnection> _connection;
+        private readonly IDb2Context _db2Context;
 
-        public DbPaymentOps(Db2ConnectionConfig connectionConfig)
+        public DbPaymentOps(IDataConnection<OdbcConnection> connection, IDb2Context context)
         {
-            _connectionConfig = connectionConfig ?? throw new ArgumentNullException(nameof(connectionConfig));
+            _connection = connection;
+            _db2Context = context;
 
         }
 
@@ -23,128 +23,12 @@ namespace VPay.Payment.Db2
 
         public async Task<bool> IsHealthy()
         {
-            try
-            {
-                var connection = await GetOpenConnection();
-                return connection.State == ConnectionState.Open;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return await _db2Context.CanConnectAsync();
         }
-
-
+        
         public void Dispose()
         {
-            _dbConnection?.Close();
-            _dbConnection?.Dispose();
-        }
-
-        public async Task<AuthenticationResult> AuthenticateUser(AuthenticationParam param)
-        {
-            var connection = await GetOpenConnection();
-
-            using (var cmd = new OdbcCommand("CALL SEWADM.SP_AUTHWEB(?,?,?,?,?,?)", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("PAUTHCODE", param.Id);
-                cmd.Parameters.AddWithValue("PPWD", param.PassPhrase);
-                cmd.Parameters.AddWithValue("PRMTADDR", param.IpAddress);
-                cmd.Parameters.AddWithValue("PREQBY", "WEBSERVICE");
-
-                var errorMessageParam = cmd.Parameters.Add("ERRMSG", OdbcType.Char, 256);
-                errorMessageParam.Direction = ParameterDirection.InputOutput;
-                errorMessageParam.Value = "";
-
-                var resultParam = cmd.Parameters.Add("PRCOD", OdbcType.Char, 5);
-                resultParam.Direction = ParameterDirection.InputOutput;
-                resultParam.Value = "";
-
-                await cmd.ExecuteNonQueryAsync();
-
-                return new AuthenticationResult()
-                {
-                    Result = resultParam.Value?.ToString().Trim(),
-                    ErrorMessage = errorMessageParam.Value?.ToString().Trim()
-                };
-            }
-
-        }
-
-        public async Task<RemoteLoginResult> RemoteLogin(string username, string password, string source)
-        {
-            var connection = await GetOpenConnection();
-
-            using (var cmd = new OdbcCommand("CALL VPAYSEC.VPAY_REMOTE_LOGIN(?,?,?,?,?,?,?)", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("USERID", username);
-                cmd.Parameters.AddWithValue("PASSWORD", password);
-
-                var resultParam = cmd.Parameters.Add("RETURNCODE", OdbcType.Char, 10);
-                resultParam.Direction = ParameterDirection.InputOutput;
-                resultParam.Value = "";
-
-                var errorMessageParam = cmd.Parameters.Add("ERRMSG", OdbcType.Char, 256);
-                errorMessageParam.Direction = ParameterDirection.InputOutput;
-                errorMessageParam.Value = "";
-
-
-                cmd.Parameters.AddWithValue("GUID", "");
-
-                var tokenParam = cmd.Parameters.Add("TOKEN", OdbcType.Char, 128);
-                tokenParam.Direction = ParameterDirection.InputOutput;
-                tokenParam.Value = "";
-
-                cmd.Parameters.AddWithValue("SOURCE", source);
-
-
-                await cmd.ExecuteNonQueryAsync();
-
-                return new RemoteLoginResult()
-                {
-                    ReturnCode = resultParam.Value?.ToString().Trim(),
-                    ErrorMessage = errorMessageParam.Value?.ToString().Trim(),
-                    Token = tokenParam.Value?.ToString().Trim()
-                };
-            }
-
-        }
-
-        public async Task<SecurityCheckResult> CheckUserSecurity(SecurityCheckParam param)
-        {
-            var connection = await GetOpenConnection();
-
-            var secObjName = $"UNIVERSE|{param.SecurityGroup}|{param.WebServiceName}".ToUpper();
-
-            using (var cmd = new OdbcCommand("CALL VPAYSEC.SP_Check_Object_Security(?,?,?,?,?)", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("PUSERNM", param.UserId.ToUpper());
-                cmd.Parameters.AddWithValue("PPATH", secObjName);
-                cmd.Parameters.AddWithValue("PACTION", param.Action.ToUpper());
-
-                var resultParam = cmd.Parameters.Add("PRETCODE", OdbcType.Char, 4);
-                resultParam.Direction = ParameterDirection.InputOutput;
-                resultParam.Value = "0000";
-
-                var descParameter = cmd.Parameters.Add("PRETDESC", OdbcType.Char, 256);
-                descParameter.Direction = ParameterDirection.InputOutput;
-                descParameter.Value = "";
-
-                await cmd.ExecuteNonQueryAsync();
-
-                return new SecurityCheckResult()
-                {
-                    Code = resultParam.Value?.ToString().Trim(),
-                    Description = descParameter.Value?.ToString().Trim()
-                };
-            }
-
+            
         }
 
         public async Task<string> BalanceRequest(string auth, string password, string ip, string data)
@@ -169,145 +53,9 @@ namespace VPay.Payment.Db2
             }
         }
 
-        public async Task<FaxMethodResult> CancelFax(string token, int faxCode)
-        {
-            var connection = await GetOpenConnection();
-
-            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_CANCEL_FAX_JOB(?,?,?,?)", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
-                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
-                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 256, ParameterDirection.InputOutput);
-                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
-
-                await cmd.ExecuteNonQueryAsync();
-
-                return new FaxMethodResult
-                {
-                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
-                    SuccessDescription = successDescParam.Value?.ToString().Trim()
-                };
-            }
-        }
-
-        public async Task<FaxMethodResult> ChangeFaxNumber(string token, int faxCode, string phoneNumber)
-        {
-            var connection = await GetOpenConnection();
-
-            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_CHANGE_FAX_NUMBER(?,?,?,?,?)", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
-                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
-                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 256, ParameterDirection.InputOutput);
-                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
-                cmd.Parameters.AddWithValue("PFAXNUM", phoneNumber);
-
-                await cmd.ExecuteNonQueryAsync();
-
-                return new FaxMethodResult
-                {
-                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
-                    SuccessDescription = successDescParam.Value?.ToString().Trim()
-                };
-            }
-        }
-
-        public async Task<FaxMethodResult> HoldFax(string token, int faxCode)
-        {
-            var connection = await GetOpenConnection();
-
-            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_PUT_FAX_JOB_ON_HOLD(?,?,?,?)", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
-                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
-                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 256, ParameterDirection.InputOutput);
-                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
-
-                await cmd.ExecuteNonQueryAsync();
-
-                return new FaxMethodResult
-                {
-                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
-                    SuccessDescription = successDescParam.Value?.ToString().Trim()
-                };
-            }
-        }
-
-        public async Task<FaxMethodResult> ReleaseFax(string token, int faxCode)
-        {
-            var connection = await GetOpenConnection();
-
-            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_RELEASE_FAX_JOB(?,?,?,?)", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
-                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
-                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 256, ParameterDirection.InputOutput);
-                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
-
-                await cmd.ExecuteNonQueryAsync();
-
-                return new FaxMethodResult
-                {
-                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
-                    SuccessDescription = successDescParam.Value?.ToString().Trim()
-                };
-            }
-        }
-
-        public async Task<FaxMethodResult> ResendFax(string token, int faxCode, string phoneNumber)
-        {
-            var connection = await GetOpenConnection();
-
-            using (var cmd = new OdbcCommand("CALL VPAYFAX.SP_RESEND_FAX_JOB(?,?,?,?,?)", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("PUSTOKEN", token.PadRight(128), OdbcType.Char, 128, ParameterDirection.InputOutput);
-                var successCodeParam = cmd.Parameters.AddWithValue("PRETCODE", "0000", OdbcType.Char, 4, ParameterDirection.InputOutput);
-                var successDescParam = cmd.Parameters.AddWithValue("PRETDESC", "Authorized".PadRight(256), OdbcType.Char, 128, ParameterDirection.InputOutput);
-                cmd.Parameters.AddWithValue("PJOBNUM", faxCode);
-                var phoneNumberParam = cmd.Parameters.AddWithValue("PPHNNUM", phoneNumber, OdbcType.Char, 20, ParameterDirection.InputOutput);
-
-                await cmd.ExecuteNonQueryAsync();
-
-                return new FaxMethodResult
-                {
-                    SuccessCode = successCodeParam.Value?.ToString().Trim(),
-                    SuccessDescription = successDescParam.Value?.ToString().Trim(),
-                    PhoneNumber = phoneNumberParam.Value?.ToString().Trim()
-                };
-            }
-        }
-
         private async Task<OdbcConnection> GetOpenConnection()
         {
-
-            if (_dbConnection == null)
-            {
-                _dbConnection = new OdbcConnection(ConvertToConnectionString(_connectionConfig));
-                await _dbConnection.OpenAsync();
-            }
-
-            return _dbConnection;
-        }
-
-        private string ConvertToConnectionString(Db2ConnectionConfig connectionConfig)
-        {
-            if (string.IsNullOrWhiteSpace(connectionConfig.DefaultLibraries))
-            {
-
-                return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password};System={connectionConfig.Hostname}";
-            }
-
-            return $"DSN={connectionConfig.Dsn};UID={connectionConfig.UserName};PWD={connectionConfig.Password};System={connectionConfig.Hostname};DefaultLibraries={connectionConfig.DefaultLibraries}";
+            return await _connection.GetOpenConnectionAsync();
         }
 
     }

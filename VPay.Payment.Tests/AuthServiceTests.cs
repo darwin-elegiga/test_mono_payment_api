@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using VPay.Payment.Common.Db2;
+using VPay.Data.Db2.Abstractions;
 using VPay.Payment.Common.Models;
 using VPay.Payment.Common.MySql;
 using Xunit;
@@ -19,10 +19,10 @@ namespace VPay.Payment.Tests
 
             string expectedResult = "B666BB00CEB92C007481180E4134DD46EFF7F5D8";
 
-            var dbOps = new Mock<IDbPaymentOps>();
+            var dbContext = new Mock<IDb2Context>();
             var mySqlOps = new Mock<IMySqlPaymentOps>();
 
-            var authService = new AuthService(dbOps.Object, mySqlOps.Object, new NullLogger<AuthService>(), new PaymentConfig());
+            var authService = new AuthService(dbContext.Object, mySqlOps.Object, new NullLogger<AuthService>(), new PaymentConfig());
 
             var actual = authService.HashPassword(username, password);
 
