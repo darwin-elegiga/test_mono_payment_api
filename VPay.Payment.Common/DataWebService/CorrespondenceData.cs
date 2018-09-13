@@ -109,5 +109,28 @@ namespace VPay.Payment.Common.DataWebService
 
             return builder.ToString();
         }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "CORRSPDATA") return; // TODO: Handle weird errors better
+
+            AttachmentLocation = ReadNext(ref iSeriesString, ref index, _attLocLen);
+            DocumentID = ReadNext(ref iSeriesString, ref index, _docIdLen);
+            Email = ReadNext(ref iSeriesString, ref index, _emailLen);
+            FaxCode = ReadNext(ref iSeriesString, ref index, _faxCodLen);
+            FaxStat = ReadNext(ref iSeriesString, ref index, _faxStaLen);
+            PhoneNumber = ReadNext(ref iSeriesString, ref index, _phnNbrLen);
+            Type = ReadNext(ref iSeriesString, ref index, _typeLen);
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
+        }
     }
 }

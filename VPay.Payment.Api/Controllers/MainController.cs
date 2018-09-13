@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,8 +18,14 @@ namespace VPay.Payment.Api.Controllers
     [ApiController]
     public class MainController : ControllerBase
     {
-        public MainController()
+        private readonly IHttpContextAccessor _accessor;
+        private readonly ITransactionService _transactionService;
+
+        public MainController(IHttpContextAccessor accessor, ITransactionService transactionService)
         {
+            _accessor = accessor;
+            _transactionService = transactionService;
+
             // TODO:  Initialize private variables
             version = "2018-08-10";
         }
@@ -37,8 +44,7 @@ namespace VPay.Payment.Api.Controllers
         // private ValidateParm vparm;
         // Logging Object
         private ILogger li;
-        // WebService ISeries Pool
-        private WSiPool wsi;
+
         // Add version tag
         private string version;
 
@@ -94,22 +100,26 @@ namespace VPay.Payment.Api.Controllers
             return Task.FromResult("LoadPan");
         }
 
-        [HttpPost("BalanceRequest")]
+        [HttpGet("BalanceRequest")]
         [ServicePermissionAuthorize(ServicePermission.BalanceRequest)]
         [Produces("application/json")]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public Task<StandardResponse> BalanceRequest(StandardRequest entity)
+        public Task<StandardResponse> BalanceRequest(string transNumber)
         {
-            AuthenticationValues av = new AuthenticationValues();
+            var sr = new StandardRequest()
+            {
+                CommonData = new CommonData()
+                {
+                    TransNumber = transNumber,
+                    User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
+                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
+                    PassWord = "yraheem197"
+                }
+            };
 
-            string webSvc = "BALREQUEST";
-            string svcName = "BalRequest";
-            string action = "READ";
-            string secGrp = "WSPUBLIC";
+            var result = await _transactionService.GetBalanceRequest(sr);
 
-            StandardResponse returnValue = Run(av, entity, webSvc, svcName, secGrp, action);
-
-            return Task.FromResult(returnValue);
+            return result;
         }
 
         [HttpGet("UnloadPan")]
@@ -126,58 +136,49 @@ namespace VPay.Payment.Api.Controllers
             return Task.FromResult("StopPay");
         }
 
-        [HttpGet("CancelFax")]
+        [HttpPost("CancelFax")]
         [ServicePermissionAuthorize(ServicePermission.CancelFax)]
-        public Task<string> CancelFax()
+        public async Task<StandardResponse> CancelFax(FaxRequest entity)
         {
-            return Task.FromResult("CancelFax");
+            var result = await _transactionService.CancelFax(entity.FaxCode.GetValueOrDefault(0));
+
+            return result;
         }
 
-        [HttpGet("ChangeFaxNumber")]
+        [HttpPost("ChangeFaxNumber")]
         [ServicePermissionAuthorize(ServicePermission.ChangeFaxNumber)]
-        public Task<string> ChangeFaxNumber()
+        public async Task<StandardResponse> ChangeFaxNumber(ChangeFaxNumberRequest entity)
         {
-            return Task.FromResult("ChangeFaxNumber");
+            var result = await _transactionService.ChangeFaxNumber(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
+
+            return result;
         }
 
-        [HttpGet("HoldFax")]
+        [HttpPost("HoldFax")]
         [ServicePermissionAuthorize(ServicePermission.HoldFax)]
-        public Task<string> HoldFax()
+        public async Task<StandardResponse> HoldFax(FaxRequest entity)
         {
-            return Task.FromResult("HoldFax");
+            var result = await _transactionService.HoldFax(entity.FaxCode.GetValueOrDefault(0));
+
+            return result;
         }
 
-        [HttpGet("ReleaseFax")]
+        [HttpPost("ReleaseFax")]
         [ServicePermissionAuthorize(ServicePermission.ReleaseFax)]
-        public Task<string> ReleaseFax()
+        public async Task<StandardResponse> ReleaseFax(FaxRequest entity)
         {
-            return Task.FromResult("ReleaseFax");
+            var result = await _transactionService.ReleaseFax(entity.FaxCode.GetValueOrDefault(0));
+
+            return result;
         }
 
-        [HttpGet("ResendFax")]
+        [HttpPost("ResendFax")]
         [ServicePermissionAuthorize(ServicePermission.ResendFax)]
-        public Task<string> ResendFax()
+        public async Task<StandardResponse> ResendFax(ResendFaxRequest entity)
         {
-            return Task.FromResult("ResendFax");
-        }
+            var result = await _transactionService.ResendFax(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
 
-        private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
-            string secGrp, string action, CustomData ct)
-        {
-            return new StandardResponse()
-            {
-                CommonData = new CommonData()
-                {
-                    TransNumber = sr.CommonData.TransNumber,
-                    ResponseCode = "0000"
-                }
-            };
-        }
-
-        private StandardResponse Run(AuthenticationValues av, StandardRequest sr, string webSvc, string svcName,
-            string secGrp, string action)
-        {
-            return Run(av, sr, webSvc, svcName, secGrp, action, new CustomData());
+            return result;
         }
 
     }

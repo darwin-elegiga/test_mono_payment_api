@@ -6,6 +6,9 @@ namespace VPay.Payment.Common.DataWebService
 {
     public class Merchant
     {
+
+        private bool _useEmailAddress = true;
+
         public Merchant()
         {
             PayeeCode = "";
@@ -60,8 +63,18 @@ namespace VPay.Payment.Common.DataWebService
         private void InitializeTotLen()
         {
             TotLen = 10 + _payCodLen + _payNamLen + _cntactLen +
-                _merZipLen + _merPhnLen + _merFaxLen +
-                _merEmlLen; // m005
+                     _merZipLen + _merPhnLen + _merFaxLen; // m005
+
+            if (_useEmailAddress)
+            {
+                TotLen += _merEmlLen;
+            }
+        }
+
+        public void SetUseEmailAddress(bool useEmailAddress)
+        {
+            _useEmailAddress = useEmailAddress;
+            InitializeTotLen();
         }
 
         public override string ToString()
@@ -115,9 +128,38 @@ namespace VPay.Payment.Common.DataWebService
             builder.Append(PostalCode.PadRight(_merZipLen));
             builder.Append(Telephone.PadRight(_merPhnLen));
             builder.Append(Fax.PadRight(_merFaxLen));
-            builder.Append(EmailAddress.PadRight(_merEmlLen));   // m005
+            if (_useEmailAddress)
+            {
+                builder.Append(EmailAddress.PadRight(_merEmlLen));   // m005
+            }
 
             return builder.ToString();
+        }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "MERCHANT  ") return; // TODO: Handle weird errors better
+
+            PayeeCode = ReadNext(ref iSeriesString, ref index, _payCodLen);
+            PayeeName = ReadNext(ref iSeriesString, ref index, _payNamLen);
+            ContactPerson = ReadNext(ref iSeriesString, ref index, _cntactLen);
+            PostalCode = ReadNext(ref iSeriesString, ref index, _merZipLen);
+            Telephone = ReadNext(ref iSeriesString, ref index, _merPhnLen);
+            Fax = ReadNext(ref iSeriesString, ref index, _merFaxLen);
+            if (_useEmailAddress)
+            {
+                EmailAddress = ReadNext(ref iSeriesString, ref index, _merEmlLen);   // m005
+            }
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
         }
     }
 }

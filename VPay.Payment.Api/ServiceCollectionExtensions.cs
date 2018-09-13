@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using VPay.Data.Db2.Odbc;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
 using VPay.Payment.Common.Db2;
@@ -41,13 +41,13 @@ namespace VPay.Payment.Api
 
         public static IMvcBuilder AddFluentValidationSettings(this IMvcBuilder mvcBuilder)
         {
-            return mvcBuilder;
+            return mvcBuilder.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
         }
 
         public static IServiceCollection SetupDb2(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<Db2ConnectionConfig>(configuration.GetSection("Db2"));
-            services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<Db2ConnectionConfig>>().Value);
+            services.Configure<OdbcConnectionConfig>(configuration.GetSection("Db2"));
+            services.AddDb2OdbcConnection();
 
             services.AddScoped<IDbPaymentOps, DbPaymentOps>();
             services.AddScoped<IHealthCheck, DbPaymentOps>();
@@ -141,6 +141,7 @@ namespace VPay.Payment.Api
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IUserInfo, UserInfo>();
 
             return services;
         }

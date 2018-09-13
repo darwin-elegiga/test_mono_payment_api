@@ -165,5 +165,38 @@ namespace VPay.Payment.Common.DataWebService
 
             return builder.ToString();
         }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "PAYMENT   ") return; // TODO: Handle weird errors better
+
+            AcctngCode = ReadNext(ref iSeriesString, ref index, _actCodLen);
+            AcctngDesc = ReadNext(ref iSeriesString, ref index, _actDscLen);
+            AccountNumber = ReadNext(ref iSeriesString, ref index, _actNbrLen);
+            Action = ReadNext(ref iSeriesString, ref index, _actionLen);
+            AvailableBalance = ReadNext(ref iSeriesString, ref index, _avlBalLen);
+            BillCode = ReadNext(ref iSeriesString, ref index, _billCdLen);
+            Client = ReadNext(ref iSeriesString, ref index, _clientLen);
+            CurrencyCode = ReadNext(ref iSeriesString, ref index, _curCodLen);
+            CurrentBalance = ReadNext(ref iSeriesString, ref index, _curBalLen);
+            Free = ReadNext(ref iSeriesString, ref index, _freeLen);
+            FutureUse = ReadNext(ref iSeriesString, ref index, _futUseLen);
+            Id = ReadNext(ref iSeriesString, ref index, _idLen);
+            LoadAmount = ReadNext(ref iSeriesString, ref index, _lodAmtLen);
+            PanNumber = ReadNext(ref iSeriesString, ref index, _panNbrLen);
+            RequestedAmount = ReadNext(ref iSeriesString, ref index, _reqAmtLen);
+            RoutingNumber = ReadNext(ref iSeriesString, ref index, _rtgNbrLen);
+            Type = ReadNext(ref iSeriesString, ref index, _typeLen);
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
+        }
     }
 }

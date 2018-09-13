@@ -133,5 +133,32 @@ namespace VPay.Payment.Common.DataWebService
 
             return builder.ToString();
         }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "SWITCHTRAN") return; // TODO: Handle weird errors better
+
+            AcquireID = ReadNext(ref iSeriesString, ref index, _acqireLen);
+            AuthCode = ReadNext(ref iSeriesString, ref index, _athCodLen);
+            AvailableBal = ReadNext(ref iSeriesString, ref index, _avlBalLen);
+            CaptureTS = ReadNext(ref iSeriesString, ref index, _captTSLen);
+            CurrentBal = ReadNext(ref iSeriesString, ref index, _curBalLen);
+            MerchantID = ReadNext(ref iSeriesString, ref index, _mrchntLen);
+            OlsLogID = ReadNext(ref iSeriesString, ref index, _olsLogLen);
+            Stan = ReadNext(ref iSeriesString, ref index, _stanLen);
+            Switch = ReadNext(ref iSeriesString, ref index, _switchLen);
+            TerminalID = ReadNext(ref iSeriesString, ref index, _trmnIdLen);
+            TransactionTS = ReadNext(ref iSeriesString, ref index, _trnsTSLen);
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
+        }
     }
 }

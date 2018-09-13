@@ -6,6 +6,9 @@ namespace VPay.Payment.Common.DataWebService
 {
     public class CheckData
     {
+
+        private bool _useEmailAddress = false;
+
         public CheckData()
         {
             Number = "";
@@ -107,6 +110,17 @@ namespace VPay.Payment.Common.DataWebService
                      _chkDatLen + _chkAd1Len + _chkAd2Len + _chkAd3Len + _chkCtyLen +
                      _chkStpLen + _chkZipLen + _chkCntLen + _chkRgnLen + _chkCtrLen +
                      _chkMemLen; // m005
+
+            if (_useEmailAddress)
+            {
+                TotLen += _chkEmlLen;
+            }
+        }
+
+        public void SetUseEmailAddress(bool useEmailAddress)
+        {
+            _useEmailAddress = useEmailAddress;
+            InitializeTotLen();
         }
 
         public override string ToString()
@@ -161,12 +175,57 @@ namespace VPay.Payment.Common.DataWebService
             builder.Append(County.PadRight(_chkCntLen));
             builder.Append(Region.PadRight(_chkRgnLen));
             builder.Append(Country.PadRight(_chkCtrLen));
+
             // m005
-            // builder.Append(EmailAddress.PadRight(_chkEmlLen));
+            if (_useEmailAddress)
+            {
+                builder.Append(EmailAddress.PadRight(_chkEmlLen));
+            }
             builder.Append(Memo.PadRight(_chkMemLen));
 
 
             return builder.ToString();
+        }
+
+        public void HydrateFromISeriesString(ref string iSeriesString)
+        {
+            int index = 10;
+            if (iSeriesString.Substring(0, 10) != "CHECKDATA ") return; // TODO: Handle weird errors better
+
+            Number = ReadNext(ref iSeriesString, ref index, _chkNumLen);
+            PpChkNum = ReadNext(ref iSeriesString, ref index, _cppNumLen);
+            SwChkNum = ReadNext(ref iSeriesString, ref index, _cswNumLen);
+            ChkNum1 = ReadNext(ref iSeriesString, ref index, _chkNm1Len);
+            ChkNum2 = ReadNext(ref iSeriesString, ref index, _chkNm2Len);
+            Date = ReadNext(ref iSeriesString, ref index, _chkDatLen);
+            Address1 = ReadNext(ref iSeriesString, ref index, _chkAd1Len);
+            Address2 = ReadNext(ref iSeriesString, ref index, _chkAd2Len);
+            Address3 = ReadNext(ref iSeriesString, ref index, _chkAd3Len);
+            City = ReadNext(ref iSeriesString, ref index, _chkCtyLen);
+            StateOrProvince = ReadNext(ref iSeriesString, ref index, _chkStpLen);
+            Zip = ReadNext(ref iSeriesString, ref index, _chkZipLen);
+            County = ReadNext(ref iSeriesString, ref index, _chkCntLen);
+            Region = ReadNext(ref iSeriesString, ref index, _chkRgnLen);
+            Country = ReadNext(ref iSeriesString, ref index, _chkCtrLen);
+
+            // m005
+            if (_useEmailAddress)
+            {
+                EmailAddress = ReadNext(ref iSeriesString, ref index, _chkEmlLen);
+            }
+
+            // m005
+            Memo = ReadNext(ref iSeriesString, ref index, _chkMemLen);
+
+        }
+
+        private string ReadNext(ref string inputString, ref int index, int length)
+        {
+            string rawValue = inputString.Substring(index, length);
+            index += length;
+            string returnValue = rawValue.Trim();
+
+            return returnValue;
         }
     }
 }
