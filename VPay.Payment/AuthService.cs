@@ -85,11 +85,11 @@ namespace VPay.Payment
 
             if (userSession == null)
             {
-                var loginTry = await DoLogin(param.UserId, param.Password, "", "", "WEBSERVICE");
+                var loginTry = await DoLogin(param.UserId, param.Password, "WEBSERVICE");
 
                 if (loginTry != null)
                 {
-                    userSession = await GetTokenAndUserId(loginTry.Uniqueid);
+                    userSession = loginTry;
                     userSession.Source = 'S';
                 }
             }
@@ -115,35 +115,10 @@ namespace VPay.Payment
             return result?.Result == "0000";
         }
 
-        public async Task<LoginService> DoLogin(string name, string password, string recordid, string recordtype, string source)
+        public async Task<UserSessionInfo> DoLogin(string name, string password, string source)
         {
             // Force userid to uppercase
             name = name.ToUpper();
-
-            var ucfRecord = await _mySql.GetWebUfcByUserName(name);
-
-            if (ucfRecord == null)
-            {
-                _logger.LogWarning("Not Found - Name: {UserName}", name);
-                //    setLogError("No local entry");
-                return null;
-            }
-
-            if (ucfRecord.Wupass == null)
-            {
-                _logger.LogWarning("No Localp - Name: {UserName}", name);
-                //    setLogError("No local passwd");
-                return null;
-            }
-
-            var hashPass = HashPassword(name, password);
-
-            if (!string.Equals(ucfRecord.Wupass, hashPass))
-            {
-                //    setLogError("Not Allowed");
-                _logger.LogWarning("Passed in password does not match - Name: {UserName}", name);
-                return null;
-            }
 
            var remoteLogin = await _db.Security.RemoteLoginAsync(new RemoteLoginParam()
             {
@@ -157,28 +132,11 @@ namespace VPay.Payment
                 _logger.LogWarning("Error Response from login [{ErrorMessage}] - Name: {UserName}", remoteLogin.ErrorMessage, name);
                 return null;
             }
-            var sessionEntry = new SessionEntry()
+
+            return new UserSessionInfo
             {
                 UserName = name,
-                Token = remoteLogin.Token,
-                Active = true,
-                DateHit = DateTime.Now,
-                
-            };
-            var preHash = $"{name}{sessionEntry.DateHit.Ticks / TimeSpan.TicksPerSecond}";
-            sessionEntry.SessionId = CalculateHash(SHA256.Create(), Encoding.Default.GetBytes(preHash));
-
-
-            var value = await _mySql.InsertSessionEntry(sessionEntry);
-
-            if (!value)
-            {
-                return null;
-            }
-
-            return new LoginService()
-            {
-                Uniqueid = sessionEntry.SessionId
+                Token = remoteLogin.Token
             };
         }
 
