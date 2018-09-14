@@ -63,6 +63,7 @@ namespace VPay.Payment.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
             app.UseAuthentication();
+            app.UseStaticFiles();
 
             app.UseExceptionHandler("/error").WithConventions(x => {
                 ConfigureExceptionHandler(x, env.IsDevelopment());

@@ -1,0 +1,71 @@
+type: onprem
+server:
+  host: asdevxapim01.vpayusa.net
+org:
+  id: 5ab9167ae4b0fd87bb9f09df
+  name: vpay
+  displayName: VPay Development - Provider
+  orgType: apiProvider
+  status: active
+  advPortalOverride: true
+  extUaaAuthenticated: false
+  requiresSSLClientCertCheck: false
+  dormant: false
+  url: 'https://asdevxapim01.vpayusa.net/v1/orgs/5ab9167ae4b0fd87bb9f09df'
+catalog:
+  id: 5b90485de4b073d03624fde0
+  orgId: 5ab9167ae4b0fd87bb9f09df
+  name: Internal Sandbox
+  shortName: isb
+  owner:
+    id: 5ab916fae4b0fd87bb9f09fb
+    username: rathreya
+    context: apimanager
+    idpId: 5aaaad6ee4b0fd87bb9f0992
+    email: rathreya@vpayusa.com
+    firstName: Rama
+    lastName: Athreya
+    status: ACTIVE
+    lastLoginTime: '2018-09-05T21:09:48.937+0000'
+    url: 'https://asdevxapim01.vpayusa.net/v1/users/5ab916fae4b0fd87bb9f09fb'
+  apiCenter: false
+  portalType: ADVANCED
+  portalUrl: 'https://asdevxapim01.vpayusa.net/vpay/isb'
+  customPortalUrl: 'https://asdevxdp01.vpayusa.net/vpay/isb'
+  gatewayType: DataPowerGateway
+  gwServices:
+    - id: 5b90473be4b073d03624fdd8
+      endpointUrl: 'https://dev-internalapi.vpayusa.net/vpay/isb'
+  idp: 5aaaad6ee4b0fd87bb9f0992
+  idps:
+    - 5aaaad6ee4b0fd87bb9f0992
+  availableRoles:
+    - viewer
+    - developer
+  default: false
+  autoDeploy: true
+  restrictedDeployment: false
+  invitationEnabled: true
+  selfSignUpEnabled: false
+  spaceEnabled: false
+  spaceIds:
+    - 5b90485de4b073d03624fde8
+  testAppEnabled: true
+  testAppCredentials:
+    clientId: 38ff83dc-f326-42a0-812d-4525a7c4491e
+    clientSecret: G4lT4dH3aN6xB3hR5aE8rF4hW3kI1yH2vO7sL6nW3kM1nM7hB1
+  createdAt: '2018-09-05T21:19:25.317+0000'
+  updatedAt: '2018-09-05T21:22:53.790+0000'
+  createdBy: rathreya
+  updatedBy: rathreya
+  url: >-
+    https://asdevxapim01.vpayusa.net/v1/orgs/5ab9167ae4b0fd87bb9f09df/environments/5b90485de4b073d03624fde0
+  applicationLifecycleEnabled: false
+  productDeploymentApprovalRequiredStates: []
+  orgName: vpay
+space:
+  none: true
+app:
+  none: true
+id: 5f9477cd-c65b-4aaa-8ad1-8d8be022f76a
+target: 1.0.0
