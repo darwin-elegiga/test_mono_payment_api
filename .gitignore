@@ -263,3 +263,8 @@ __pycache__/
 /src/VPay.DocSys.Common/Models/Storage/GenericStorageResponse.cs
 
 *.Local.*
+
+# Api-Connect folders
+.apiconnect
+.datastore
+.targets

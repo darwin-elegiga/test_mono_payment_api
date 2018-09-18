@@ -3,14 +3,20 @@ info:
   name: vpaywsservice-product
   title: VPayWSService product
   version: 1.0.0
+visibility:
+  view:
+    enabled: true
+    type: public
+    tags: []
+    orgs: []
+  subscribe:
+    enabled: true
+    type: authenticated
+    tags: []
+    orgs: []
 apis:
   vpaywsservice:
     $ref: vpaywsservice_1.0.0.yaml
-visibility:
-  view:
-    type: public
-  subscribe:
-    type: authenticated
 plans:
   default:
     title: Default Plan
