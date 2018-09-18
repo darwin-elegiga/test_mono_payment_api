@@ -1,0 +1,24 @@
+product: 1.0.0
+info:
+  name: vpaywsservice-product
+  title: VPayWSService product
+  version: 1.0.0
+visibility:
+  view:
+    enabled: true
+    type: public
+    tags: []
+    orgs: []
+  subscribe:
+    enabled: true
+    type: authenticated
+    tags: []
+    orgs: []
+apis:
+  vpaywsservice:
+    $ref: vpaywsservice_1.0.0.yaml
+plans:
+  default:
+    title: Default Plan
+    description: Default Plan
+    approval: false

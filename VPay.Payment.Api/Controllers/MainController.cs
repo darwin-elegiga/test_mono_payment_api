@@ -102,6 +102,8 @@ namespace VPay.Payment.Api.Controllers
 
         [HttpGet("BalanceRequest")]
         [ServicePermissionAuthorize(ServicePermission.BalanceRequest)]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> BalanceRequest(string transNumber)
         {
             var sr = new StandardRequest()

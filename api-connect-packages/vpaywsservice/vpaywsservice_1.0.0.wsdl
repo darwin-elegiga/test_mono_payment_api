@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://webinterface.vpay.com/" name="VPayWSService" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://webinterface.vpay.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>    
+    <xs:schema version="1.0" targetNamespace="http://webinterface.vpay.com/" xmlns:tns="http://webinterface.vpay.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="BalanceRequest" type="tns:BalanceRequest"/>
+      <xs:element name="BalanceRequestResponse" type="tns:BalanceRequestResponse"/>
+      <xs:element name="CancelFax" type="tns:CancelFax"/>
+      <xs:element name="CancelFaxResponse" type="tns:CancelFaxResponse"/>
+      <xs:element name="ChangeFaxNumber" type="tns:ChangeFaxNumber"/>
+      <xs:element name="ChangeFaxNumberResponse" type="tns:ChangeFaxNumberResponse"/>
+      <xs:element name="Echo" type="tns:Echo"/>
+      <xs:element name="EchoResponse" type="tns:EchoResponse"/>
+      <xs:element name="GetPanNumber" type="tns:GetPanNumber"/>
+      <xs:element name="GetPanNumberResponse" type="tns:GetPanNumberResponse"/>
+      <xs:element name="GetReasonCodes" type="tns:GetReasonCodes"/>
+      <xs:element name="GetReasonCodesResponse" type="tns:GetReasonCodesResponse"/>
+      <xs:element name="GetTransactionDetails" type="tns:GetTransactionDetails"/>
+      <xs:element name="GetTransactionDetailsResponse" type="tns:GetTransactionDetailsResponse"/>
+      <xs:element name="HoldFax" type="tns:HoldFax"/>
+      <xs:element name="HoldFaxResponse" type="tns:HoldFaxResponse"/>
+      <xs:element name="LoadPan" type="tns:LoadPan"/>
+      <xs:element name="LoadPanResponse" type="tns:LoadPanResponse"/>
+      <xs:element name="OpenPreAuth" type="tns:OpenPreAuth"/>
+      <xs:element name="OpenPreAuthResponse" type="tns:OpenPreAuthResponse"/>
+      <xs:element name="ReleaseFax" type="tns:ReleaseFax"/>
+      <xs:element name="ReleaseFaxResponse" type="tns:ReleaseFaxResponse"/>
+      <xs:element name="ResendFax" type="tns:ResendFax"/>
+      <xs:element name="ResendFaxResponse" type="tns:ResendFaxResponse"/>
+      <xs:element name="StopPay" type="tns:StopPay"/>
+      <xs:element name="StopPayResponse" type="tns:StopPayResponse"/>
+      <xs:element name="UnloadPan" type="tns:UnloadPan"/>
+      <xs:element name="UnloadPanResponse" type="tns:UnloadPanResponse"/>
+      <xs:element name="getVer" type="tns:getVer"/>
+      <xs:element name="getVerResponse" type="tns:getVerResponse"/>
+      <xs:complexType name="ChangeFaxNumber">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="authenticationValues">
+        <xs:sequence>
+          <xs:element name="id" type="xs:string" minOccurs="0"/>
+          <xs:element name="passphrase" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="standardRequest">
+        <xs:sequence>
+          <xs:element name="cardData" type="tns:cardData" minOccurs="0"/>
+          <xs:element name="checkData" type="tns:checkData" minOccurs="0"/>
+          <xs:element name="claim" type="tns:claim" minOccurs="0"/>
+          <xs:element name="commonData" type="tns:commonData" minOccurs="0"/>
+          <xs:element name="correspondenceData" type="tns:correspondenceData" minOccurs="0"/>
+          <xs:element name="coveredItem" type="tns:coveredItem" minOccurs="0"/>
+          <xs:element name="merchant" type="tns:merchant" minOccurs="0"/>
+          <xs:element name="payment" type="tns:payment" minOccurs="0"/>
+          <xs:element name="switchTransaction" type="tns:switchTransaction" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cardData">
+        <xs:sequence>
+          <xs:element name="cardCvv2" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardExpiration" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardPostalCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardType" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardholderAddress" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardholderName" type="xs:string" minOccurs="0"/>
+          <xs:element name="displayCVV2" type="xs:string" minOccurs="0"/>
+          <xs:element name="loadAmount" type="xs:string" minOccurs="0"/>
+          <xs:element name="loadFee" type="xs:string" minOccurs="0"/>
+          <xs:element name="loadTransId" type="xs:string" minOccurs="0"/>
+          <xs:element name="maskPan" type="xs:string" minOccurs="0"/>
+          <xs:element name="payeeName" type="xs:string" minOccurs="0"/>
+          <xs:element name="unloadCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="unloadDesc" type="xs:string" minOccurs="0"/>
+          <xs:element name="vcRef" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="checkData">
+        <xs:sequence>
+          <xs:element name="address1" type="xs:string" minOccurs="0"/>
+          <xs:element name="address2" type="xs:string" minOccurs="0"/>
+          <xs:element name="address3" type="xs:string" minOccurs="0"/>
+          <xs:element name="checkDate" type="xs:string" minOccurs="0"/>
+          <xs:element name="checkNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="chkNum1" type="xs:string" minOccurs="0"/>
+          <xs:element name="chkNum2" type="xs:string" minOccurs="0"/>
+          <xs:element name="city" type="xs:string" minOccurs="0"/>
+          <xs:element name="country" type="xs:string" minOccurs="0"/>
+          <xs:element name="county" type="xs:string" minOccurs="0"/>
+          <xs:element name="emailAddress" type="xs:string" minOccurs="0"/>
+          <xs:element name="memo" type="xs:string" minOccurs="0"/>
+          <xs:element name="posPayNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="region" type="xs:string" minOccurs="0"/>
+          <xs:element name="stateOrProvince" type="xs:string" minOccurs="0"/>
+          <xs:element name="switchNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="zip" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="claim">
+        <xs:sequence>
+          <xs:element name="amount" type="xs:string" minOccurs="0"/>
+          <xs:element name="claimDate" type="xs:string" minOccurs="0"/>
+          <xs:element name="claimDeductible" type="xs:string" minOccurs="0"/>
+          <xs:element name="claimDescription" type="xs:string" minOccurs="0"/>
+          <xs:element name="claimNotes" type="xs:string" minOccurs="0"/>
+          <xs:element name="claimOdometer" type="xs:string" minOccurs="0"/>
+          <xs:element name="currencyType" type="xs:string" minOccurs="0"/>
+          <xs:element name="repairOrderId" type="xs:string" minOccurs="0"/>
+          <xs:element name="requesterId" type="xs:string" minOccurs="0"/>
+          <xs:element name="requesterName" type="xs:string" minOccurs="0"/>
+          <xs:element name="userField1" type="xs:string" minOccurs="0"/>
+          <xs:element name="userField2" type="xs:string" minOccurs="0"/>
+          <xs:element name="userField3" type="xs:string" minOccurs="0"/>
+          <xs:element name="userKey" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="commonData">
+        <xs:sequence>
+          <xs:element name="passWord" type="xs:string" minOccurs="0"/>
+          <xs:element name="programID" type="xs:string" minOccurs="0"/>
+          <xs:element name="reasonCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="reasonDesc" type="xs:string" minOccurs="0"/>
+          <xs:element name="responseCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="responseDesc" type="xs:string" minOccurs="0"/>
+          <xs:element name="seClaimID" type="xs:string" minOccurs="0"/>
+          <xs:element name="successCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="successDesc" type="xs:string" minOccurs="0"/>
+          <xs:element name="timeStamp" type="xs:string" minOccurs="0"/>
+          <xs:element name="token" type="xs:string" minOccurs="0"/>
+          <xs:element name="tpaClaimID" type="xs:string" minOccurs="0"/>
+          <xs:element name="transNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="user" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="correspondenceData">
+        <xs:sequence>
+          <xs:element name="attachmentLocation" type="xs:string" minOccurs="0"/>
+          <xs:element name="documentID" type="xs:string" minOccurs="0"/>
+          <xs:element name="email" type="xs:string" minOccurs="0"/>
+          <xs:element name="faxCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="faxStat" type="xs:string" minOccurs="0"/>
+          <xs:element name="phoneNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="type" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="coveredItem">
+        <xs:sequence>
+          <xs:element name="beginDate" type="xs:string" minOccurs="0"/>
+          <xs:element name="beginOdometer" type="xs:string" minOccurs="0"/>
+          <xs:element name="bookStateOrProvince" type="xs:string" minOccurs="0"/>
+          <xs:element name="deductible" type="xs:string" minOccurs="0"/>
+          <xs:element name="expireDate" type="xs:string" minOccurs="0"/>
+          <xs:element name="expireOdometer" type="xs:string" minOccurs="0"/>
+          <xs:element name="itemId" type="xs:string" minOccurs="0"/>
+          <xs:element name="itemType" type="xs:string" minOccurs="0"/>
+          <xs:element name="manufacturer" type="xs:string" minOccurs="0"/>
+          <xs:element name="model" type="xs:string" minOccurs="0"/>
+          <xs:element name="newUsed" type="xs:string" minOccurs="0"/>
+          <xs:element name="odometerType" type="xs:string" minOccurs="0"/>
+          <xs:element name="ownerFirstName" type="xs:string" minOccurs="0"/>
+          <xs:element name="ownerLastName" type="xs:string" minOccurs="0"/>
+          <xs:element name="planCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="planDescription" type="xs:string" minOccurs="0"/>
+          <xs:element name="postalCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="year" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="merchant">
+        <xs:sequence>
+          <xs:element name="contactPerson" type="xs:string" minOccurs="0"/>
+          <xs:element name="fax" type="xs:string" minOccurs="0"/>
+          <xs:element name="payeeCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="payeeName" type="xs:string" minOccurs="0"/>
+          <xs:element name="postalCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="telephone" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="payment">
+        <xs:sequence>
+          <xs:element name="accountNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="accountingCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="accountingDesc" type="xs:string" minOccurs="0"/>
+          <xs:element name="action" type="xs:string" minOccurs="0"/>
+          <xs:element name="availableBalance" type="xs:string" minOccurs="0"/>
+          <xs:element name="billCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="client" type="xs:string" minOccurs="0"/>
+          <xs:element name="currencyCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="currentBalance" type="xs:string" minOccurs="0"/>
+          <xs:element name="free" type="xs:string" minOccurs="0"/>
+          <xs:element name="futureUse" type="xs:string" minOccurs="0"/>
+          <xs:element name="id" type="xs:string" minOccurs="0"/>
+          <xs:element name="loadAmount" type="xs:string" minOccurs="0"/>
+          <xs:element name="panNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="requestedAmount" type="xs:string" minOccurs="0"/>
+          <xs:element name="routingNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="type" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="switchTransaction">
+        <xs:sequence>
+          <xs:element name="acquireID" type="xs:string" minOccurs="0"/>
+          <xs:element name="authCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="availableBal" type="xs:string" minOccurs="0"/>
+          <xs:element name="captureTS" type="xs:string" minOccurs="0"/>
+          <xs:element name="currentBal" type="xs:string" minOccurs="0"/>
+          <xs:element name="merchantID" type="xs:string" minOccurs="0"/>
+          <xs:element name="olsLogID" type="xs:string" minOccurs="0"/>
+          <xs:element name="stan" type="xs:string" minOccurs="0"/>
+          <xs:element name="switch" type="xs:string" minOccurs="0"/>
+          <xs:element name="terminalID" type="xs:string" minOccurs="0"/>
+          <xs:element name="transactionTS" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ChangeFaxNumberResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="standardResponse">
+        <xs:sequence>
+          <xs:element name="cardData" type="tns:cardData" minOccurs="0"/>
+          <xs:element name="checkData" type="tns:checkData" minOccurs="0"/>
+          <xs:element name="claim" type="tns:claim" minOccurs="0"/>
+          <xs:element name="commonData" type="tns:commonData" minOccurs="0"/>
+          <xs:element name="correspondenceData" type="tns:correspondenceData" minOccurs="0"/>
+          <xs:element name="coveredItem" type="tns:coveredItem" minOccurs="0"/>
+          <xs:element name="merchant" type="tns:merchant" minOccurs="0"/>
+          <xs:element name="payment" type="tns:payment" minOccurs="0"/>
+          <xs:element name="switchTransaction" type="tns:switchTransaction" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ResendFax">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ResendFaxResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Echo">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="es" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="EchoResponse">
+        <xs:sequence>
+          <xs:element name="commonData" type="tns:commonData" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getVer">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="getVerResponse">
+        <xs:sequence>
+          <xs:element name="return" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BalanceRequest">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BalanceRequestResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="StopPay">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="StopPayResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GetPanNumber">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GetPanNumberResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="HoldFax">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="HoldFaxResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ReleaseFax">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ReleaseFaxResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="UnloadPan">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="UnloadPanResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="OpenPreAuth">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="OpenPreAuthResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="LoadPan">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+          <xs:element name="cd" type="tns:customData" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customData">
+        <xs:sequence>
+          <xs:element name="clientData" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="LoadPanResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GetReasonCodes">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="reasonCodeRequest" type="tns:reasonCodeRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="reasonCodeRequest">
+        <xs:sequence>
+          <xs:element name="passWord" type="xs:string" minOccurs="0"/>
+          <xs:element name="transNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="user" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GetReasonCodesResponse">
+        <xs:sequence>
+          <xs:element name="reasonCodeResponse" type="tns:reasonCodeResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="reasonCodeResponse">
+        <xs:sequence>
+          <xs:element name="commonData" type="tns:commonData" minOccurs="0"/>
+          <xs:element name="reasonCodeList" type="tns:reasonCode" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="reasonCode">
+        <xs:sequence>
+          <xs:element name="reasonAdsc" type="xs:string" minOccurs="0"/>
+          <xs:element name="reasonCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="reasonDesc" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CancelFax">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="sr" type="tns:standardRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CancelFaxResponse">
+        <xs:sequence>
+          <xs:element name="standardResponse" type="tns:standardResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GetTransactionDetails">
+        <xs:sequence>
+          <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
+          <xs:element name="transactionDetailRequest" type="tns:transactionDetailRequest" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="transactionDetailRequest">
+        <xs:sequence>
+          <xs:element name="passWord" type="xs:string" minOccurs="0"/>
+          <xs:element name="transNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="user" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GetTransactionDetailsResponse">
+        <xs:sequence>
+          <xs:element name="transactionDetailResponse" type="tns:transactionDetailResponse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="transactionDetailResponse">
+        <xs:sequence>
+          <xs:element name="commonData" type="tns:commonData" minOccurs="0"/>
+          <xs:element name="correspondenceList" type="tns:corespDtl" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="detailList" type="tns:detail" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="headerData" type="tns:headerData" minOccurs="0"/>
+          <xs:element name="payTypeDetail" type="tns:payTypeDetail" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="corespDtl">
+        <xs:sequence>
+          <xs:element name="direction" type="xs:string" minOccurs="0"/>
+          <xs:element name="faxJobList" type="tns:faxJob" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="fromAddress1" type="xs:string" minOccurs="0"/>
+          <xs:element name="fromAddress2" type="xs:string" minOccurs="0"/>
+          <xs:element name="fromCity" type="xs:string" minOccurs="0"/>
+          <xs:element name="fromName" type="xs:string" minOccurs="0"/>
+          <xs:element name="fromPostalCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="fromState" type="xs:string" minOccurs="0"/>
+          <xs:element name="requestDate" type="xs:int" minOccurs="0"/>
+          <xs:element name="sentBehalfName" type="xs:string" minOccurs="0"/>
+          <xs:element name="status" type="xs:string" minOccurs="0"/>
+          <xs:element name="statusDate" type="xs:int" minOccurs="0"/>
+          <xs:element name="statusText" type="xs:string" minOccurs="0"/>
+          <xs:element name="toAddress1" type="xs:string" minOccurs="0"/>
+          <xs:element name="toAddress2" type="xs:string" minOccurs="0"/>
+          <xs:element name="toCity" type="xs:string" minOccurs="0"/>
+          <xs:element name="toName" type="xs:string" minOccurs="0"/>
+          <xs:element name="toPostalCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="toState" type="xs:string" minOccurs="0"/>
+          <xs:element name="type" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="faxJob">
+        <xs:sequence>
+          <xs:element name="cancelAble" type="xs:string" minOccurs="0"/>
+          <xs:element name="createTS" type="xs:dateTime" minOccurs="0"/>
+          <xs:element name="dropToMailAble" type="xs:string" minOccurs="0"/>
+          <xs:element name="editAble" type="xs:string" minOccurs="0"/>
+          <xs:element name="faxJobId" type="xs:int" minOccurs="0"/>
+          <xs:element name="faxNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="faxQueue" type="xs:string" minOccurs="0"/>
+          <xs:element name="faxStatus" type="xs:string" minOccurs="0"/>
+          <xs:element name="holdAble" type="xs:string" minOccurs="0"/>
+          <xs:element name="lastStatusTS" type="xs:dateTime" minOccurs="0"/>
+          <xs:element name="releaseAble" type="xs:string" minOccurs="0"/>
+          <xs:element name="reserveName" type="xs:string" minOccurs="0"/>
+          <xs:element name="retryCount" type="xs:int" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="detail">
+        <xs:sequence>
+          <xs:element name="actionCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="actionDesc" type="xs:string" minOccurs="0"/>
+          <xs:element name="amount" type="xs:string" minOccurs="0"/>
+          <xs:element name="authCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="batchNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="expiration" type="xs:string" minOccurs="0"/>
+          <xs:element name="financialType" type="xs:string" minOccurs="0"/>
+          <xs:element name="loadTran" type="xs:int" minOccurs="0"/>
+          <xs:element name="merchantCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="merchantName" type="xs:string" minOccurs="0"/>
+          <xs:element name="reasonCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="reasonDesc" type="xs:string" minOccurs="0"/>
+          <xs:element name="requesterName" type="xs:string" minOccurs="0"/>
+          <xs:element name="status" type="xs:string" minOccurs="0"/>
+          <xs:element name="statusDesc" type="xs:string" minOccurs="0"/>
+          <xs:element name="tranId" type="xs:int" minOccurs="0"/>
+          <xs:element name="tranTimeStamp" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="headerData">
+        <xs:sequence>
+          <xs:element name="availBalance" type="xs:string" minOccurs="0"/>
+          <xs:element name="billCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="billType" type="xs:string" minOccurs="0"/>
+          <xs:element name="client" type="xs:string" minOccurs="0"/>
+          <xs:element name="currentBalance" type="xs:string" minOccurs="0"/>
+          <xs:element name="payeeCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="payeeName" type="xs:string" minOccurs="0"/>
+          <xs:element name="providerName" type="xs:string" minOccurs="0"/>
+          <xs:element name="requesterId" type="xs:string" minOccurs="0"/>
+          <xs:element name="requesterName" type="xs:string" minOccurs="0"/>
+          <xs:element name="switchAvailBal" type="xs:string" minOccurs="0"/>
+          <xs:element name="switchCurrentBal" type="xs:string" minOccurs="0"/>
+          <xs:element name="taxId" type="xs:string" minOccurs="0"/>
+          <xs:element name="transNumber" type="xs:int" minOccurs="0"/>
+          <xs:element name="userField1" type="xs:string" minOccurs="0"/>
+          <xs:element name="userField2" type="xs:string" minOccurs="0"/>
+          <xs:element name="userField3" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="payTypeDetail">
+        <xs:sequence>
+          <xs:element name="association" type="xs:string" minOccurs="0"/>
+          <xs:element name="bank" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardCvv2" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardExp" type="xs:string" minOccurs="0"/>
+          <xs:element name="cardNumber" type="xs:string" minOccurs="0"/>
+          <xs:element name="clearCheck" type="xs:string" minOccurs="0"/>
+          <xs:element name="outsideCheck" type="xs:string" minOccurs="0"/>
+          <xs:element name="posPayCheck" type="xs:string" minOccurs="0"/>
+          <xs:element name="switchNumber" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </types>
+  <message name="Echo">
+    <part name="parameters" element="tns:Echo"/>
+  </message>
+  <message name="EchoResponse">
+    <part name="parameters" element="tns:EchoResponse"/>
+  </message>
+  <message name="LoadPan">
+    <part name="parameters" element="tns:LoadPan"/>
+  </message>
+  <message name="LoadPanResponse">
+    <part name="parameters" element="tns:LoadPanResponse"/>
+  </message>
+  <message name="getVer">
+    <part name="parameters" element="tns:getVer"/>
+  </message>
+  <message name="getVerResponse">
+    <part name="parameters" element="tns:getVerResponse"/>
+  </message>
+  <message name="GetTransactionDetails">
+    <part name="parameters" element="tns:GetTransactionDetails"/>
+  </message>
+  <message name="GetTransactionDetailsResponse">
+    <part name="parameters" element="tns:GetTransactionDetailsResponse"/>
+  </message>
+  <message name="GetReasonCodes">
+    <part name="parameters" element="tns:GetReasonCodes"/>
+  </message>
+  <message name="GetReasonCodesResponse">
+    <part name="parameters" element="tns:GetReasonCodesResponse"/>
+  </message>
+  <message name="GetPanNumber">
+    <part name="parameters" element="tns:GetPanNumber"/>
+  </message>
+  <message name="GetPanNumberResponse">
+    <part name="parameters" element="tns:GetPanNumberResponse"/>
+  </message>
+  <message name="OpenPreAuth">
+    <part name="parameters" element="tns:OpenPreAuth"/>
+  </message>
+  <message name="OpenPreAuthResponse">
+    <part name="parameters" element="tns:OpenPreAuthResponse"/>
+  </message>
+  <message name="BalanceRequest">
+    <part name="parameters" element="tns:BalanceRequest"/>
+  </message>
+  <message name="BalanceRequestResponse">
+    <part name="parameters" element="tns:BalanceRequestResponse"/>
+  </message>
+  <message name="UnloadPan">
+    <part name="parameters" element="tns:UnloadPan"/>
+  </message>
+  <message name="UnloadPanResponse">
+    <part name="parameters" element="tns:UnloadPanResponse"/>
+  </message>
+  <message name="StopPay">
+    <part name="parameters" element="tns:StopPay"/>
+  </message>
+  <message name="StopPayResponse">
+    <part name="parameters" element="tns:StopPayResponse"/>
+  </message>
+  <message name="CancelFax">
+    <part name="parameters" element="tns:CancelFax"/>
+  </message>
+  <message name="CancelFaxResponse">
+    <part name="parameters" element="tns:CancelFaxResponse"/>
+  </message>
+  <message name="ChangeFaxNumber">
+    <part name="parameters" element="tns:ChangeFaxNumber"/>
+  </message>
+  <message name="ChangeFaxNumberResponse">
+    <part name="parameters" element="tns:ChangeFaxNumberResponse"/>
+  </message>
+  <message name="HoldFax">
+    <part name="parameters" element="tns:HoldFax"/>
+  </message>
+  <message name="HoldFaxResponse">
+    <part name="parameters" element="tns:HoldFaxResponse"/>
+  </message>
+  <message name="ReleaseFax">
+    <part name="parameters" element="tns:ReleaseFax"/>
+  </message>
+  <message name="ReleaseFaxResponse">
+    <part name="parameters" element="tns:ReleaseFaxResponse"/>
+  </message>
+  <message name="ResendFax">
+    <part name="parameters" element="tns:ResendFax"/>
+  </message>
+  <message name="ResendFaxResponse">
+    <part name="parameters" element="tns:ResendFaxResponse"/>
+  </message>
+  <portType name="VPayWS">
+    <operation name="Echo">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/EchoRequest" message="tns:Echo"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/EchoResponse" message="tns:EchoResponse"/>
+    </operation>
+    <operation name="LoadPan">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/LoadPanRequest" message="tns:LoadPan"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/LoadPanResponse" message="tns:LoadPanResponse"/>
+    </operation>
+    <operation name="getVer">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/getVerRequest" message="tns:getVer"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/getVerResponse" message="tns:getVerResponse"/>
+    </operation>
+    <operation name="GetTransactionDetails">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/GetTransactionDetailsRequest" message="tns:GetTransactionDetails"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/GetTransactionDetailsResponse" message="tns:GetTransactionDetailsResponse"/>
+    </operation>
+    <operation name="GetReasonCodes">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/GetReasonCodesRequest" message="tns:GetReasonCodes"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/GetReasonCodesResponse" message="tns:GetReasonCodesResponse"/>
+    </operation>
+    <operation name="GetPanNumber">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/GetPanNumberRequest" message="tns:GetPanNumber"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/GetPanNumberResponse" message="tns:GetPanNumberResponse"/>
+    </operation>
+    <operation name="OpenPreAuth">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/OpenPreAuthRequest" message="tns:OpenPreAuth"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/OpenPreAuthResponse" message="tns:OpenPreAuthResponse"/>
+    </operation>
+    <operation name="BalanceRequest">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/BalanceRequestRequest" message="tns:BalanceRequest"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/BalanceRequestResponse" message="tns:BalanceRequestResponse"/>
+    </operation>
+    <operation name="UnloadPan">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/UnloadPanRequest" message="tns:UnloadPan"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/UnloadPanResponse" message="tns:UnloadPanResponse"/>
+    </operation>
+    <operation name="StopPay">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/StopPayRequest" message="tns:StopPay"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/StopPayResponse" message="tns:StopPayResponse"/>
+    </operation>
+    <operation name="CancelFax">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/CancelFaxRequest" message="tns:CancelFax"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/CancelFaxResponse" message="tns:CancelFaxResponse"/>
+    </operation>
+    <operation name="ChangeFaxNumber">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/ChangeFaxNumberRequest" message="tns:ChangeFaxNumber"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/ChangeFaxNumberResponse" message="tns:ChangeFaxNumberResponse"/>
+    </operation>
+    <operation name="HoldFax">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/HoldFaxRequest" message="tns:HoldFax"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/HoldFaxResponse" message="tns:HoldFaxResponse"/>
+    </operation>
+    <operation name="ReleaseFax">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/ReleaseFaxRequest" message="tns:ReleaseFax"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/ReleaseFaxResponse" message="tns:ReleaseFaxResponse"/>
+    </operation>
+    <operation name="ResendFax">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/ResendFaxRequest" message="tns:ResendFax"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/ResendFaxResponse" message="tns:ResendFaxResponse"/>
+    </operation>
+  </portType>
+  <binding name="VPayWSPortBinding" type="tns:VPayWS">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="Echo">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="LoadPan">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="getVer">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="GetTransactionDetails">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="GetReasonCodes">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="GetPanNumber">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="OpenPreAuth">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="BalanceRequest">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="UnloadPan">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="StopPay">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="CancelFax">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="ChangeFaxNumber">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="HoldFax">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="ReleaseFax">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="ResendFax">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="VPayWSService">
+    <port name="VPayWSPort" binding="tns:VPayWSPortBinding">
+      <soap:address location="http://asstglws01.vpayusa.net:8080/VPayWS/VPayWSService"/>
+    </port>
+  </service>
+</definitions>
