@@ -326,6 +326,662 @@ x-ibm-configuration:
                 - proxy:
                     title: proxy
                     target-url: 'http://10.200.93.102:8080/VPayWS/VPayWSService'
+            - operations:
+                - ChangeFaxNumber
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/ChangeFaxNumberInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          description: ''
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              name: id
+                            passPhrase:
+                              type: string
+                              name: passPhrase
+                            userName:
+                              type: string
+                              name: userName
+                            password:
+                              type: string
+                              name: password
+                            transNumber:
+                              type: string
+                              name: transNumber
+                          example: |-
+                            {
+                                "id": "string",
+                                "passPhrase": "string",
+                                "userName": "userName",
+                                "password": "password"
+                            }
+                        variable: saved
+                        content: application/json
+                    actions:
+                      - set: output.id
+                        from: input.Envelope.Body.ChangeFaxNumber.av.id
+                      - set: output.passPhrase
+                        from: input.Envelope.Body.ChangeFaxNumber.av.passphrase
+                      - set: output.password
+                        from: >-
+                          input.Envelope.Body.ChangeFaxNumber.sr.commonData.passWord
+                      - set: output.userName
+                        from: input.Envelope.Body.ChangeFaxNumber.sr.commonData.user
+                      - set: output.transNumber
+                        from: >-
+                          input.Envelope.Body.ChangeFaxNumber.sr.commonData.transNumber
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      body:
+                        schema:
+                          $ref: '#/definitions/ChangeFaxNumberInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          type: object
+                          properties:
+                            faxNumber:
+                              type: string
+                              name: faxNumber
+                            faxCode:
+                              type: string
+                              name: faxCode
+                        variable: message.body
+                        content: application/json
+                    actions:
+                      - set: output.faxCode
+                        from: >-
+                          body.Envelope.Body.ChangeFaxNumber.sr.correspondenceData.faxCode
+                      - set: output.faxNumber
+                        from: >-
+                          body.Envelope.Body.ChangeFaxNumber.sr.correspondenceData.phoneNumber
+                    version: 1.0.0
+                - gatewayscript:
+                    title: gatewayscript
+                    version: 1.0.0
+                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
+                - invoke:
+                    title: invoke
+                    timeout: 297
+                    verb: POST
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    version: 1.0.0
+                    target-url: $(api.properties.endpoint-url)Main/ChangeFaxNumber
+                    output: echo_invoke
+                    username: '$(saved.id):$(saved.passPhrase)'
+                    password: '$(saved.userName):$(saved.password)'
+                - if:
+                    title: if
+                    condition: >-
+                      apim.getvariable('message.status.code') == 401 ||
+                      apim.getvariable('message.status.code') == 403
+                    execute:
+                      - gatewayscript:
+                          title: gatewayscript
+                          version: 1.0.0
+                          source: >
+                            var body = {"commonData": {"successCode": "0002",
+                            "successDesc":"Not Authorized"}};
+
+                            apim.setvariable('echo_invoke.body', body);
+
+                            apim.setvariable('message.status.code', '200');
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/ChangeFaxNumberOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.ChangeFaxNumberResponse.standardResponse
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - CancelFax
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/CancelFaxInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          description: ''
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              name: id
+                            passPhrase:
+                              type: string
+                              name: passPhrase
+                            userName:
+                              type: string
+                              name: userName
+                            password:
+                              type: string
+                              name: password
+                            transNumber:
+                              type: string
+                              name: transNumber
+                          example: |-
+                            {
+                                "id": "string",
+                                "passPhrase": "string",
+                                "userName": "userName",
+                                "password": "password"
+                            }
+                        variable: saved
+                        content: application/json
+                    actions:
+                      - set: output.id
+                        from: input.Envelope.Body.CancelFax.av.id
+                      - set: output.passPhrase
+                        from: input.Envelope.Body.CancelFax.av.passphrase
+                      - set: output.password
+                        from: input.Envelope.Body.CancelFax.sr.commonData.passWord
+                      - set: output.userName
+                        from: input.Envelope.Body.CancelFax.sr.commonData.user
+                      - set: output.transNumber
+                        from: >-
+                          input.Envelope.Body.CancelFax.sr.commonData.transNumber
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      body:
+                        schema:
+                          $ref: '#/definitions/CancelFaxInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          type: object
+                          properties:
+                            faxCode:
+                              type: string
+                              name: faxCode
+                        variable: message.body
+                        content: application/json
+                    actions:
+                      - set: output.faxCode
+                        from: >-
+                          body.Envelope.Body.CancelFax.sr.correspondenceData.faxCode
+                    version: 1.0.0
+                - gatewayscript:
+                    title: gatewayscript
+                    version: 1.0.0
+                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
+                - invoke:
+                    title: invoke
+                    timeout: 297
+                    verb: POST
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    version: 1.0.0
+                    target-url: $(api.properties.endpoint-url)Main/CancelFax
+                    output: echo_invoke
+                    username: '$(saved.id):$(saved.passPhrase)'
+                    password: '$(saved.userName):$(saved.password)'
+                - if:
+                    title: if
+                    condition: >-
+                      apim.getvariable('message.status.code') == 401 ||
+                      apim.getvariable('message.status.code') == 403
+                    execute:
+                      - gatewayscript:
+                          title: gatewayscript
+                          version: 1.0.0
+                          source: >
+                            var body = {"commonData": {"successCode": "0002",
+                            "successDesc":"Not Authorized"}};
+
+                            apim.setvariable('echo_invoke.body', body);
+
+                            apim.setvariable('message.status.code', '200');
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/CancelFaxOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.CancelFaxResponse.standardResponse
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - HoldFax
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/HoldFaxInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          description: ''
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              name: id
+                            passPhrase:
+                              type: string
+                              name: passPhrase
+                            userName:
+                              type: string
+                              name: userName
+                            password:
+                              type: string
+                              name: password
+                            transNumber:
+                              type: string
+                              name: transNumber
+                          example: |-
+                            {
+                                "id": "string",
+                                "passPhrase": "string",
+                                "userName": "userName",
+                                "password": "password"
+                            }
+                        variable: saved
+                        content: application/json
+                    actions:
+                      - set: output.id
+                        from: input.Envelope.Body.HoldFax.av.id
+                      - set: output.passPhrase
+                        from: input.Envelope.Body.HoldFax.av.passphrase
+                      - set: output.password
+                        from: input.Envelope.Body.HoldFax.sr.commonData.passWord
+                      - set: output.userName
+                        from: input.Envelope.Body.HoldFax.sr.commonData.user
+                      - set: output.transNumber
+                        from: input.Envelope.Body.HoldFax.sr.commonData.transNumber
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      body:
+                        schema:
+                          $ref: '#/definitions/HoldFaxInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          type: object
+                          properties:
+                            faxCode:
+                              type: string
+                              name: faxCode
+                        variable: message.body
+                        content: application/json
+                    actions:
+                      - set: output.faxCode
+                        from: >-
+                          body.Envelope.Body.HoldFax.sr.correspondenceData.faxCode
+                    version: 1.0.0
+                - gatewayscript:
+                    title: gatewayscript
+                    version: 1.0.0
+                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
+                - invoke:
+                    title: invoke
+                    timeout: 297
+                    verb: POST
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    version: 1.0.0
+                    target-url: $(api.properties.endpoint-url)Main/HoldFax
+                    output: echo_invoke
+                    username: '$(saved.id):$(saved.passPhrase)'
+                    password: '$(saved.userName):$(saved.password)'
+                - if:
+                    title: if
+                    condition: >-
+                      apim.getvariable('message.status.code') == 401 ||
+                      apim.getvariable('message.status.code') == 403
+                    execute:
+                      - gatewayscript:
+                          title: gatewayscript
+                          version: 1.0.0
+                          source: >
+                            var body = {"commonData": {"successCode": "0002",
+                            "successDesc":"Not Authorized"}};
+
+                            apim.setvariable('echo_invoke.body', body);
+
+                            apim.setvariable('message.status.code', '200');
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/HoldFaxOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: output.Envelope.Body.HoldFaxResponse.standardResponse
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - ReleaseFax
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/ReleaseFaxInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          description: ''
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              name: id
+                            passPhrase:
+                              type: string
+                              name: passPhrase
+                            userName:
+                              type: string
+                              name: userName
+                            password:
+                              type: string
+                              name: password
+                            transNumber:
+                              type: string
+                              name: transNumber
+                          example: |-
+                            {
+                                "id": "string",
+                                "passPhrase": "string",
+                                "userName": "userName",
+                                "password": "password"
+                            }
+                        variable: saved
+                        content: application/json
+                    actions:
+                      - set: output.id
+                        from: input.Envelope.Body.ReleaseFax.av.id
+                      - set: output.passPhrase
+                        from: input.Envelope.Body.ReleaseFax.av.passphrase
+                      - set: output.password
+                        from: input.Envelope.Body.ReleaseFax.sr.commonData.passWord
+                      - set: output.userName
+                        from: input.Envelope.Body.ReleaseFax.sr.commonData.user
+                      - set: output.transNumber
+                        from: >-
+                          input.Envelope.Body.ReleaseFax.sr.commonData.transNumber
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      body:
+                        schema:
+                          $ref: '#/definitions/ReleaseFaxInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          type: object
+                          properties:
+                            faxCode:
+                              type: string
+                              name: faxCode
+                        variable: message.body
+                        content: application/json
+                    actions:
+                      - set: output.faxCode
+                        from: >-
+                          body.Envelope.Body.ReleaseFax.sr.correspondenceData.faxCode
+                    version: 1.0.0
+                - gatewayscript:
+                    title: gatewayscript
+                    version: 1.0.0
+                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
+                - invoke:
+                    title: invoke
+                    timeout: 297
+                    verb: POST
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    version: 1.0.0
+                    target-url: $(api.properties.endpoint-url)Main/ReleaseFax
+                    output: echo_invoke
+                    username: '$(saved.id):$(saved.passPhrase)'
+                    password: '$(saved.userName):$(saved.password)'
+                - if:
+                    title: if
+                    condition: >-
+                      apim.getvariable('message.status.code') == 401 ||
+                      apim.getvariable('message.status.code') == 403
+                    execute:
+                      - gatewayscript:
+                          title: gatewayscript
+                          version: 1.0.0
+                          source: >
+                            var body = {"commonData": {"successCode": "0002",
+                            "successDesc":"Not Authorized"}};
+
+                            apim.setvariable('echo_invoke.body', body);
+
+                            apim.setvariable('message.status.code', '200');
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/ReleaseFaxOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.ReleaseFaxResponse.standardResponse
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - ResendFax
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/ResendFaxInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          description: ''
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              name: id
+                            passPhrase:
+                              type: string
+                              name: passPhrase
+                            userName:
+                              type: string
+                              name: userName
+                            password:
+                              type: string
+                              name: password
+                            transNumber:
+                              type: string
+                              name: transNumber
+                          example: |-
+                            {
+                                "id": "string",
+                                "passPhrase": "string",
+                                "userName": "userName",
+                                "password": "password"
+                            }
+                        variable: saved
+                        content: application/json
+                    actions:
+                      - set: output.id
+                        from: input.Envelope.Body.ResendFax.av.id
+                      - set: output.passPhrase
+                        from: input.Envelope.Body.ResendFax.av.passphrase
+                      - set: output.password
+                        from: input.Envelope.Body.ResendFax.sr.commonData.passWord
+                      - set: output.userName
+                        from: input.Envelope.Body.ResendFax.sr.commonData.user
+                      - set: output.transNumber
+                        from: >-
+                          input.Envelope.Body.ResendFax.sr.commonData.transNumber
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      body:
+                        schema:
+                          $ref: '#/definitions/ResendFaxInput'
+                        variable: request.body
+                        content: application/xml
+                    outputs:
+                      output:
+                        schema:
+                          type: object
+                          properties:
+                            faxNumber:
+                              type: string
+                              name: faxNumber
+                            faxCode:
+                              type: string
+                              name: faxCode
+                        variable: message.body
+                        content: application/json
+                    actions:
+                      - set: output.faxCode
+                        from: >-
+                          body.Envelope.Body.ResendFax.sr.correspondenceData.faxCode
+                      - set: output.faxNumber
+                        from: >-
+                          body.Envelope.Body.ResendFax.sr.correspondenceData.phoneNumber
+                    version: 1.0.0
+                - gatewayscript:
+                    title: gatewayscript
+                    version: 1.0.0
+                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
+                - invoke:
+                    title: invoke
+                    timeout: 297
+                    verb: POST
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    version: 1.0.0
+                    target-url: $(api.properties.endpoint-url)Main/ResendFax
+                    output: echo_invoke
+                    username: '$(saved.id):$(saved.passPhrase)'
+                    password: '$(saved.userName):$(saved.password)'
+                - if:
+                    title: if
+                    condition: >-
+                      apim.getvariable('message.status.code') == 401 ||
+                      apim.getvariable('message.status.code') == 403
+                    execute:
+                      - gatewayscript:
+                          title: gatewayscript
+                          version: 1.0.0
+                          source: >
+                            var body = {"commonData": {"successCode": "0002",
+                            "successDesc":"Not Authorized"}};
+
+                            apim.setvariable('echo_invoke.body', body);
+
+                            apim.setvariable('message.status.code', '200');
+                    version: 1.0.0
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/ResendFaxOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.ResendFaxResponse.standardResponse
+                        from: input
+                    version: 1.0.0
           otherwise: []
           version: 1.0.0
     catch: []
