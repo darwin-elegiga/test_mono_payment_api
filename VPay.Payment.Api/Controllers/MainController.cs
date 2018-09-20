@@ -67,37 +67,57 @@ namespace VPay.Payment.Api.Controllers
 
         [HttpGet("ReasonCodes")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
-        public Task<string> GetReasonCodes()
+        public async Task<StandardResponse> GetReasonCodes(string transNumber)
         {
-            return Task.FromResult("ReasonCodes");
+            var sr = DefaultStandardRequest(transNumber);
+
+            var result = await _transactionService.GetBalanceRequest(sr);
+
+            return result;
         }
 
         [HttpGet("TransactionDetails")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
-        public Task<string> GetTransactionDetails()
+        public async Task<StandardResponse> GetTransactionDetails(string transNumber)
         {
-            return Task.FromResult("GetTransactionDetails");
+            var sr = DefaultStandardRequest(transNumber);
+
+            var result = await _transactionService.GetBalanceRequest(sr);
+
+            return result;
         }
 
         [HttpGet("PanNumber")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
-        public Task<string> GetPanNumber()
+        public async Task<StandardResponse> GetPanNumber(string transNumber)
         {
-            return Task.FromResult("GetPanNumber");
+            var sr = DefaultStandardRequest(transNumber);
+
+            var result = await _transactionService.GetBalanceRequest(sr);
+
+            return result;
         }
 
         [HttpGet("OpenPreAuth")]
         [ServicePermissionAuthorize(ServicePermission.OpenPreAuth)]
-        public Task<string> OpenPreAuth()
+        public async Task<StandardResponse> OpenPreAuth(string transNumber)
         {
-            return Task.FromResult("OpenPreAuth");
+            var sr = DefaultStandardRequest(transNumber);
+
+            var result = await _transactionService.GetBalanceRequest(sr);
+
+            return result;
         }
 
         [HttpGet("LoadPan")]
         [ServicePermissionAuthorize(ServicePermission.LoadPan)]
-        public Task<string> LoadPan()
+        public async Task<StandardResponse> LoadPan(string transNumber)
         {
-            return Task.FromResult("LoadPan");
+            var sr = DefaultStandardRequest(transNumber);
+
+            var result = await _transactionService.GetBalanceRequest(sr);
+
+            return result;
         }
 
         [HttpGet("BalanceRequest")]
@@ -106,16 +126,7 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> BalanceRequest(string transNumber)
         {
-            var sr = new StandardRequest()
-            {
-                CommonData = new CommonData()
-                {
-                    TransNumber = transNumber,
-                    User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
-                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
-                    PassWord = "yraheem197"
-                }
-            };
+            var sr = DefaultStandardRequest(transNumber);
 
             var result = await _transactionService.GetBalanceRequest(sr);
 
@@ -124,16 +135,24 @@ namespace VPay.Payment.Api.Controllers
 
         [HttpGet("UnloadPan")]
         [ServicePermissionAuthorize(ServicePermission.Unload)]
-        public Task<string> UnloadPan()
+        public async Task<StandardResponse> UnloadPan(string transNumber)
         {
-            return Task.FromResult("UnloadPan");
+            var sr = StandardRequestWithUnload(transNumber);
+
+            var result = await _transactionService.UnloadPan(sr);
+
+            return result;
         }
 
         [HttpGet("StopPay")]
         [ServicePermissionAuthorize(ServicePermission.StopPay)]
-        public Task<string> StopPay()
+        public async Task<StandardResponse> StopPay(string transNumber)
         {
-            return Task.FromResult("StopPay");
+            var sr = StandardRequestWithUnload(transNumber);
+
+            var result = await _transactionService.UnloadPan(sr);
+
+            return result;
         }
 
         [HttpPost("CancelFax")]
@@ -179,6 +198,43 @@ namespace VPay.Payment.Api.Controllers
             var result = await _transactionService.ResendFax(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
 
             return result;
+        }
+
+        private StandardRequest DefaultStandardRequest(string transNumber)
+        {
+            var defaultStandardRequest = new StandardRequest()
+            {
+                CommonData = new CommonData()
+                {
+                    TransNumber = transNumber,
+                    User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
+                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
+                    PassWord = "yraheem197"
+                }
+            };
+
+            return defaultStandardRequest;
+        }
+
+        private StandardRequest StandardRequestWithUnload(string transNumber)
+        {
+            var defaultStandardRequest = new StandardRequest()
+            {
+                CommonData = new CommonData()
+                {
+                    TransNumber = transNumber,
+                    User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
+                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
+                    PassWord = "yraheem197"
+                },
+                CardData = new CardData()
+                {
+                    UnloadCode = "4602",
+                    UnloadDesc = "No Reason"
+                }
+            };
+
+            return defaultStandardRequest;
         }
 
     }

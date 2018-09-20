@@ -44,21 +44,36 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest)
         {
-            StandardResponse resultOfISeriesCall = null;
+            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+
+            string textResultOfDb2Call = await _dbPaymentOps.GetPan("WSQATEST", "QATEST01WS18", "10.120.202.129",
+                serviceStringHelper.GenerateStringForISeriesCall());
+
+            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
 
             return resultOfISeriesCall;
         }
 
         public async Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest)
         {
-            StandardResponse resultOfISeriesCall = null;
+            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+
+            string textResultOfDb2Call = await _dbPaymentOps.OpenPreAuth("WSQATEST", "QATEST01WS18", "10.120.202.129",
+                serviceStringHelper.GenerateStringForISeriesCall());
+
+            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
 
             return resultOfISeriesCall;
         }
 
         public async Task<StandardResponse> LoadPan(StandardRequest standardRequest)
         {
-            StandardResponse resultOfISeriesCall = null;
+            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+
+            string textResultOfDb2Call = await _dbPaymentOps.LoadPan("WSQATEST", "QATEST01WS18", "10.120.202.129",
+                serviceStringHelper.GenerateStringForISeriesCall());
+
+            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
 
             return resultOfISeriesCall;
         }
@@ -77,14 +92,24 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> UnloadPan(StandardRequest standardRequest)
         {
-            StandardResponse resultOfISeriesCall = null;
+            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+
+            string textResultOfDb2Call = await _dbPaymentOps.Unload("WSQATEST", "QATEST01WS18", "10.120.202.129",
+                serviceStringHelper.GenerateStringForISeriesCall());
+
+            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
 
             return resultOfISeriesCall;
         }
 
         public async Task<StandardResponse> StopPay(StandardRequest standardRequest)
         {
-            StandardResponse resultOfISeriesCall = null;
+            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+
+            string textResultOfDb2Call = await _dbPaymentOps.StopPay("WSQATEST", "QATEST01WS18", "10.120.202.129",
+                serviceStringHelper.GenerateStringForISeriesCall());
+
+            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
 
             return resultOfISeriesCall;
         }
