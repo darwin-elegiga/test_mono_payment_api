@@ -53,6 +53,116 @@ namespace VPay.Payment.Db2
             }
         }
 
+        public async Task<string> GetPan(string auth, string password, string ip, string data)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSGETPAN(?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PAUTHID", auth);
+                cmd.Parameters.AddWithValue("PPWD", password);
+                cmd.Parameters.AddWithValue("PIP", ip);
+                cmd.Parameters.AddWithValue("PREQSTR", data);
+
+                var descParameter = cmd.Parameters.Add("PRSPSTR", OdbcType.Char, 4000);
+                descParameter.Direction = ParameterDirection.Output;
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return descParameter.Value?.ToString().Trim();
+            }
+        }
+
+        public async Task<string> LoadPan(string auth, string password, string ip, string data)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSLOADPAND(?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PAUTHID", auth);
+                cmd.Parameters.AddWithValue("PPWD", password);
+                cmd.Parameters.AddWithValue("PIP", ip);
+                cmd.Parameters.AddWithValue("PREQSTR", data);
+
+                var descParameter = cmd.Parameters.Add("PRSPSTR", OdbcType.Char, 4000);
+                descParameter.Direction = ParameterDirection.Output;
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return descParameter.Value?.ToString().Trim();
+            }
+        }
+
+        public async Task<string> OpenPreAuth(string auth, string password, string ip, string data)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSOPNPREAUTH(?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PAUTHID", auth);
+                cmd.Parameters.AddWithValue("PPWD", password);
+                cmd.Parameters.AddWithValue("PIP", ip);
+                cmd.Parameters.AddWithValue("PREQSTR", data);
+
+                var descParameter = cmd.Parameters.Add("PRSPSTR", OdbcType.Char, 4000);
+                descParameter.Direction = ParameterDirection.Output;
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return descParameter.Value?.ToString().Trim();
+            }
+        }
+
+        public async Task<string> StopPay(string auth, string password, string ip, string data)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSSTOPPAY(?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PAUTHID", auth);
+                cmd.Parameters.AddWithValue("PPWD", password);
+                cmd.Parameters.AddWithValue("PIP", ip);
+                cmd.Parameters.AddWithValue("PREQSTR", data);
+
+                var descParameter = cmd.Parameters.Add("PRSPSTR", OdbcType.Char, 4000);
+                descParameter.Direction = ParameterDirection.Output;
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return descParameter.Value?.ToString().Trim();
+            }
+        }
+
+        public async Task<string> Unload(string auth, string password, string ip, string data)
+        {
+            var connection = await GetOpenConnection();
+
+            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSUNLOADPAN(?,?,?,?,?)", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("PAUTHID", auth);
+                cmd.Parameters.AddWithValue("PPWD", password);
+                cmd.Parameters.AddWithValue("PIP", ip);
+                cmd.Parameters.AddWithValue("PREQSTR", data);
+
+                var descParameter = cmd.Parameters.Add("PRSPSTR", OdbcType.Char, 4000);
+                descParameter.Direction = ParameterDirection.Output;
+
+                await cmd.ExecuteNonQueryAsync();
+
+                return descParameter.Value?.ToString().Trim();
+            }
+        }
+
         private async Task<OdbcConnection> GetOpenConnection()
         {
             return await _connection.GetOpenConnectionAsync();
