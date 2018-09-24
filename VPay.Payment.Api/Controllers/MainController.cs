@@ -93,7 +93,7 @@ namespace VPay.Payment.Api.Controllers
         {
             var sr = DefaultStandardRequest(transNumber);
 
-            var result = await _transactionService.GetBalanceRequest(sr);
+            var result = await _transactionService.GetPanNumber(sr);
 
             return result;
         }
@@ -104,7 +104,7 @@ namespace VPay.Payment.Api.Controllers
         {
             var sr = DefaultStandardRequest(transNumber);
 
-            var result = await _transactionService.GetBalanceRequest(sr);
+            var result = await _transactionService.OpenPreAuth(sr);
 
             return result;
         }
@@ -115,7 +115,7 @@ namespace VPay.Payment.Api.Controllers
         {
             var sr = DefaultStandardRequest(transNumber);
 
-            var result = await _transactionService.GetBalanceRequest(sr);
+            var result = await _transactionService.LoadPan(sr);
 
             return result;
         }
@@ -150,7 +150,7 @@ namespace VPay.Payment.Api.Controllers
         {
             var sr = StandardRequestWithUnload(transNumber);
 
-            var result = await _transactionService.UnloadPan(sr);
+            var result = await _transactionService.StopPay(sr);
 
             return result;
         }

@@ -57,7 +57,7 @@ namespace VPay.Payment.Db2
         {
             var connection = await GetOpenConnection();
 
-            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSGETPAN(?,?,?,?,?)", connection))
+            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSGETPANNUM(?,?,?,?,?)", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -79,7 +79,7 @@ namespace VPay.Payment.Db2
         {
             var connection = await GetOpenConnection();
 
-            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSLOADPAND(?,?,?,?,?)", connection))
+            using (var cmd = new OdbcCommand("CALL VPAYPGM.SP_WSLOADPAND(?,?,?,?,?,?)", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -87,6 +87,8 @@ namespace VPay.Payment.Db2
                 cmd.Parameters.AddWithValue("PPWD", password);
                 cmd.Parameters.AddWithValue("PIP", ip);
                 cmd.Parameters.AddWithValue("PREQSTR", data);
+                string temporaryCustData = new string(' ', 1024);
+                cmd.Parameters.AddWithValue("CSTDTA", temporaryCustData); // todo: review better parameter values
 
                 var descParameter = cmd.Parameters.Add("PRSPSTR", OdbcType.Char, 4000);
                 descParameter.Direction = ParameterDirection.Output;
