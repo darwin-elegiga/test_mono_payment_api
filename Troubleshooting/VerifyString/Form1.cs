@@ -4,11 +4,12 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using VPay.Payment.Common.CommunicationStrings;
-using VPay.Payment.Common.DataWebService;
+using VPay.Data.Db2.Abstractions.Helpers;
+using VPay.Data.Db2.Abstractions.TransactionWs;
 
 namespace VerifyString
 {
@@ -21,24 +22,23 @@ namespace VerifyString
 
         private void buttonGo1_Click(object sender, EventArgs e)
         {
-            ServiceString serviceString = EmptyObjects();
+            var serviceString = EmptyObjects();
             serviceString = ForBalanceRequest1(serviceString);
 
-            string sampleText = serviceString.GenerateStringForISeriesCall();
+            string sampleText = serviceString.Pack();
             Clipboard.SetText(sampleText);
         }
 
-        private ServiceString EmptyObjects()
+        private StandardRequest EmptyObjects()
         {
-            return new ServiceString(false, new CommonData(), new CardData(), new CheckData(), new Claim(), new CorrespondenceData(),
-                new CoveredItem(), new Merchant(), new Payment(), new SwitchTransaction());
+            return new StandardRequest();
         }
 
-        private ServiceString ForBalanceRequest1(ServiceString serviceString)
+        private StandardRequest ForBalanceRequest1(StandardRequest serviceString)
         {
-            serviceString.CommonSection.PassWord = "yraheem197";
-            serviceString.CommonSection.TransNumber = "55123182";
-            serviceString.CommonSection.User = "YAMMONRAHE";
+            serviceString.CommonData.PassWord = "yraheem197";
+            serviceString.CommonData.TransNumber = "55123182";
+            serviceString.CommonData.User = "YAMMONRAHE";
 
             return serviceString;
         }
@@ -46,8 +46,10 @@ namespace VerifyString
         private void buttonGo2_Click(object sender, EventArgs e)
         {
             string s1 = @"COMMONDATA            55123182                                                            0107Decrypt of card failed with error  ErrText: CRE0357                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 0000Successful Completion                                                                                                                                                                                                                                                                                                                                                                                                                         CARDDATA                                                                                                                                                                                                                                                                                                                                                                 CHECKDATA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   CLAIMDATA                                                                                                                                                                                                                                                                                                                                                                                                                                                                  CORRSPDATA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                COVERDITEM                                                                                                                                                                                                                                                                                                                           MERCHANT                                                                                                                     PAYMENT                                                       10.00                                                       10.00                                                                                                                                                                   SWITCHTRAN                                                                   0.0                                           0.0";
-            ServiceString serviceString = new ServiceString(false);
-            serviceString.PopulateDataFromISeriesResponse(s1);
+            //ServiceString serviceString = new ServiceString(false);
+            //serviceString.PopulateDataFromISeriesResponse(s1);
+
+            var response = TransactionWsStringHelpers.Unpack(s1);
 
             // CommonData commonData = new CommonData();
             // commonData.HydrateFromISeriesString(ref s1);

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Api.Dtos;
 using VPay.Payment.Common;
