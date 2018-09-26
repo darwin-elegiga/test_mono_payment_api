@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
+using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
-using VPay.Payment.Common.CommunicationStrings;
-using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.Models;
 
@@ -44,74 +43,91 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest)
         {
-            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+            var request = new TransactionWsRequest()
+            {
+                UserId = "WSQATEST",
+                Password = "QATEST01WS18",
+                IpAddress = "10.120.202.129",
+                Request = standardRequest
+            };
 
-            string textResultOfDb2Call = await _dbPaymentOps.GetPan("WSQATEST", "QATEST01WS18", "10.120.202.129",
-                serviceStringHelper.GenerateStringForISeriesCall());
+            var result = await _db2Context.TransactionWs.GetPan(request);
 
-            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
-
-            return resultOfISeriesCall;
+            return result;
         }
 
         public async Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest)
         {
-            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+            var request = new TransactionWsRequest()
+            {
+                UserId = "WSQATEST",
+                Password = "QATEST01WS18",
+                IpAddress = "10.120.202.129",
+                Request = standardRequest
+            };
 
-            string textResultOfDb2Call = await _dbPaymentOps.OpenPreAuth("WSQATEST", "QATEST01WS18", "10.120.202.129",
-                serviceStringHelper.GenerateStringForISeriesCall());
+            var result = await _db2Context.TransactionWs.OpenPreAuth(request);
 
-            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
-
-            return resultOfISeriesCall;
+            return result;
         }
 
         public async Task<StandardResponse> LoadPan(StandardRequest standardRequest)
         {
-            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+            var request = new TransactionWsRequest()
+            {
+                UserId = "WSQATEST",
+                Password = "QATEST01WS18",
+                IpAddress = "10.120.202.129",
+                Request = standardRequest
+            };
 
-            string textResultOfDb2Call = await _dbPaymentOps.LoadPan("WSQATEST", "QATEST01WS18", "10.120.202.129",
-                serviceStringHelper.GenerateStringForISeriesCall());
+            var result = await _db2Context.TransactionWs.LoadPan(request);
 
-            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
-
-            return resultOfISeriesCall;
+            return result;
         }
 
         public async Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest)
         {
-            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+            var request = new TransactionWsRequest()
+            {
+                UserId = "WSQATEST",
+                Password = "QATEST01WS18",
+                IpAddress = "10.120.202.129",
+                Request = standardRequest
+            };
 
-            string textResultOfDb2Call = await _dbPaymentOps.BalanceRequest("WSQATEST", "QATEST01WS18", "10.120.202.129",
-                serviceStringHelper.GenerateStringForISeriesCall());
+            var result = await _db2Context.TransactionWs.BalanceRequest(request);
 
-            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
-
-            return resultOfISeriesCall;
+            return result;
         }
 
         public async Task<StandardResponse> UnloadPan(StandardRequest standardRequest)
         {
-            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+            var request = new TransactionWsRequest()
+            {
+                UserId = "WSQATEST",
+                Password = "QATEST01WS18",
+                IpAddress = "10.120.202.129",
+                Request = standardRequest
+            };
 
-            string textResultOfDb2Call = await _dbPaymentOps.Unload("WSQATEST", "QATEST01WS18", "10.120.202.129",
-                serviceStringHelper.GenerateStringForISeriesCall());
-
-            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
-
-            return resultOfISeriesCall;
+            var result = await _db2Context.TransactionWs.UnloadPan(request);
+            return result;
         }
 
         public async Task<StandardResponse> StopPay(StandardRequest standardRequest)
         {
-            ServiceString serviceStringHelper = new ServiceString(_config.UseCheckEmail, standardRequest);
+            var request = new TransactionWsRequest()
+            {
+                UserId = "WSQATEST",
+                Password = "QATEST01WS18",
+                IpAddress = "10.120.202.129",
+                Request = standardRequest
+            };
 
-            string textResultOfDb2Call = await _dbPaymentOps.StopPay("WSQATEST", "QATEST01WS18", "10.120.202.129",
-                serviceStringHelper.GenerateStringForISeriesCall());
+            var result = await _db2Context.TransactionWs.StopPay(request);
 
-            StandardResponse resultOfISeriesCall = ServiceString.ParseToStandardResponse(_config.UseCheckEmail, textResultOfDb2Call);
-
-            return resultOfISeriesCall;
+            return result;
         }
 
         public async Task<StandardResponse> CancelFax(int faxCode)
@@ -127,12 +143,12 @@ namespace VPay.Payment
                 },
                 CardData = new CardData(),
                 CheckData = new CheckData(),
-                Claim = new Claim(),
+                Claim = new ClaimData(),
                 CorrespondenceData = new CorrespondenceData(),
-                CoveredItem = new CoveredItem(),
-                Merchant = new Merchant(),
-                Payment = new Common.DataWebService.Payment(),
-                SwitchTransaction = new SwitchTransaction()
+                CoveredItem = new CoveredItemData(),
+                Merchant = new MerchantData(),
+                Payment = new PaymentData(),
+                SwitchTransaction = new SwitchTransactionData()
             };
 
             return sResp;
@@ -151,12 +167,12 @@ namespace VPay.Payment
                 },
                 CardData = new CardData(),
                 CheckData = new CheckData(),
-                Claim = new Claim(),
+                Claim = new ClaimData(),
                 CorrespondenceData = new CorrespondenceData(),
-                CoveredItem = new CoveredItem(),
-                Merchant = new Merchant(),
-                Payment = new Common.DataWebService.Payment(),
-                SwitchTransaction = new SwitchTransaction()
+                CoveredItem = new CoveredItemData(),
+                Merchant = new MerchantData(),
+                Payment = new PaymentData(),
+                SwitchTransaction = new SwitchTransactionData()
             };
 
             return sResp;
@@ -175,12 +191,12 @@ namespace VPay.Payment
                 },
                 CardData = new CardData(),
                 CheckData = new CheckData(),
-                Claim = new Claim(),
+                Claim = new ClaimData(),
                 CorrespondenceData = new CorrespondenceData(),
-                CoveredItem = new CoveredItem(),
-                Merchant = new Merchant(),
-                Payment = new Common.DataWebService.Payment(),
-                SwitchTransaction = new SwitchTransaction()
+                CoveredItem = new CoveredItemData(),
+                Merchant = new MerchantData(),
+                Payment = new PaymentData(),
+                SwitchTransaction = new SwitchTransactionData()
             };
 
             return sResp;
@@ -199,12 +215,12 @@ namespace VPay.Payment
                 },
                 CardData = new CardData(),
                 CheckData = new CheckData(),
-                Claim = new Claim(),
+                Claim = new ClaimData(),
                 CorrespondenceData = new CorrespondenceData(),
-                CoveredItem = new CoveredItem(),
-                Merchant = new Merchant(),
-                Payment = new Common.DataWebService.Payment(),
-                SwitchTransaction = new SwitchTransaction()
+                CoveredItem = new CoveredItemData(),
+                Merchant = new MerchantData(),
+                Payment = new PaymentData(),
+                SwitchTransaction = new SwitchTransactionData()
             };
 
             return sResp;
@@ -223,15 +239,15 @@ namespace VPay.Payment
                 },
                 CardData = new CardData(),
                 CheckData = new CheckData(),
-                Claim = new Claim(),
+                Claim = new ClaimData(),
                 CorrespondenceData = new CorrespondenceData()
                 {
                     PhoneNumber = dbResult.FaxNumber
                 },
-                CoveredItem = new CoveredItem(),
-                Merchant = new Merchant(),
-                Payment = new Common.DataWebService.Payment(),
-                SwitchTransaction = new SwitchTransaction()
+                CoveredItem = new CoveredItemData(),
+                Merchant = new MerchantData(),
+                Payment = new PaymentData(),
+                SwitchTransaction = new SwitchTransactionData()
             };
 
             return sResp;

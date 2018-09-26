@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using VPay.Payment.Common.DataWebService;
+﻿using System.Collections.Generic;
+using VPay.Data.Db2.Abstractions.TransactionWs;
 
 namespace VPay.Payment.Common
 {

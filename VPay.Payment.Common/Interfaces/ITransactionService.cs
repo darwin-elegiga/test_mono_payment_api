@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using VPay.Payment.Common.DataWebService;
+using VPay.Data.Db2.Abstractions.TransactionWs;
 
 namespace VPay.Payment.Common
 {
