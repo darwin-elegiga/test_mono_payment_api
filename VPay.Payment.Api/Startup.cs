@@ -37,12 +37,13 @@ namespace VPay.Payment.Api
                 .AddFluentValidationSettings();
 
             services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+                options.InvalidModelStateResponseFactory = actionContext =>
                 {
-                    options.InvalidModelStateResponseFactory = actionContext =>
-                        {
-                            return new ValidationFailedResult(actionContext.ModelState);
-                        };
-                });
+                    return new ValidationFailedResult(actionContext.ModelState);
+                };
+            });
 
             services
                 .AddApiVersioningService()

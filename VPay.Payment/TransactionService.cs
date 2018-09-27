@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
 using VPay.Data.Db2.Abstractions.TransactionWs;
@@ -73,6 +74,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> LoadPan(StandardRequest standardRequest)
         {
+            SetupDefaultValuesForLoadPan(standardRequest);
+
             var request = new TransactionWsRequest()
             {
                 UserId = "WSQATEST",
@@ -251,6 +254,105 @@ namespace VPay.Payment
             };
 
             return sResp;
+        }
+
+
+        private void SetupDefaultValuesForLoadPan(StandardRequest sr)
+        {
+            if (sr.Claim != null)
+            {
+                if (string.IsNullOrWhiteSpace(sr.Claim.Amount))
+                {
+                    sr.Claim.Amount = "0.00";
+                }
+                if (string.IsNullOrWhiteSpace(sr.Claim.ClaimOdometer))
+                {
+                    sr.Claim.Amount = "000000";
+                }
+                if (string.IsNullOrWhiteSpace(sr.Claim.ClaimDeductible))
+                {
+                    sr.Claim.Amount = "0.00";
+                }
+                if (string.IsNullOrWhiteSpace(sr.Claim.ClaimDate))
+                {
+                    sr.Claim.Amount = "10000101";
+                }
+                if (string.IsNullOrWhiteSpace(sr.Claim.CurrencyType))
+                {
+                    sr.Claim.Amount = "USD";
+                }
+
+                if (!string.IsNullOrWhiteSpace(sr.Claim.UserField1))
+                {
+                    sr.Claim.UserField1 = sr.Claim.UserField1.ToUpper();
+                }
+            }
+
+            if (sr.CoveredItem != null)
+            {
+                if (string.IsNullOrWhiteSpace(sr.CoveredItem.ItemYear))
+                {
+                    sr.CoveredItem.ItemYear = "1000";
+                }
+                if (string.IsNullOrWhiteSpace(sr.CoveredItem.Deductible))
+                {
+                    sr.CoveredItem.Deductible = "0.00";
+                }
+                if (string.IsNullOrWhiteSpace(sr.CoveredItem.BeginOdometer))
+                {
+                    sr.CoveredItem.BeginOdometer = "000000";
+                }
+                if (string.IsNullOrWhiteSpace(sr.CoveredItem.ExpireDate))
+                {
+                    sr.CoveredItem.ExpireDate = "10000101";
+                }
+                if (string.IsNullOrWhiteSpace(sr.CoveredItem.BeginDate))
+                {
+                    sr.CoveredItem.BeginDate = "10000101";
+                }
+            }
+
+        }
+
+        private (string code, string message) ValidateLoadPan(StandardRequest request)
+        {
+            var notEqualMsg = "Invalid Numeric Format:";
+            var invalidDateMsg = "Date format not ISO ";
+            var greaterThanAmtMsg = "Amount must be >= 0.00 ";
+            var equalAmtMsg = "Amount must be = 0.00 ";
+
+            var result = (code: "0000", message: "Successful Validation");
+
+            if (decimal.TryParse(request.Claim.Amount, out var amount))
+            {
+                if (request.Payment.Type == "CLNPF")
+                {
+                    if (amount != 0)
+                    {
+                        result = (code: "0908", message: equalAmtMsg);
+                    }
+                }
+                else
+                {
+                    if (amount <= 0)
+                    {
+                        result = (code: "0908", message: greaterThanAmtMsg);
+                    }
+                }
+            }
+            else
+            {
+                result = (code: "0930", message: $"{notEqualMsg} amount {request.Claim.Amount}");
+            }
+
+            if (!int.TryParse(request.CoveredItem.ItemYear, out var year))
+            {
+                result = (code: "0931", message: $"{notEqualMsg} year {request.CoveredItem.ItemYear}");
+            }
+
+
+            return result;
+
         }
 
     }
