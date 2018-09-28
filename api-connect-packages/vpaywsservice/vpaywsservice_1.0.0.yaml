@@ -156,75 +156,35 @@ x-ibm-configuration:
                     version: 1.0.0
             - operations:
                 - BalanceRequest
+                - GetPanNumber
+                - OpenPreAuth
+                - UnloadPan
+                - ChangeFaxNumber
+                - CancelFax
+                - HoldFax
+                - ReleaseFax
+                - ResendFax
+                - LoadPan
+                - StopPay
+                - GetTransactionDetails
+                - GetReasonCodes
               execute:
-                - map:
-                    title: map
-                    inputs:
-                      input:
-                        schema:
-                          $ref: '#/definitions/BalanceRequestInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          description: ''
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              name: id
-                            passPhrase:
-                              type: string
-                              name: passPhrase
-                            userName:
-                              type: string
-                              name: userName
-                            password:
-                              type: string
-                              name: password
-                            transNumber:
-                              type: string
-                              name: transNumber
-                          example: |-
-                            {
-                                "id": "string",
-                                "passPhrase": "string",
-                                "userName": "userName",
-                                "password": "password"
-                            }
-                        variable: saved
-                        content: application/json
-                    actions:
-                      - set: output.id
-                        from: input.Envelope.Body.BalanceRequest.av.id
-                      - set: output.passPhrase
-                        from: input.Envelope.Body.BalanceRequest.av.passphrase
-                      - set: output.password
-                        from: >-
-                          input.Envelope.Body.BalanceRequest.sr.commonData.passWord
-                      - set: output.userName
-                        from: input.Envelope.Body.BalanceRequest.sr.commonData.user
-                      - set: output.transNumber
-                        from: >-
-                          input.Envelope.Body.BalanceRequest.sr.commonData.transNumber
+                - xml-to-json:
+                    title: xml-to-json
                     version: 1.0.0
                 - gatewayscript:
                     title: gatewayscript
                     version: 1.0.0
-                    source: >-
-                      apim.setvariable('message.headers.accept',
-                      'application/json');
+                    source: "var body = apim.getvariable('message.body');\r\nvar op = apim.getvariable('api.operation.id');\r\n\r\nfunction flatten(data) {\r\n    function recurse (cur, prop, last) {\r\n        if (Object(cur) === cur) {\r\n        \tif (!!cur[\"@xmlns\"]) {\r\n        \t\tdelete cur[\"@xmlns\"];\r\n          }\r\n          var split = prop.split(':');\r\n          if (split.length == 2) {\r\n          \tlast[split[1]] = last[prop];\r\n            delete last[prop];\r\n            prop = split[1];\r\n          }\r\n          if (!!cur['$']) {\r\n            last[prop] = cur['$'];\r\n          } else {\r\n            for (var p in cur) {\r\n              recurse(cur[p], p, cur);\r\n            }\r\n          }\r\n       }\r\n    }\r\n    recurse(data, \"\");\r\n    return data;\r\n}\r\nbody = flatten(body);\r\nvar saved = {\r\n    id: body.Envelope.Body[op].av.id,\r\n    passphrase: body.Envelope.Body[op].av.passPhrase,\r\n    userName: body.Envelope.Body[op].sr.commonData.user,\r\n    password: body.Envelope.Body[op].sr.commonData.passWord\r\n};\r\n\r\napim.setvariable('saved', saved);\r\napim.setvariable('message.body', body);\r\napim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');\r\n"
                 - invoke:
                     title: invoke
                     timeout: 300
-                    verb: GET
+                    verb: POST
                     cache-response: protocol
                     cache-ttl: 900
                     stop-on-error: []
                     version: 1.0.0
-                    target-url: >-
-                      $(api.properties.endpoint-url)Main/BalanceRequest?transNumber=$(saved.transNumber)
+                    target-url: $(api.properties.endpoint-url)Legacy/$(api.operation.id)
                     output: echo_invoke
                     username: '$(saved.id):$(saved.passPhrase)'
                     password: '$(saved.userName):$(saved.password)'
@@ -245,6 +205,14 @@ x-ibm-configuration:
 
                             apim.setvariable('message.status.code', '200');
                     version: 1.0.0
+          otherwise: []
+          version: 1.0.0
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - BalanceRequest
+              execute:
                 - map:
                     title: map
                     inputs:
@@ -261,188 +229,78 @@ x-ibm-configuration:
                         content: application/xml
                     actions:
                       - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.reasonCode
-                        from: input.commonData.reasonCode
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.reasonDesc
-                        from: input.commonData.reasonDesc
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.responseCode
-                        from: input.commonData.responseCode
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.responseDesc
-                        from: input.commonData.responseDesc
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.successCode
-                        from: input.commonData.successCode
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.successDesc
-                        from: input.commonData.successDesc
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.timeStamp
-                        from: input.commonData.timeStamp
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.seClaimID
-                        from: input.commonData.seClaimID
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.token
-                        from: input.commonData.token
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.tpaClaimID
-                        from: input.commonData.tpaClaimID
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.transNumber
-                        from: input.commonData.transNumber
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.user
-                        from: input.commonData.user
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.programID
-                        from: input.commonData.programID
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.commonData.passWord
-                        from: input.commonData.passWord
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.switchTransaction
-                        from: input.switchTransaction
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.payment
-                        from: input.payment
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.merchant
-                        from: input.merchant
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.coveredItem
-                        from: input.coveredItem
-                      - set: >-
-                          output.Envelope.Body.BalanceRequestResponse.standardResponse.correspondenceData
-                        from: input.correspondenceData
+                          output.Envelope.Body.BalanceRequestResponse.standardResponse
+                        from: input
                     version: 1.0.0
             - operations:
-                - LoadPan
-                - getVer
-                - GetTransactionDetails
-              execute:
-                - proxy:
-                    title: proxy
-                    target-url: 'http://10.200.93.102:8080/VPayWS/VPayWSService'
-            - operations:
-                - ChangeFaxNumber
+                - GetPanNumber
               execute:
                 - map:
                     title: map
                     inputs:
                       input:
                         schema:
-                          $ref: '#/definitions/ChangeFaxNumberInput'
-                        variable: request.body
-                        content: application/xml
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
                     outputs:
                       output:
                         schema:
-                          description: ''
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              name: id
-                            passPhrase:
-                              type: string
-                              name: passPhrase
-                            userName:
-                              type: string
-                              name: userName
-                            password:
-                              type: string
-                              name: password
-                            transNumber:
-                              type: string
-                              name: transNumber
-                          example: |-
-                            {
-                                "id": "string",
-                                "passPhrase": "string",
-                                "userName": "userName",
-                                "password": "password"
-                            }
-                        variable: saved
-                        content: application/json
+                          $ref: '#/definitions/GetPanNumberOutput'
+                        variable: message.body
+                        content: application/xml
                     actions:
-                      - set: output.id
-                        from: input.Envelope.Body.ChangeFaxNumber.av.id
-                      - set: output.passPhrase
-                        from: input.Envelope.Body.ChangeFaxNumber.av.passphrase
-                      - set: output.password
-                        from: >-
-                          input.Envelope.Body.ChangeFaxNumber.sr.commonData.passWord
-                      - set: output.userName
-                        from: input.Envelope.Body.ChangeFaxNumber.sr.commonData.user
-                      - set: output.transNumber
-                        from: >-
-                          input.Envelope.Body.ChangeFaxNumber.sr.commonData.transNumber
+                      - set: >-
+                          output.Envelope.Body.GetPanNumberResponse.standardResponse
+                        from: input
                     version: 1.0.0
+            - operations:
+                - OpenPreAuth
+              execute:
                 - map:
                     title: map
                     inputs:
-                      body:
+                      input:
                         schema:
-                          $ref: '#/definitions/ChangeFaxNumberInput'
-                        variable: request.body
-                        content: application/xml
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
                     outputs:
                       output:
                         schema:
-                          type: object
-                          properties:
-                            faxNumber:
-                              type: string
-                              name: faxNumber
-                            faxCode:
-                              type: string
-                              name: faxCode
+                          $ref: '#/definitions/OpenPreAuthOutput'
                         variable: message.body
-                        content: application/json
+                        content: application/xml
                     actions:
-                      - set: output.faxCode
-                        from: >-
-                          body.Envelope.Body.ChangeFaxNumber.sr.correspondenceData.faxCode
-                      - set: output.faxNumber
-                        from: >-
-                          body.Envelope.Body.ChangeFaxNumber.sr.correspondenceData.phoneNumber
+                      - set: >-
+                          output.Envelope.Body.OpenPreAuthResponse.standardResponse
+                        from: input
                     version: 1.0.0
-                - gatewayscript:
-                    title: gatewayscript
+            - operations:
+                - UnloadPan
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/UnloadPanOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.UnloadPanResponse.standardResponse
+                        from: input
                     version: 1.0.0
-                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
-                - invoke:
-                    title: invoke
-                    timeout: 297
-                    verb: POST
-                    cache-response: protocol
-                    cache-ttl: 900
-                    stop-on-error: []
-                    version: 1.0.0
-                    target-url: $(api.properties.endpoint-url)Main/ChangeFaxNumber
-                    output: echo_invoke
-                    username: '$(saved.id):$(saved.passPhrase)'
-                    password: '$(saved.userName):$(saved.password)'
-                - if:
-                    title: if
-                    condition: >-
-                      apim.getvariable('message.status.code') == 401 ||
-                      apim.getvariable('message.status.code') == 403
-                    execute:
-                      - gatewayscript:
-                          title: gatewayscript
-                          version: 1.0.0
-                          source: >
-                            var body = {"commonData": {"successCode": "0002",
-                            "successDesc":"Not Authorized"}};
-
-                            apim.setvariable('echo_invoke.body', body);
-
-                            apim.setvariable('message.status.code', '200');
-                    version: 1.0.0
+            - operations:
+                - ChangeFaxNumber
+              execute:
                 - map:
                     title: map
                     inputs:
@@ -470,113 +328,6 @@ x-ibm-configuration:
                     inputs:
                       input:
                         schema:
-                          $ref: '#/definitions/CancelFaxInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          description: ''
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              name: id
-                            passPhrase:
-                              type: string
-                              name: passPhrase
-                            userName:
-                              type: string
-                              name: userName
-                            password:
-                              type: string
-                              name: password
-                            transNumber:
-                              type: string
-                              name: transNumber
-                          example: |-
-                            {
-                                "id": "string",
-                                "passPhrase": "string",
-                                "userName": "userName",
-                                "password": "password"
-                            }
-                        variable: saved
-                        content: application/json
-                    actions:
-                      - set: output.id
-                        from: input.Envelope.Body.CancelFax.av.id
-                      - set: output.passPhrase
-                        from: input.Envelope.Body.CancelFax.av.passphrase
-                      - set: output.password
-                        from: input.Envelope.Body.CancelFax.sr.commonData.passWord
-                      - set: output.userName
-                        from: input.Envelope.Body.CancelFax.sr.commonData.user
-                      - set: output.transNumber
-                        from: >-
-                          input.Envelope.Body.CancelFax.sr.commonData.transNumber
-                    version: 1.0.0
-                - map:
-                    title: map
-                    inputs:
-                      body:
-                        schema:
-                          $ref: '#/definitions/CancelFaxInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          type: object
-                          properties:
-                            faxCode:
-                              type: string
-                              name: faxCode
-                        variable: message.body
-                        content: application/json
-                    actions:
-                      - set: output.faxCode
-                        from: >-
-                          body.Envelope.Body.CancelFax.sr.correspondenceData.faxCode
-                    version: 1.0.0
-                - gatewayscript:
-                    title: gatewayscript
-                    version: 1.0.0
-                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
-                - invoke:
-                    title: invoke
-                    timeout: 297
-                    verb: POST
-                    cache-response: protocol
-                    cache-ttl: 900
-                    stop-on-error: []
-                    version: 1.0.0
-                    target-url: $(api.properties.endpoint-url)Main/CancelFax
-                    output: echo_invoke
-                    username: '$(saved.id):$(saved.passPhrase)'
-                    password: '$(saved.userName):$(saved.password)'
-                - if:
-                    title: if
-                    condition: >-
-                      apim.getvariable('message.status.code') == 401 ||
-                      apim.getvariable('message.status.code') == 403
-                    execute:
-                      - gatewayscript:
-                          title: gatewayscript
-                          version: 1.0.0
-                          source: >
-                            var body = {"commonData": {"successCode": "0002",
-                            "successDesc":"Not Authorized"}};
-
-                            apim.setvariable('echo_invoke.body', body);
-
-                            apim.setvariable('message.status.code', '200');
-                    version: 1.0.0
-                - map:
-                    title: map
-                    inputs:
-                      input:
-                        schema:
                           $ref: '#/definitions/standardResponse_tns'
                         variable: echo_invoke.body
                         content: application/json
@@ -599,112 +350,6 @@ x-ibm-configuration:
                     inputs:
                       input:
                         schema:
-                          $ref: '#/definitions/HoldFaxInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          description: ''
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              name: id
-                            passPhrase:
-                              type: string
-                              name: passPhrase
-                            userName:
-                              type: string
-                              name: userName
-                            password:
-                              type: string
-                              name: password
-                            transNumber:
-                              type: string
-                              name: transNumber
-                          example: |-
-                            {
-                                "id": "string",
-                                "passPhrase": "string",
-                                "userName": "userName",
-                                "password": "password"
-                            }
-                        variable: saved
-                        content: application/json
-                    actions:
-                      - set: output.id
-                        from: input.Envelope.Body.HoldFax.av.id
-                      - set: output.passPhrase
-                        from: input.Envelope.Body.HoldFax.av.passphrase
-                      - set: output.password
-                        from: input.Envelope.Body.HoldFax.sr.commonData.passWord
-                      - set: output.userName
-                        from: input.Envelope.Body.HoldFax.sr.commonData.user
-                      - set: output.transNumber
-                        from: input.Envelope.Body.HoldFax.sr.commonData.transNumber
-                    version: 1.0.0
-                - map:
-                    title: map
-                    inputs:
-                      body:
-                        schema:
-                          $ref: '#/definitions/HoldFaxInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          type: object
-                          properties:
-                            faxCode:
-                              type: string
-                              name: faxCode
-                        variable: message.body
-                        content: application/json
-                    actions:
-                      - set: output.faxCode
-                        from: >-
-                          body.Envelope.Body.HoldFax.sr.correspondenceData.faxCode
-                    version: 1.0.0
-                - gatewayscript:
-                    title: gatewayscript
-                    version: 1.0.0
-                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
-                - invoke:
-                    title: invoke
-                    timeout: 297
-                    verb: POST
-                    cache-response: protocol
-                    cache-ttl: 900
-                    stop-on-error: []
-                    version: 1.0.0
-                    target-url: $(api.properties.endpoint-url)Main/HoldFax
-                    output: echo_invoke
-                    username: '$(saved.id):$(saved.passPhrase)'
-                    password: '$(saved.userName):$(saved.password)'
-                - if:
-                    title: if
-                    condition: >-
-                      apim.getvariable('message.status.code') == 401 ||
-                      apim.getvariable('message.status.code') == 403
-                    execute:
-                      - gatewayscript:
-                          title: gatewayscript
-                          version: 1.0.0
-                          source: >
-                            var body = {"commonData": {"successCode": "0002",
-                            "successDesc":"Not Authorized"}};
-
-                            apim.setvariable('echo_invoke.body', body);
-
-                            apim.setvariable('message.status.code', '200');
-                    version: 1.0.0
-                - map:
-                    title: map
-                    inputs:
-                      input:
-                        schema:
                           $ref: '#/definitions/standardResponse_tns'
                         variable: echo_invoke.body
                         content: application/json
@@ -721,113 +366,6 @@ x-ibm-configuration:
             - operations:
                 - ReleaseFax
               execute:
-                - map:
-                    title: map
-                    inputs:
-                      input:
-                        schema:
-                          $ref: '#/definitions/ReleaseFaxInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          description: ''
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              name: id
-                            passPhrase:
-                              type: string
-                              name: passPhrase
-                            userName:
-                              type: string
-                              name: userName
-                            password:
-                              type: string
-                              name: password
-                            transNumber:
-                              type: string
-                              name: transNumber
-                          example: |-
-                            {
-                                "id": "string",
-                                "passPhrase": "string",
-                                "userName": "userName",
-                                "password": "password"
-                            }
-                        variable: saved
-                        content: application/json
-                    actions:
-                      - set: output.id
-                        from: input.Envelope.Body.ReleaseFax.av.id
-                      - set: output.passPhrase
-                        from: input.Envelope.Body.ReleaseFax.av.passphrase
-                      - set: output.password
-                        from: input.Envelope.Body.ReleaseFax.sr.commonData.passWord
-                      - set: output.userName
-                        from: input.Envelope.Body.ReleaseFax.sr.commonData.user
-                      - set: output.transNumber
-                        from: >-
-                          input.Envelope.Body.ReleaseFax.sr.commonData.transNumber
-                    version: 1.0.0
-                - map:
-                    title: map
-                    inputs:
-                      body:
-                        schema:
-                          $ref: '#/definitions/ReleaseFaxInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          type: object
-                          properties:
-                            faxCode:
-                              type: string
-                              name: faxCode
-                        variable: message.body
-                        content: application/json
-                    actions:
-                      - set: output.faxCode
-                        from: >-
-                          body.Envelope.Body.ReleaseFax.sr.correspondenceData.faxCode
-                    version: 1.0.0
-                - gatewayscript:
-                    title: gatewayscript
-                    version: 1.0.0
-                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
-                - invoke:
-                    title: invoke
-                    timeout: 297
-                    verb: POST
-                    cache-response: protocol
-                    cache-ttl: 900
-                    stop-on-error: []
-                    version: 1.0.0
-                    target-url: $(api.properties.endpoint-url)Main/ReleaseFax
-                    output: echo_invoke
-                    username: '$(saved.id):$(saved.passPhrase)'
-                    password: '$(saved.userName):$(saved.password)'
-                - if:
-                    title: if
-                    condition: >-
-                      apim.getvariable('message.status.code') == 401 ||
-                      apim.getvariable('message.status.code') == 403
-                    execute:
-                      - gatewayscript:
-                          title: gatewayscript
-                          version: 1.0.0
-                          source: >
-                            var body = {"commonData": {"successCode": "0002",
-                            "successDesc":"Not Authorized"}};
-
-                            apim.setvariable('echo_invoke.body', body);
-
-                            apim.setvariable('message.status.code', '200');
-                    version: 1.0.0
                 - map:
                     title: map
                     inputs:
@@ -855,119 +393,6 @@ x-ibm-configuration:
                     inputs:
                       input:
                         schema:
-                          $ref: '#/definitions/ResendFaxInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          description: ''
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              name: id
-                            passPhrase:
-                              type: string
-                              name: passPhrase
-                            userName:
-                              type: string
-                              name: userName
-                            password:
-                              type: string
-                              name: password
-                            transNumber:
-                              type: string
-                              name: transNumber
-                          example: |-
-                            {
-                                "id": "string",
-                                "passPhrase": "string",
-                                "userName": "userName",
-                                "password": "password"
-                            }
-                        variable: saved
-                        content: application/json
-                    actions:
-                      - set: output.id
-                        from: input.Envelope.Body.ResendFax.av.id
-                      - set: output.passPhrase
-                        from: input.Envelope.Body.ResendFax.av.passphrase
-                      - set: output.password
-                        from: input.Envelope.Body.ResendFax.sr.commonData.passWord
-                      - set: output.userName
-                        from: input.Envelope.Body.ResendFax.sr.commonData.user
-                      - set: output.transNumber
-                        from: >-
-                          input.Envelope.Body.ResendFax.sr.commonData.transNumber
-                    version: 1.0.0
-                - map:
-                    title: map
-                    inputs:
-                      body:
-                        schema:
-                          $ref: '#/definitions/ResendFaxInput'
-                        variable: request.body
-                        content: application/xml
-                    outputs:
-                      output:
-                        schema:
-                          type: object
-                          properties:
-                            faxNumber:
-                              type: string
-                              name: faxNumber
-                            faxCode:
-                              type: string
-                              name: faxCode
-                        variable: message.body
-                        content: application/json
-                    actions:
-                      - set: output.faxCode
-                        from: >-
-                          body.Envelope.Body.ResendFax.sr.correspondenceData.faxCode
-                      - set: output.faxNumber
-                        from: >-
-                          body.Envelope.Body.ResendFax.sr.correspondenceData.phoneNumber
-                    version: 1.0.0
-                - gatewayscript:
-                    title: gatewayscript
-                    version: 1.0.0
-                    source: "apim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
-                - invoke:
-                    title: invoke
-                    timeout: 297
-                    verb: POST
-                    cache-response: protocol
-                    cache-ttl: 900
-                    stop-on-error: []
-                    version: 1.0.0
-                    target-url: $(api.properties.endpoint-url)Main/ResendFax
-                    output: echo_invoke
-                    username: '$(saved.id):$(saved.passPhrase)'
-                    password: '$(saved.userName):$(saved.password)'
-                - if:
-                    title: if
-                    condition: >-
-                      apim.getvariable('message.status.code') == 401 ||
-                      apim.getvariable('message.status.code') == 403
-                    execute:
-                      - gatewayscript:
-                          title: gatewayscript
-                          version: 1.0.0
-                          source: >
-                            var body = {"commonData": {"successCode": "0002",
-                            "successDesc":"Not Authorized"}};
-
-                            apim.setvariable('echo_invoke.body', body);
-
-                            apim.setvariable('message.status.code', '200');
-                    version: 1.0.0
-                - map:
-                    title: map
-                    inputs:
-                      input:
-                        schema:
                           $ref: '#/definitions/standardResponse_tns'
                         variable: echo_invoke.body
                         content: application/json
@@ -980,6 +405,92 @@ x-ibm-configuration:
                     actions:
                       - set: >-
                           output.Envelope.Body.ResendFaxResponse.standardResponse
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - LoadPan
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/LoadPanOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: output.Envelope.Body.LoadPanResponse.standardResponse
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - GetTransactionDetails
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/transactionDetailResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/GetTransactionDetailsOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.GetTransactionDetailsResponse.transactionDetailResponse
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - GetReasonCodes
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/reasonCodeResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/GetReasonCodesOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.GetReasonCodesResponse.reasonCodeResponse
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - StopPay
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/standardResponse_tns'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/StopPayOutput'
+                        variable: message.body
+                        content: application/xml
+                    actions:
+                      - set: output.Envelope.Body.StopPayResponse.standardResponse
                         from: input
                     version: 1.0.0
           otherwise: []

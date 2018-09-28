@@ -15,21 +15,21 @@ namespace VPay.Payment.Common
             //StatDate = " ";
             SentBehalfName = " ";
             FromName = " ";
-            FromAddr1 = " ";
-            FromAddr2 = " ";
+            FromAddress1 = " ";
+            FromAddress2 = " ";
             FromCity = " ";
             FromState = " ";
-            FromZip = " ";
+            FromPostalCode = " ";
             FromFax = " ";
             ToName = " ";
-            ToAddr1 = " ";
-            ToAddr2 = " ";
+            ToAddress1 = " ";
+            ToAddress2 = " ";
             ToCity = " ";
             ToState = " ";
-            ToZip = " ";
+            ToPostalCode = " ";
             ToFax = " ";
             ToPhone = " ";
-            StatText = " ";
+            StatusText = " ";
             //FaxJobList = " ";
             DmRecId = 0;
             LastStatRank = 10;
@@ -49,25 +49,25 @@ namespace VPay.Payment.Common
             Direction = directionIn;
             Type = typeIn;
             Status = statusIn;
-            RqstDate = rqstDateIn;
-            StatDate = statDateIn;
+            RequestDate = rqstDateIn;
+            StatusDate = statDateIn;
             SentBehalfName = sentBehalfNameIn;
             FromName = fromNameIn;
-            FromAddr1 = fromAddr1In;
-            FromAddr2 = fromAddr2In;
+            FromAddress1 = fromAddr1In;
+            FromAddress2 = fromAddr2In;
             FromCity = fromCityIn;
             FromState = fromStateIn;
-            FromZip = fromZipIn;
+            FromPostalCode = fromZipIn;
             FromFax = fromFaxIn;
             ToName = toNameIn;
-            ToAddr1 = toAddr1In;
-            ToAddr2 = toAddr2In;
+            ToAddress1 = toAddr1In;
+            ToAddress2 = toAddr2In;
             ToCity = toCityIn;
             ToState = toStateIn;
-            ToZip = toZipIn;
+            ToPostalCode = toZipIn;
             ToFax = toFaxIn;
             ToPhone = toPhoneIn;
-            StatText = statTextIn;
+            StatusText = statTextIn;
             FaxJobList = faxJobListIn;
             DmRecId = dmRecIdIn;
             LastStatRank = 10;
@@ -77,36 +77,30 @@ namespace VPay.Payment.Common
         public string Direction { get; set; }
         public string Type { get; set; }
         public string Status { get; set; }
-        public int RqstDate { get; set; }
-        public int StatDate { get; set; }
+        public int RequestDate { get; set; }
+        public int StatusDate { get; set; }
         public string SentBehalfName { get; set; }
         public string FromName { get; set; }
-        public string FromAddr1 { get; set; }
-        public string FromAddr2 { get; set; }
+        public string FromAddress1 { get; set; }
+        public string FromAddress2 { get; set; }
         public string FromCity { get; set; }
         public string FromState { get; set; }
-        public string FromZip { get; set; }
+        public string FromPostalCode { get; set; }
         public string FromFax { get; set; }
         public string ToName { get; set; }
-        public string ToAddr1 { get; set; }
-        public string ToAddr2 { get; set; }
+        public string ToAddress1 { get; set; }
+        public string ToAddress2 { get; set; }
         public string ToCity { get; set; }
         public string ToState { get; set; }
-        public string ToZip { get; set; }
+        public string ToPostalCode { get; set; }
         public string ToFax { get; set; }
         public string ToPhone { get; set; }
-        public string StatText { get; set; }
+        public string StatusText { get; set; }
         public List<FaxJob> FaxJobList { get; set; }
-        public IEnumerator<FaxJob> FaxJobPtr { get; set; }
-        //public SignatureBatch SignatureBatch { get; set; }
 
         public int DmRecId { get; set; }
         public int LastStatRank { get; set; }
         public string LastStatText { get; set; }
 
-        public void ParseResult()
-        {
-            // TODO:  Convert SQL-related object to properties
-        }
     }
 }
