@@ -36,7 +36,6 @@ namespace VPay.Payment.Common
             RequesterName = requesterName;
             BatchNumber = batchNumber;
             StatusDesc = statusDesc;
-            //SignatureBatch = signatureBatch;
         }
 
         public int TranId { get; set; }
@@ -56,7 +55,6 @@ namespace VPay.Payment.Common
         public string RequesterName { get; set; }
         public string BatchNumber { get; set; }
         public string StatusDesc { get; set; }
-        //public SignatureBatch SignatureBatch { get; set; }
 
     }
 }

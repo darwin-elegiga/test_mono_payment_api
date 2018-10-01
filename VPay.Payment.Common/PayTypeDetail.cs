@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace VPay.Payment.Common
+﻿namespace VPay.Payment.Common
 {
     public class PayTypeDetail
     {
@@ -43,7 +39,7 @@ namespace VPay.Payment.Common
         public string ClearCheck { get; set; }
         public string PosPayCheck { get; set; }
         public string SwitchNumber { get; set; }
-        public string PanNumber { get; set; }
+
 
     }
 }

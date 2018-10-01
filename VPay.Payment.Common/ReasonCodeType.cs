@@ -4,10 +4,9 @@ using System.Text;
 
 namespace VPay.Payment.Common
 {
-    [Serializable]
-    public class ReasonCode
+    public class ReasonCodeType
     {
-        public string ReasonCodeString { get; set; }
+        public string ReasonCode { get; set; }
         public string ReasonDesc { get; set; }
         public string ReasonAdsc { get; set; }
         /* M001

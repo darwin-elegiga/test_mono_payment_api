@@ -10,7 +10,7 @@ namespace VPay.Payment.Common
         {
             User = "";
             PassWord = "";
-            Txid = "";
+            TransNumber = "";
             Source = ' '; // Source of request P-webPage, S-webSvc, ' '-Other
         }
 
@@ -19,13 +19,14 @@ namespace VPay.Payment.Common
         {
             User = user;
             PassWord = passWord;
-            Txid = txid;
+            TransNumber = txid;
             Source = source;
         }
 
         public string User { get; set; }
         public string PassWord { get; set; }
-        public string Txid { get; set; }
+        public string TransNumber { get; set; }
+
         public char Source { get; set; }
 
         public override string ToString()
