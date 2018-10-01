@@ -56,7 +56,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("GetReasonCodes")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
         [ProducesResponseType(typeof(ReasonCodeResponse), 200)]
-        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest reasonCodeRequest)
+        public async Task<ReasonCodeResponse> GetReasonCodes(LegacyRequest request)
         {
             return new ReasonCodeResponse();
         }
@@ -64,7 +64,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("GetTransactionDetails")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
         [ProducesResponseType(typeof(TransactionDetailResponse), 200)]
-        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest transactionDetailRequest)
+        public async Task<TransactionDetailResponse> GetTransactionDetails(LegacyRequest request)
         {
             return new TransactionDetailResponse();
         }
