@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Api.Dtos;
@@ -12,9 +11,13 @@ using VPay.Payment.Common;
 namespace VPay.Payment.Api.Controllers
 {
     [Route("api/[controller]")]
+    [Produces("application/json")]
     [ApiController]
     public class LegacyController : ControllerBase
     {
+        // Add version tag
+        private readonly string _version;
+
         private readonly IHttpContextAccessor _accessor;
         private readonly ITransactionService _transactionService;
 
@@ -24,36 +27,29 @@ namespace VPay.Payment.Api.Controllers
             _transactionService = transactionService;
 
             // TODO:  Initialize private variables
-            version = "2018-08-10";
+            _version = "2018-08-10";
         }
 
         [HttpGet("version")]
         [AllowAnonymous]
         public string GetVer()
         {
-            return version;
+            return _version;
         }
 
-        // private WebServiceContext wsContext;
-        // Common Utilities
-        // private VPayWSBase vbase;
-        // Validation object
-        // private ValidateParm vparm;
-        // Logging Object
-        private ILogger li;
-
-        // Add version tag
-        private string version;
-
         [HttpPost("echo")]
-        [ProducesResponseType(typeof(CommonData), 200)]
-        public Task<CommonData> PostEcho(EchoRequest entity)
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(StandardResponse), 200)]
+        public Task<StandardResponse> PostEcho(EchoRequest entity)
         {
-            return Task.FromResult(new CommonData()
+            return Task.FromResult(new StandardResponse()
             {
-                ResponseDesc = entity.Es,
-                SuccessCode = "0",
-                ReasonCode = "0"
+                CommonData = new CommonData()
+                {
+                    ResponseDesc = entity.Es,
+                    SuccessCode = "0",
+                    ReasonCode = "0"
+                }
             });
         }
 
@@ -76,7 +72,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("GetPanNumber")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> GetPanNumber(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> GetPanNumber(LegacyRequest request)
         {
             var sr = DefaultStandardRequest(request.Envelope.Body.GetPanNumber?.Request);
 
@@ -88,7 +84,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("OpenPreAuth")]
         [ServicePermissionAuthorize(ServicePermission.OpenPreAuth)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> OpenPreAuth(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> OpenPreAuth(LegacyRequest request)
         {
             var sr = DefaultStandardRequest(request.Envelope.Body.OpenPreAuth?.Request);
 
@@ -100,7 +96,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("LoadPan")]
         [ServicePermissionAuthorize(ServicePermission.LoadPan)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> LoadPan(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> LoadPan(LegacyRequest request)
         {
             var sr = DefaultStandardRequest(request.Envelope.Body.LoadPan?.Request);
 
@@ -112,7 +108,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("BalanceRequest")]
         [ServicePermissionAuthorize(ServicePermission.BalanceRequest)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> BalanceRequest(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> BalanceRequest(LegacyRequest request)
         {
             var sr = DefaultStandardRequest(request.Envelope.Body.BalanceRequest?.Request);
 
@@ -124,7 +120,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("UnloadPan")]
         [ServicePermissionAuthorize(ServicePermission.Unload)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> UnloadPan(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> UnloadPan(LegacyRequest request)
         {
             var sr = DefaultStandardRequest(request.Envelope.Body.UnloadPan?.Request);
 
@@ -136,7 +132,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("StopPay")]
         [ServicePermissionAuthorize(ServicePermission.StopPay)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> StopPay(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> StopPay(LegacyRequest request)
         {
             var sr = DefaultStandardRequest(request.Envelope.Body.StopPay?.Request);
 
@@ -148,7 +144,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("CancelFax")]
         [ServicePermissionAuthorize(ServicePermission.CancelFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> CancelFax(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> CancelFax(LegacyRequest request)
         {
             var tempRequest = request.Envelope.Body.CancelFax;
             var entity = new FaxRequest() {};
@@ -166,7 +162,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("ChangeFaxNumber")]
         [ServicePermissionAuthorize(ServicePermission.ChangeFaxNumber)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> ChangeFaxNumber(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> ChangeFaxNumber(LegacyRequest request)
         {
             var tempRequest = request.Envelope.Body.ChangeFaxNumber;
             var entity = new ChangeFaxNumberRequest()
@@ -186,7 +182,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("HoldFax")]
         [ServicePermissionAuthorize(ServicePermission.HoldFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> HoldFax(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> HoldFax(LegacyRequest request)
         {
             var tempRequest = request.Envelope.Body.HoldFax;
             var entity = new FaxRequest() { };
@@ -203,7 +199,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("ReleaseFax")]
         [ServicePermissionAuthorize(ServicePermission.ReleaseFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> ReleaseFax(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> ReleaseFax(LegacyRequest request)
         {
             var tempRequest = request.Envelope.Body.ReleaseFax;
             var entity = new FaxRequest() { };
@@ -220,7 +216,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpPost("ResendFax")]
         [ServicePermissionAuthorize(ServicePermission.ResendFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> ResendFax(LegacyEnvelopeDto request)
+        public async Task<StandardResponse> ResendFax(LegacyRequest request)
         {
             var tempRequest = request.Envelope.Body.ResendFax;
             var entity = new ChangeFaxNumberRequest()
