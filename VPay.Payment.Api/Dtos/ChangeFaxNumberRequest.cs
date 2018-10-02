@@ -1,6 +1,7 @@
 ﻿
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using VPay.Payment.Common;
 
 namespace VPay.Payment.Api.Dtos
 {

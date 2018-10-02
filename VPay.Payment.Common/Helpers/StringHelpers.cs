@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace VPay.Payment.Api
+namespace VPay.Payment.Common
 {
     public static class StringHelpers
     {
