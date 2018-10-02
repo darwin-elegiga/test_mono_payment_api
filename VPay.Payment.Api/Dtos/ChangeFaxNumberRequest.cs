@@ -9,17 +9,6 @@ namespace VPay.Payment.Api.Dtos
         public string FaxNumber { get; set; }
 
         [JsonIgnore]
-        public string CleanFaxNumber
-        {
-            get
-            {
-                if (FaxNumber == null)
-                {
-                    return null;
-                }
-
-                return Regex.Replace(FaxNumber, "^[1]|[.|(|)| |_|-]", "");
-            }
-        }
+        public string CleanFaxNumber => FaxNumber.CleanFaxNumber();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using FluentValidation;
 using VPay.Data.Db2.Abstractions.Attributes;
 using VPay.Data.Db2.Abstractions.Helpers;
@@ -45,6 +46,27 @@ namespace VPay.Payment.Api.Validators
                 .MaximumLength(propertyLengths[nameof(CorrespondenceData.Type)])
                 .WithErrorCode("0990");
 
+            RuleSet("ChangeFaxNumber", () =>
+            {
+                RuleFor(x => x.FaxCode)
+                    .NotNull().WithErrorCode("0055").WithMessage("Invalid value for FaxCode");
+
+                RuleFor(x => x.PhoneNumber)
+                    .NotEmpty().WithErrorCode("0005").WithMessage("No Fax Number Provided")
+                    .Must((x) => Regex.IsMatch(x.CleanFaxNumber(), "[0-9]{10,}")).WithErrorCode("0005")
+                    .WithMessage((f, s) => "New Fax Number Invalid: " + f.PhoneNumber);
+            });
+
+            RuleSet("ResendFax", () =>
+            {
+
+                RuleFor(x => x.FaxCode)
+                    .NotNull().WithErrorCode("0055").WithMessage("Invalid value for FaxCode");
+
+                RuleFor(x => x.PhoneNumber)
+                    .Must((x) => Regex.IsMatch(x.CleanFaxNumber(), "[0-9]{10,}")).WithErrorCode("0005")
+                    .WithMessage((f, s) => "New Fax Number Invalid: " + f.PhoneNumber);
+            });
         }
     }
 }

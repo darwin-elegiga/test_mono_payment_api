@@ -38,7 +38,6 @@ namespace VPay.Payment.Api
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
-                options.SuppressModelStateInvalidFilter = true;
                 options.InvalidModelStateResponseFactory = actionContext =>
                 {
                     return new ValidationFailedResult(actionContext.ModelState);

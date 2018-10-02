@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
@@ -76,6 +77,14 @@ namespace VPay.Payment
         {
             SetupDefaultValuesForLoadPan(standardRequest);
 
+            var checkDeclineMessages = CheckLoadPanForDeclineErrorMessages(standardRequest);
+
+            // Setting these response codes and description. If these are set to non-success code of 0000
+            // then the LoadPan db2 call will record an declined message with these responses
+            // WE MUST STILL CALL THE STORED PROC, even if there is an error in these responses.
+            standardRequest.CommonData.ResponseCode = checkDeclineMessages.code;
+            standardRequest.CommonData.ResponseDesc = checkDeclineMessages.message;
+
             var request = new TransactionWsRequest()
             {
                 UserId = "WSQATEST",
@@ -85,6 +94,13 @@ namespace VPay.Payment
             };
 
             var result = await _db2Context.TransactionWs.LoadPan(request);
+
+            // Set the Success Code and Description to the Declined Message if the Declined Message is an error code
+            if (checkDeclineMessages.code != "0000")
+            {
+                result.CommonData.SuccessCode = checkDeclineMessages.code;
+                result.CommonData.SuccessDesc = checkDeclineMessages.message;
+            }
 
             return result;
         }
@@ -314,7 +330,13 @@ namespace VPay.Payment
 
         }
 
-        private (string code, string message) ValidateLoadPan(StandardRequest request)
+        /// <summary>
+        /// This will Validate the data in the objects for the load pan and create response error codes.
+        /// The order of this is setup based on the java code. 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private (string code, string message) CheckLoadPanForDeclineErrorMessages(StandardRequest request)
         {
             var notEqualMsg = "Invalid Numeric Format:";
             var invalidDateMsg = "Date format not ISO ";
@@ -345,11 +367,115 @@ namespace VPay.Payment
                 result = (code: "0930", message: $"{notEqualMsg} amount {request.Claim.Amount}");
             }
 
-            if (!int.TryParse(request.CoveredItem.ItemYear, out var year))
+            if (!int.TryParse(request.CoveredItem.ItemYear, out _))
             {
                 result = (code: "0931", message: $"{notEqualMsg} year {request.CoveredItem.ItemYear}");
             }
 
+            if (!decimal.TryParse(request.CoveredItem.Deductible, NumberStyles.Float, CultureInfo.CurrentCulture, out _))
+            {
+                result = (code: "0932", message: $"{notEqualMsg} item deductible {request.CoveredItem.Deductible}");
+            }
+
+            if (!int.TryParse(request.Claim.ClaimOdometer, out _))
+            {
+                result = (code: "0933", message: $"{notEqualMsg} claimOdometer {request.Claim.ClaimOdometer}");
+            }
+
+            if (!int.TryParse(request.CoveredItem.BeginOdometer, out _))
+            {
+                result = (code: "0934", message: $"{notEqualMsg} beginOdometer {request.CoveredItem.BeginOdometer}");
+            }
+
+            if (!decimal.TryParse(request.Claim.ClaimDeductible, NumberStyles.Float, CultureInfo.CurrentCulture, out _))
+            {
+                result = (code: "0936", message: $"{notEqualMsg} claimDeductible {request.Claim.ClaimDeductible}");
+            }
+
+            if (!int.TryParse(request.Claim.ClaimDate, out _))
+            {
+                result = (code: "0935", message: $"{notEqualMsg} claimDate {request.Claim.ClaimDate}");
+            }
+            
+            if (!int.TryParse(request.CoveredItem.BeginDate, out _))
+            {
+                result = (code: "0948", message: $"{notEqualMsg} beginDate {request.CoveredItem.BeginDate}");
+            }
+
+            if (!int.TryParse(request.CoveredItem.ExpireDate, out _))
+            {
+                result = (code: "0949", message: $"{notEqualMsg} expireDate {request.CoveredItem.ExpireDate}");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Payment.Client))
+            {
+                result = (code: "0912", message: $"Client Code cannot be Blank");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Claim.UserKey))
+            {
+                result = (code: "0903", message: $"User Key cannot be Blank");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Merchant.Fax))
+            {
+                result = (code: "0959", message: $"merchant fax cannot be Blank");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Merchant.PayeeName))
+            {
+                result = (code: "0904", message: $"Payee Name cannot be Blank");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Payment.BillCode))
+            {
+                result = (code: "0906", message: $"Bill Code cannot be blank");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Payment.Type))
+            {
+                result = (code: "0905", message: $"Bill Type cannot be blank");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Merchant.PayeeCode))
+            {
+                result = (code: "0909", message: $"Payee Code cannot be Blank");
+            }
+
+            if (request.Payment.Type == "CLCHK")
+            {
+                if (string.IsNullOrEmpty(request.CheckData.CheckDate))
+                {
+                    result = (code: "0952", message: $"Check Date cannot be Blank");
+                }
+                if (string.IsNullOrEmpty(request.CheckData.Address1))
+                {
+                    result = (code: "0953", message: $"Check Address1 cannot be Blank");
+                }
+                if (string.IsNullOrEmpty(request.CheckData.City))
+                {
+                    result = (code: "0954", message: $"Check City cannot be Blank");
+                }
+                if (string.IsNullOrEmpty(request.CheckData.StateOrProvince))
+                {
+                    result = (code: "0955", message: $"Check State cannot be Blank");
+                }
+                if (string.IsNullOrEmpty(request.CheckData.Zip))
+                {
+                    result = (code: "0956", message: $"Check Zip cannot be Blank");
+                }
+            }
+            else if (request.Payment.Type == "CLEFT")
+            {
+                if (string.IsNullOrEmpty(request.Payment.RoutingNumber))
+                {
+                    result = (code: "0957", message: $"RoutingNumber cannot be Blank");
+                }
+                if (string.IsNullOrEmpty(request.Payment.AccountNumber))
+                {
+                    result = (code: "0958", message: $"AccountNumber cannot be Blank");
+                }
+            }
 
             return result;
 

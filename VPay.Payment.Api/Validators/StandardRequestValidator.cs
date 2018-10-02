@@ -12,10 +12,10 @@ namespace VPay.Payment.Api.Validators
             RuleFor(x => x.CheckData).SetValidator(new CheckDataValidator());
             RuleFor(x => x.Claim).SetValidator(new ClaimDataValidator());
             RuleFor(x => x.CorrespondenceData).SetValidator(new CorrespondenceDataValidator());
-            RuleFor(x => x.CoveredItem).SetValidator(new CoveredItemValidator());
+            RuleFor(x => x.CoveredItem).SetValidator(new CoveredItemDataValidator());
             RuleFor(x => x.Merchant).SetValidator(new MerchantDataValidator());
             RuleFor(x => x.Payment).SetValidator(new PaymentDataValidator());
-            RuleFor(x => x.SwitchTransaction).SetValidator(new SwitchTransactionValidator());
+            RuleFor(x => x.SwitchTransaction).SetValidator(new SwitchTransactionDataValidator());
 
             RuleFor(x => x.Source).Must(x => x == 'P' || x == 'S').WithErrorCode("9999")
                 .WithMessage("{PropertyName} must be either 'P' or 'S'");

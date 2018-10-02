@@ -18,6 +18,7 @@ namespace VPay.Payment.Api.Validators
                 propertyLengths.Add(prop.Name, attr.Length);
             }
 
+
             RuleFor(x => x.CardType)
                 .MaximumLength(propertyLengths[nameof(CardData.CardType)])
                 .WithErrorCode("0990");
