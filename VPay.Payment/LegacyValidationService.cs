@@ -90,7 +90,7 @@ namespace VPay.Payment
                 };
             }
 
-            if (!Regex.IsMatch(standardRequest.CorrespondenceData.PhoneNumber, "[0-9]{10,}"))
+            if (!Regex.IsMatch(standardRequest.CorrespondenceData.PhoneNumber, "^[0-9]{10,}$"))
             {
                 return new ValidationMessage()
                 {
@@ -105,7 +105,7 @@ namespace VPay.Payment
         public async Task<ValidationMessage> ValidateResendFaxNumberRequest(StandardRequest standardRequest, string originalFaxNumber,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (!string.IsNullOrWhiteSpace(standardRequest.CorrespondenceData.PhoneNumber) && !Regex.IsMatch(standardRequest.CorrespondenceData.PhoneNumber, "[0-9]{10,}"))
+            if (!string.IsNullOrWhiteSpace(standardRequest.CorrespondenceData.PhoneNumber) && !Regex.IsMatch(standardRequest.CorrespondenceData.PhoneNumber, "^[0-9]{10,}$"))
             {
                 return new ValidationMessage()
                 {
@@ -142,7 +142,7 @@ namespace VPay.Payment
                 return new ValidationMessage()
                 {
                     Code = "0990",
-                    Message = $"Fields too long: {string.Join(", ", invalidProperties)}"
+                    Message = $"Fields too long: {string.Join(", ", invalidProperties)}, "
                 };
             }
 
