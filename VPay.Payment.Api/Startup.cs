@@ -37,12 +37,12 @@ namespace VPay.Payment.Api
                 .AddFluentValidationSettings();
 
             services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = actionContext =>
                 {
-                    options.InvalidModelStateResponseFactory = actionContext =>
-                        {
-                            return new ValidationFailedResult(actionContext.ModelState);
-                        };
-                });
+                    return new ValidationFailedResult(actionContext.ModelState);
+                };
+            });
 
             services
                 .AddApiVersioningService()
@@ -57,19 +57,23 @@ namespace VPay.Payment.Api
 
             services.AddTransient<IHealthCheckService, HealthCheckService>();
             services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
+            services.AddTransient<ILegacyValidationService, LegacyValidationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
-            app.UseAuthentication();
-            app.UseStaticFiles();
-
             app.UseExceptionHandler("/error").WithConventions(x => {
                 ConfigureExceptionHandler(x, env.IsDevelopment());
             });
 
             app.Map("/error", x => x.Run(y => throw new Exception()));
+
+            app.UseStaticFiles();
+
+            app.UseAuthentication();
+            app.UseMiddleware<AttachUserToLoggingMiddleware>();
 
             app.UseMvc()
                 .UseSwagger();

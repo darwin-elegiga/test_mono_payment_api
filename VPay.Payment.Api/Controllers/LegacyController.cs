@@ -1,8 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Api.Dtos;
@@ -19,12 +21,15 @@ namespace VPay.Payment.Api.Controllers
         private readonly string _version;
 
         private readonly IHttpContextAccessor _accessor;
-        private readonly ITransactionService _transactionService;
+        private readonly ILegacyTransactionService _transactionService;
 
-        public LegacyController(IHttpContextAccessor accessor, ITransactionService transactionService)
+        private readonly ILogger _logger;
+
+        public LegacyController(IHttpContextAccessor accessor, ILegacyTransactionService transactionService, ILogger<LegacyController> logger)
         {
             _accessor = accessor;
             _transactionService = transactionService;
+            _logger = logger;
 
             // TODO:  Initialize private variables
             _version = "2018-08-10";
@@ -58,6 +63,8 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(ReasonCodeResponse), 200)]
         public async Task<ReasonCodeResponse> GetReasonCodes(LegacyRequest request)
         {
+            var response = await _transactionService.GetReasonCodes(request.Envelope.Body.GetReasonCodes.Request);
+
             return new ReasonCodeResponse();
         }
 
@@ -66,6 +73,8 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(TransactionDetailResponse), 200)]
         public async Task<TransactionDetailResponse> GetTransactionDetails(LegacyRequest request)
         {
+            var response = await _transactionService.GetTransactionDetails(request.Envelope.Body.GetTransactionDetails.Request);
+
             return new TransactionDetailResponse();
         }
 
@@ -146,15 +155,7 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> CancelFax(LegacyRequest request)
         {
-            var tempRequest = request.Envelope.Body.CancelFax;
-            var entity = new FaxRequest() {};
-            
-            if (int.TryParse(tempRequest.Request.CorrespondenceData.FaxCode, out var faxCode))
-            {
-                entity.FaxCode = faxCode;
-            }
-
-            var result = await _transactionService.CancelFax(entity.FaxCode.GetValueOrDefault(0));
+            var result = await _transactionService.CancelFax(request.Envelope.Body.CancelFax.Request);
 
             return result;
         }
@@ -164,17 +165,7 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> ChangeFaxNumber(LegacyRequest request)
         {
-            var tempRequest = request.Envelope.Body.ChangeFaxNumber;
-            var entity = new ChangeFaxNumberRequest()
-            {
-                FaxNumber = tempRequest.Request.CorrespondenceData.PhoneNumber
-            };
-
-            if (int.TryParse(tempRequest.Request.CorrespondenceData.FaxCode, out var faxCode))
-            {
-                entity.FaxCode = faxCode;
-            }
-            var result = await _transactionService.ChangeFaxNumber(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
+            var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ChangeFaxNumber.Request);
 
             return result;
         }
@@ -184,14 +175,7 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> HoldFax(LegacyRequest request)
         {
-            var tempRequest = request.Envelope.Body.HoldFax;
-            var entity = new FaxRequest() { };
-
-            if (int.TryParse(tempRequest.Request.CorrespondenceData.FaxCode, out var faxCode))
-            {
-                entity.FaxCode = faxCode;
-            }
-            var result = await _transactionService.HoldFax(entity.FaxCode.GetValueOrDefault(0));
+            var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.HoldFax.Request);
 
             return result;
         }
@@ -201,14 +185,7 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> ReleaseFax(LegacyRequest request)
         {
-            var tempRequest = request.Envelope.Body.ReleaseFax;
-            var entity = new FaxRequest() { };
-
-            if (int.TryParse(tempRequest.Request.CorrespondenceData.FaxCode, out var faxCode))
-            {
-                entity.FaxCode = faxCode;
-            }
-            var result = await _transactionService.ReleaseFax(entity.FaxCode.GetValueOrDefault(0));
+            var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ReleaseFax.Request);
 
             return result;
         }
@@ -218,17 +195,7 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> ResendFax(LegacyRequest request)
         {
-            var tempRequest = request.Envelope.Body.ResendFax;
-            var entity = new ChangeFaxNumberRequest()
-            {
-                FaxNumber = tempRequest.Request.CorrespondenceData.PhoneNumber
-            };
-
-            if (int.TryParse(tempRequest.Request.CorrespondenceData.FaxCode, out var faxCode))
-            {
-                entity.FaxCode = faxCode;
-            }
-            var result = await _transactionService.ResendFax(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
+            var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ResendFax.Request);
 
             return result;
         }
