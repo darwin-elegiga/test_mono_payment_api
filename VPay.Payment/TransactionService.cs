@@ -59,8 +59,23 @@ namespace VPay.Payment
 
             var result = await _db2Context.TransactionWs.GetPan(request);
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
-                nameof(GetPanNumber), "Response");
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = result.CommonData.ReasonCode,
+                ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                ["ResponseCode"] = result.CommonData.ResponseCode,
+                ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                ["SuccessCode"] = result.CommonData.SuccessCode,
+                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+            }))
+            {
+                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
+                    nameof(GetPanNumber), "Response");
+            }
+
+            result.CommonData.ReasonDesc = "";
+            result.CommonData.ReasonCode = "";
 
             return result;
         }
@@ -79,7 +94,22 @@ namespace VPay.Payment
 
             var result = await _db2Context.TransactionWs.OpenPreAuth(request);
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}", nameof(OpenPreAuth), "Response");
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = result.CommonData.ReasonCode,
+                ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                ["ResponseCode"] = result.CommonData.ResponseCode,
+                ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                ["SuccessCode"] = result.CommonData.SuccessCode,
+                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+            }))
+            {
+                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}", nameof(OpenPreAuth), "Response");
+            }
+
+            result.CommonData.ReasonDesc = "";
+            result.CommonData.ReasonCode = "";
 
             return result;
         }
@@ -110,7 +140,20 @@ namespace VPay.Payment
 
             var result = await _db2Context.TransactionWs.LoadPan(request);
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}", nameof(LoadPan), "Response");
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = result.CommonData.ReasonCode,
+                ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                ["ResponseCode"] = result.CommonData.ResponseCode,
+                ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                ["SuccessCode"] = result.CommonData.SuccessCode,
+                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+            }))
+            {
+                var level = result.CommonData.SuccessCode == "0000" && checkDeclineMessages.code == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
+                    nameof(LoadPan), "Response");
+            }
 
             // Set the Success Code and Description to the Declined Message if the Declined Message is an error code
             if (checkDeclineMessages.code != "0000")
@@ -118,6 +161,9 @@ namespace VPay.Payment
                 result.CommonData.SuccessCode = checkDeclineMessages.code;
                 result.CommonData.SuccessDesc = checkDeclineMessages.message;
             }
+
+            result.CommonData.ReasonDesc = "";
+            result.CommonData.ReasonCode = "";
 
             return result;
         }
@@ -136,7 +182,23 @@ namespace VPay.Payment
 
             var result = await _db2Context.TransactionWs.BalanceRequest(request);
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}", nameof(GetBalanceRequest), "Response");
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = result.CommonData.ReasonCode,
+                ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                ["ResponseCode"] = result.CommonData.ResponseCode,
+                ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                ["SuccessCode"] = result.CommonData.SuccessCode,
+                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+            }))
+            {
+                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
+                    nameof(GetBalanceRequest), "Response");
+            }
+
+            result.CommonData.ReasonDesc = "";
+            result.CommonData.ReasonCode = "";
 
             return result;
         }
@@ -155,7 +217,23 @@ namespace VPay.Payment
 
             var result = await _db2Context.TransactionWs.UnloadPan(request);
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}", nameof(UnloadPan), "Response");
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = result.CommonData.ReasonCode,
+                ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                ["ResponseCode"] = result.CommonData.ResponseCode,
+                ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                ["SuccessCode"] = result.CommonData.SuccessCode,
+                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+            }))
+            {
+                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
+                    nameof(UnloadPan), "Response");
+            }
+
+            result.CommonData.ReasonDesc = "";
+            result.CommonData.ReasonCode = "";
 
             return result;
         }
@@ -174,7 +252,23 @@ namespace VPay.Payment
 
             var result = await _db2Context.TransactionWs.StopPay(request);
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}", nameof(StopPay), "Response");
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = result.CommonData.ReasonCode,
+                ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                ["ResponseCode"] = result.CommonData.ResponseCode,
+                ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                ["SuccessCode"] = result.CommonData.SuccessCode,
+                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+            }))
+            {
+                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
+                    nameof(StopPay), "Response");
+            }
+
+            result.CommonData.ReasonDesc = "";
+            result.CommonData.ReasonCode = "";
 
             return result;
         }
@@ -202,7 +296,16 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransactionData()
             };
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(CancelFax), "Response", faxCode);
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["SuccessCode"] = sResp.CommonData.SuccessCode,
+                ["SuccessDesc"] = sResp.CommonData.SuccessDesc,
+            }))
+            {
+                var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}",
+                    nameof(CancelFax), "Response", faxCode);
+            }
 
             return sResp;
         }
@@ -230,7 +333,16 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransactionData()
             };
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(ChangeFaxNumber), "Response", faxCode);
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["SuccessCode"] = sResp.CommonData.SuccessCode,
+                ["SuccessDesc"] = sResp.CommonData.SuccessDesc,
+            }))
+            {
+                var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}",
+                    nameof(ChangeFaxNumber), "Response", faxCode);
+            }
 
             return sResp;
         }
@@ -258,7 +370,16 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransactionData()
             };
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(HoldFax), "Response", faxCode);
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["SuccessCode"] = sResp.CommonData.SuccessCode,
+                ["SuccessDesc"] = sResp.CommonData.SuccessDesc,
+            }))
+            {
+                var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(HoldFax),
+                    "Response", faxCode);
+            }
 
             return sResp;
         }
@@ -286,8 +407,16 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransactionData()
             };
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(ReleaseFax), "Response", faxCode);
-
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["SuccessCode"] = sResp.CommonData.SuccessCode,
+                ["SuccessDesc"] = sResp.CommonData.SuccessDesc,
+            }))
+            {
+                var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}",
+                    nameof(ReleaseFax), "Response", faxCode);
+            }
             return sResp;
         }
 
@@ -317,7 +446,15 @@ namespace VPay.Payment
                 SwitchTransaction = new SwitchTransactionData()
             };
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(ResendFax), "Response", faxCode);
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["SuccessCode"] = sResp.CommonData.SuccessCode,
+                ["SuccessDesc"] = sResp.CommonData.SuccessDesc,
+            }))
+            {
+                var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(ResendFax), "Response", faxCode);
+            }
 
             return sResp;
         }
