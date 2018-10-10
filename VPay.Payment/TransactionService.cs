@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
+using VPay.Data.Db2.Abstractions.Helpers;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
+using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.Models;
 
@@ -27,18 +30,18 @@ namespace VPay.Payment
             _logger = logger;
         }
 
-        public async Task<StandardResponse> GetReasonCodes(StandardRequest standardRequest)
+        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request, string token)
         {
-            StandardResponse resultOfISeriesCall = null;
+            var reasonCodeResponse = ReasonCodeAdvancedLogic(request, token, _dbPaymentOps);
 
-            return resultOfISeriesCall;
+            return reasonCodeResponse;
         }
 
-        public async Task<StandardResponse> GetTransactionDetails(StandardRequest standardRequest)
+        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request, StandardRequest standardRequest, string token)
         {
-            StandardResponse resultOfISeriesCall = null;
+            var result = TransactionDetailAdvancedLogic(request, standardRequest, token, _dbPaymentOps);
 
-            return resultOfISeriesCall;
+            return result;
         }
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest)
@@ -251,6 +254,62 @@ namespace VPay.Payment
             };
 
             return sResp;
+        }
+
+        public ReasonCodeResponse ReasonCodeAdvancedLogic(ReasonCodeRequest request, string token, IDbPaymentOps dbPaymentOps)
+        {
+            List<ReasonCodeType> reasonCodes = dbPaymentOps.ReasonCodesData(token, request.User, request.TransNumber).Result;
+            ReasonCodeResponse theResponse = new ReasonCodeResponse();
+            theResponse.ReasonCodeList = reasonCodes;
+            theResponse.CommonData = new CommonData() { SuccessCode = "0000", SuccessDesc = "Authorized" };
+
+            return theResponse;
+        }
+
+        public TransactionDetailResponse TransactionDetailAdvancedLogic(TransactionDetailRequest request, StandardRequest standardRequest, string token, IDbPaymentOps dbPaymentOps)
+        {
+            AuthenticationValues standardAuthenticationValues = new AuthenticationValues("WSQATEST", "QATEST01WS18");
+            var headerDatas = dbPaymentOps.TransactionHeadersData(token, request.User, request.PassWord, request.Txid,
+                standardAuthenticationValues, "10.120.202.129").Result;
+            List<HeaderData> waitedHeaderDatas = headerDatas;
+            string client = waitedHeaderDatas[0].Client;
+            string billCode = waitedHeaderDatas[0].BillCode;
+
+            StandardResponse balRequestResponse = GetBalanceRequest(standardRequest).Result;
+            headerDatas[0].SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
+            headerDatas[0].SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
+
+            StandardResponse panNumResponse = GetPanNumber(standardRequest).Result;
+            PayTypeDetail payTypeDetail = new PayTypeDetail();
+            payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
+            payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
+            payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
+            payTypeDetail.Association = panNumResponse.CardData.CardType;
+            payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
+            payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
+            payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
+            payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
+            payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
+
+            var detailList = dbPaymentOps.TransactionDetailsData(token, client, billCode, request.Txid).Result;
+            var correspList = dbPaymentOps.TransactionCorrespondenceData(token, request.User, request.Txid).Result;
+
+            var returnValue = new TransactionDetailResponse()
+            {
+                DetailList = detailList,
+                HeaderData = headerDatas[0],
+                CorrespondenceList = correspList,
+                PayTypeDetail = payTypeDetail,
+                CommonData = new CommonData()
+                {
+                    User = request.User.ToUpper(),
+                    TransNumber = request.Txid,
+                    SuccessCode = "0000",
+                    SuccessDesc = "Successful Query"
+                }
+            };
+
+            return returnValue;
         }
 
     }

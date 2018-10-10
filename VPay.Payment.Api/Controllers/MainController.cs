@@ -68,24 +68,27 @@ namespace VPay.Payment.Api.Controllers
 
         [HttpGet("ReasonCodes")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
-        public async Task<StandardResponse> GetReasonCodes(string transNumber)
+        public async Task<ReasonCodeResponse> GetReasonCodes(string transNumber)
         {
-            var sr = DefaultStandardRequest(transNumber);
+            var reasonCodeRequest = StandardReasonCodeRequest(transNumber);
+            string token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-            var result = await _transactionService.GetBalanceRequest(sr);
+            var reasonCodeResponse = await _transactionService.GetReasonCodes(reasonCodeRequest, token);
 
-            return result;
+            return reasonCodeResponse;
         }
 
         [HttpGet("TransactionDetails")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
-        public async Task<StandardResponse> GetTransactionDetails(string transNumber)
+        public async Task<TransactionDetailResponse> GetTransactionDetails(string transNumber)
         {
-            var sr = DefaultStandardRequest(transNumber);
+            var transactionDetailRequest = StandardTransactionDetailRequest(transNumber);
+            var standardRequest = DefaultStandardRequest(transNumber);
+            string token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-            var result = await _transactionService.GetBalanceRequest(sr);
+            var transactionDetailResponse = await _transactionService.GetTransactionDetails(transactionDetailRequest, standardRequest, token);
 
-            return result;
+            return transactionDetailResponse;
         }
 
         [HttpGet("PanNumber")]
@@ -236,6 +239,32 @@ namespace VPay.Payment.Api.Controllers
             };
 
             return defaultStandardRequest;
+        }
+
+        private ReasonCodeRequest StandardReasonCodeRequest(string transNumber)
+        {
+            var reasonCodeRequest = new ReasonCodeRequest()
+            {
+                TransNumber = transNumber,
+                PassWord = "yraheem197",
+                Source = ' ',
+                User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value
+            };
+
+            return reasonCodeRequest;
+        }
+
+        private TransactionDetailRequest StandardTransactionDetailRequest(string transNumber)
+        {
+            var transactionDetailRequest = new TransactionDetailRequest()
+            {
+                PassWord = "yraheem197",
+                Source = ' ',
+                Txid = transNumber,
+                User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value
+            };
+
+            return transactionDetailRequest;
         }
 
     }
