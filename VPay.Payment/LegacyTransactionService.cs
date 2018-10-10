@@ -83,10 +83,15 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(GetPanNumber), "Validating");
+
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(GetPanNumber), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -96,16 +101,23 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(GetPanNumber), "Valid");
 
             return await _transactionService.GetPanNumber(standardRequest);
         }
 
         public async Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(OpenPreAuth), "Validating");
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(OpenPreAuth), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -115,16 +127,23 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(OpenPreAuth), "Valid");
 
             return await _transactionService.OpenPreAuth(standardRequest);
         }
 
         public async Task<StandardResponse> LoadPan(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(LoadPan), "Validating");
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(LoadPan), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -134,6 +153,9 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(LoadPan), "Valid");
 
             return await _transactionService.LoadPan(standardRequest);
         }
@@ -141,10 +163,14 @@ namespace VPay.Payment
         public async Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest,
             CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(GetBalanceRequest), "Validating");
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(GetBalanceRequest), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -154,16 +180,23 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(GetBalanceRequest), "Valid");
 
             return await _transactionService.GetBalanceRequest(standardRequest);
         }
 
         public async Task<StandardResponse> UnloadPan(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(UnloadPan), "Validating");
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(UnloadPan), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -173,16 +206,23 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(UnloadPan), "Valid");
 
             return await _transactionService.UnloadPan(standardRequest);
         }
 
         public async Task<StandardResponse> StopPay(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(StopPay), "Validating");
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(StopPay), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -192,16 +232,23 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(StopPay), "Valid");
 
             return await _transactionService.StopPay(standardRequest);
         }
 
         public async Task<StandardResponse> CancelFax(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(CancelFax), "Validating");
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(CancelFax), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -211,6 +258,9 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(CancelFax), "Valid");
 
             if (int.TryParse(standardRequest.CorrespondenceData.FaxCode, out var faxCode))
             {
@@ -221,6 +271,9 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> ChangeFaxNumber(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(ChangeFaxNumber), "Validating");
+
             var originalPhone = standardRequest.CorrespondenceData.PhoneNumber;
             standardRequest.CorrespondenceData.PhoneNumber = originalPhone.CleanFaxNumber();
 
@@ -228,6 +281,8 @@ namespace VPay.Payment
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(ChangeFaxNumber), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -237,6 +292,9 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(ChangeFaxNumber), "Valid");
 
             if (int.TryParse(standardRequest.CorrespondenceData.FaxCode, out var faxCode))
             {
@@ -247,10 +305,15 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> HoldFax(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(HoldFax), "Validating");
+
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(HoldFax), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -260,6 +323,9 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(HoldFax), "Valid");
 
             if (int.TryParse(standardRequest.CorrespondenceData.FaxCode, out var faxCode))
             {
@@ -270,10 +336,15 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> ReleaseFax(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(ReleaseFax), "Validating");
+
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(ReleaseFax), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -283,6 +354,9 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(ReleaseFax), "Valid");
 
             if (int.TryParse(standardRequest.CorrespondenceData.FaxCode, out var faxCode))
             {
@@ -293,6 +367,9 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> ResendFax(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(ResendFax), "Validating");
+
             var originalPhone = standardRequest.CorrespondenceData.PhoneNumber;
             standardRequest.CorrespondenceData.PhoneNumber = originalPhone.CleanFaxNumber();
 
@@ -300,6 +377,8 @@ namespace VPay.Payment
 
             if (validation != null && validation.Code != "0000")
             {
+                _logger.LogWarning("{ServiceName} - {ValidationStatus}: \nCode={ValidationCode}, Code={ValidationErrorMessage}",
+                    nameof(ResendFax), "Invalid", validation.Code, validation.Message);
                 return new StandardResponse()
                 {
                     CommonData = new CommonData()
@@ -309,6 +388,9 @@ namespace VPay.Payment
                     }
                 };
             }
+
+            _logger.LogInformation("{ServiceName} - {ValidationStatus}",
+                nameof(ResendFax), "Valid");
 
             if (int.TryParse(standardRequest.CorrespondenceData.FaxCode, out var faxCode))
             {

@@ -1,8 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Api.Dtos;
@@ -21,10 +23,13 @@ namespace VPay.Payment.Api.Controllers
         private readonly IHttpContextAccessor _accessor;
         private readonly ILegacyTransactionService _transactionService;
 
-        public LegacyController(IHttpContextAccessor accessor, ILegacyTransactionService transactionService)
+        private readonly ILogger _logger;
+
+        public LegacyController(IHttpContextAccessor accessor, ILegacyTransactionService transactionService, ILogger<LegacyController> logger)
         {
             _accessor = accessor;
             _transactionService = transactionService;
+            _logger = logger;
 
             // TODO:  Initialize private variables
             _version = "2018-08-10";
