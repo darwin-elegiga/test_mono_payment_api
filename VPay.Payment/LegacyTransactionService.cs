@@ -21,7 +21,7 @@ namespace VPay.Payment
             _logger = logger;
         }
 
-        public async Task<StandardResponse> GetReasonCodes(ReasonCodeRequest request,
+        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             var standardRequest = new StandardRequest()
@@ -38,7 +38,7 @@ namespace VPay.Payment
 
             if (validation != null && validation.Code != "0000")
             {
-                return new StandardResponse()
+                return new ReasonCodeResponse()
                 {
                     CommonData = new CommonData()
                     {
@@ -48,10 +48,11 @@ namespace VPay.Payment
                 };
             }
 
-            return await _transactionService.GetReasonCodes(standardRequest);
+            // Todo: Real values
+            return await _transactionService.GetReasonCodes(new ReasonCodeRequest(), "blank_token");
         }
 
-        public async Task<StandardResponse> GetTransactionDetails(TransactionDetailRequest request,
+        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             var standardRequest = new StandardRequest()
@@ -68,7 +69,7 @@ namespace VPay.Payment
 
             if (validation != null && validation.Code != "0000")
             {
-                return new StandardResponse()
+                return new TransactionDetailResponse()
                 {
                     CommonData = new CommonData()
                     {
@@ -78,7 +79,8 @@ namespace VPay.Payment
                 };
             }
 
-            return await _transactionService.GetTransactionDetails(standardRequest);
+            // Todo: Real values
+            return await _transactionService.GetTransactionDetails(new TransactionDetailRequest(),  standardRequest, "blank_token");
         }
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))

@@ -6,8 +6,8 @@ namespace VPay.Payment.Common
 {
     public interface ILegacyTransactionService
     {
-        Task<StandardResponse> GetReasonCodes(ReasonCodeRequest request, CancellationToken cancellationToken = default(CancellationToken));
-        Task<StandardResponse> GetTransactionDetails(TransactionDetailRequest request, CancellationToken cancellationToken = default(CancellationToken));
+        Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request, CancellationToken cancellationToken = default(CancellationToken));
+        Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request, CancellationToken cancellationToken = default(CancellationToken));
         Task<StandardResponse> GetPanNumber(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));
         Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));
         Task<StandardResponse> LoadPan(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));
