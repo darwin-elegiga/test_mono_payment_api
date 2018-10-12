@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
-    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.0.0.14" />
+    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.0.0.15" />
   </ItemGroup>
 
   <ItemGroup>
