@@ -33,16 +33,56 @@ namespace VPay.Payment
 
         public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request, string token)
         {
-            var reasonCodeResponse = ReasonCodeAdvancedLogic(request, token, _dbPaymentOps);
+            List<ReasonCodeType> reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(token, request.User, request.TransNumber);
+            var reasonCodeResponse = new ReasonCodeResponse();
+            reasonCodeResponse.ReasonCodeList = reasonCodes;
+            reasonCodeResponse.CommonData = new CommonData() { SuccessCode = "0000", SuccessDesc = "Authorized" };
 
-            return await reasonCodeResponse;
+            return reasonCodeResponse;
         }
 
         public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request, StandardRequest standardRequest, string token)
         {
-            var result = TransactionDetailAdvancedLogic(request, standardRequest, token, _dbPaymentOps);
+            var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(token, request.User, request.Txid);
+            List<HeaderData> waitedHeaderDatas = headerDatas;
+            string client = waitedHeaderDatas[0].Client;
+            string billCode = waitedHeaderDatas[0].BillCode;
 
-            return await result;
+            StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
+            headerDatas[0].SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
+            headerDatas[0].SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
+
+            StandardResponse panNumResponse = await GetPanNumber(standardRequest);
+            PayTypeDetail payTypeDetail = new PayTypeDetail();
+            payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
+            payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
+            payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
+            payTypeDetail.Association = panNumResponse.CardData.CardType;
+            payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
+            payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
+            payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
+            payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
+            payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
+
+            var detailList = await _db2Context.TransactionWs.TransactionDetailsData(token, client, billCode, request.Txid);
+            var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(token, request.User, request.Txid);
+
+            var completeResponse = new TransactionDetailResponse()
+            {
+                DetailList = detailList,
+                HeaderData = headerDatas[0],
+                CorrespondenceList = correspList,
+                PayTypeDetail = payTypeDetail,
+                CommonData = new CommonData()
+                {
+                    User = request.User.ToUpper(),
+                    TransNumber = request.Txid,
+                    SuccessCode = "0000",
+                    SuccessDesc = "Successful Query"
+                }
+            };
+
+            return completeResponse;
         }
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest)
@@ -668,62 +708,5 @@ namespace VPay.Payment
             return result;
 
         }
-
-        public async Task<ReasonCodeResponse> ReasonCodeAdvancedLogic(ReasonCodeRequest request, string token, IDbPaymentOps dbPaymentOps)
-        {
-            List<ReasonCodeType> reasonCodes = await dbPaymentOps.ReasonCodesData(token, request.User, request.TransNumber);
-            ReasonCodeResponse theResponse = new ReasonCodeResponse();
-            theResponse.ReasonCodeList = reasonCodes;
-            theResponse.CommonData = new CommonData() { SuccessCode = "0000", SuccessDesc = "Authorized" };
-
-            return theResponse;
-        }
-
-        public async Task<TransactionDetailResponse> TransactionDetailAdvancedLogic(TransactionDetailRequest request, StandardRequest standardRequest, string token, IDbPaymentOps dbPaymentOps)
-        {
-            AuthenticationValues standardAuthenticationValues = new AuthenticationValues("WSQATEST", "QATEST01WS18");
-            var headerDatas = await dbPaymentOps.TransactionHeadersData(token, request.User, request.PassWord, request.Txid,
-                standardAuthenticationValues, "10.120.202.129");
-            List<HeaderData> waitedHeaderDatas = headerDatas;
-            string client = waitedHeaderDatas[0].Client;
-            string billCode = waitedHeaderDatas[0].BillCode;
-
-            StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
-            headerDatas[0].SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
-            headerDatas[0].SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
-
-            StandardResponse panNumResponse = await GetPanNumber(standardRequest);
-            PayTypeDetail payTypeDetail = new PayTypeDetail();
-            payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
-            payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
-            payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
-            payTypeDetail.Association = panNumResponse.CardData.CardType;
-            payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
-            payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
-            payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
-            payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
-            payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
-
-            var detailList = await dbPaymentOps.TransactionDetailsData(token, client, billCode, request.Txid);
-            var correspList = await dbPaymentOps.TransactionCorrespondenceData(token, request.User, request.Txid);
-
-            var returnValue = new TransactionDetailResponse()
-            {
-                DetailList = detailList,
-                HeaderData = headerDatas[0],
-                CorrespondenceList = correspList,
-                PayTypeDetail = payTypeDetail,
-                CommonData = new CommonData()
-                {
-                    User = request.User.ToUpper(),
-                    TransNumber = request.Txid,
-                    SuccessCode = "0000",
-                    SuccessDesc = "Successful Query"
-                }
-            };
-
-            return returnValue;
-        }
-
     }
 }
