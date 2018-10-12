@@ -29,7 +29,7 @@ namespace VPay.Payment
                 CommonData = new CommonData()
                 {
                     User = request.User,
-                    PassWord = request.PassWord,
+                    Token = request.Token,
                     TransNumber = request.TransNumber
                 }
             };
@@ -47,9 +47,7 @@ namespace VPay.Payment
                     }
                 };
             }
-
-            // Todo: Real values
-            return await _transactionService.GetReasonCodes(new ReasonCodeRequest(), "blank_token");
+            return await _transactionService.GetReasonCodes(request);
         }
 
         public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request,
@@ -60,8 +58,8 @@ namespace VPay.Payment
                 CommonData = new CommonData()
                 {
                     User = request.User,
-                    PassWord = request.PassWord,
-                    TransNumber = request.Txid
+                    Token = request.Token,
+                    TransNumber = request.TransNumber
                 }
             };
 
@@ -79,8 +77,7 @@ namespace VPay.Payment
                 };
             }
 
-            // Todo: Real values
-            return await _transactionService.GetTransactionDetails(new TransactionDetailRequest(),  standardRequest, "blank_token");
+            return await _transactionService.GetTransactionDetails(request);
         }
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))

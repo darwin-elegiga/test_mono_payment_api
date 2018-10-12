@@ -31,9 +31,9 @@ namespace VPay.Payment
             _logger = logger;
         }
 
-        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request, string token)
+        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request)
         {
-            List<ReasonCodeType> reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(token, request.User, request.TransNumber);
+            List<ReasonCodeType> reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(request.Token, request.User, request.TransNumber);
             var reasonCodeResponse = new ReasonCodeResponse();
             reasonCodeResponse.ReasonCodeList = reasonCodes;
             reasonCodeResponse.CommonData = new CommonData() { SuccessCode = "0000", SuccessDesc = "Authorized" };
@@ -41,12 +41,24 @@ namespace VPay.Payment
             return reasonCodeResponse;
         }
 
-        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request, StandardRequest standardRequest, string token)
+        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request)
         {
-            var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(token, request.User, request.Txid);
+            var standardRequest = new StandardRequest
+            {
+                CommonData = new CommonData
+                {
+                    TransNumber = request.TransNumber,
+                    User = request.User,
+                    Token = request.Token
+                }
+            };
+
+            var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber);
             List<HeaderData> waitedHeaderDatas = headerDatas;
             string client = waitedHeaderDatas[0].Client;
             string billCode = waitedHeaderDatas[0].BillCode;
+
+
 
             StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
             headerDatas[0].SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
@@ -64,8 +76,8 @@ namespace VPay.Payment
             payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
             payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
 
-            var detailList = await _db2Context.TransactionWs.TransactionDetailsData(token, client, billCode, request.Txid);
-            var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(token, request.User, request.Txid);
+            var detailList = await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber);
+            var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(request.Token, request.User, request.TransNumber);
 
             var completeResponse = new TransactionDetailResponse()
             {
@@ -76,7 +88,7 @@ namespace VPay.Payment
                 CommonData = new CommonData()
                 {
                     User = request.User.ToUpper(),
-                    TransNumber = request.Txid,
+                    TransNumber = request.TransNumber,
                     SuccessCode = "0000",
                     SuccessDesc = "Successful Query"
                 }
