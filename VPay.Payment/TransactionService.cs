@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
-using VPay.Data.Db2.Abstractions.Helpers;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
-using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.Models;
 
@@ -31,22 +28,55 @@ namespace VPay.Payment
             _logger = logger;
         }
 
-        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request, string token)
+        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request)
         {
-            List<ReasonCodeType> reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(token, request.User, request.TransNumber);
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{request.ToDisplayString()}",
+                nameof(GetReasonCodes), "Starting");
+
+            List<ReasonCodeType> reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(request.Token, request.User, request.TransNumber);
             var reasonCodeResponse = new ReasonCodeResponse();
             reasonCodeResponse.ReasonCodeList = reasonCodes;
             reasonCodeResponse.CommonData = new CommonData() { SuccessCode = "0000", SuccessDesc = "Authorized" };
 
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = reasonCodeResponse.CommonData.ReasonCode,
+                ["ReasonDesc"] = reasonCodeResponse.CommonData.ReasonDesc,
+                ["ResponseCode"] = reasonCodeResponse.CommonData.ResponseCode,
+                ["ResponseDesc"] = reasonCodeResponse.CommonData.ResponseDesc,
+                ["SuccessCode"] = reasonCodeResponse.CommonData.SuccessCode,
+                ["SuccessDesc"] = reasonCodeResponse.CommonData.SuccessDesc,
+            }))
+            {
+                var level = reasonCodeResponse.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{reasonCodeResponse.ToDisplayString()}",
+                    nameof(GetPanNumber), "Response");
+            }
+
             return reasonCodeResponse;
         }
 
-        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request, StandardRequest standardRequest, string token)
+        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request)
         {
-            var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(token, request.User, request.Txid);
+            var standardRequest = new StandardRequest
+            {
+                CommonData = new CommonData
+                {
+                    TransNumber = request.TransNumber,
+                    User = request.User,
+                    Token = request.Token
+                }
+            };
+
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(GetTransactionDetails), "Starting");
+
+            var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber);
             List<HeaderData> waitedHeaderDatas = headerDatas;
             string client = waitedHeaderDatas[0].Client;
             string billCode = waitedHeaderDatas[0].BillCode;
+
+
 
             StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
             headerDatas[0].SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
@@ -64,8 +94,8 @@ namespace VPay.Payment
             payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
             payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
 
-            var detailList = await _db2Context.TransactionWs.TransactionDetailsData(token, client, billCode, request.Txid);
-            var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(token, request.User, request.Txid);
+            var detailList = await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber);
+            var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(request.Token, request.User, request.TransNumber);
 
             var completeResponse = new TransactionDetailResponse()
             {
@@ -76,11 +106,26 @@ namespace VPay.Payment
                 CommonData = new CommonData()
                 {
                     User = request.User.ToUpper(),
-                    TransNumber = request.Txid,
+                    TransNumber = request.TransNumber,
                     SuccessCode = "0000",
                     SuccessDesc = "Successful Query"
                 }
             };
+
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = completeResponse.CommonData.ReasonCode,
+                ["ReasonDesc"] = completeResponse.CommonData.ReasonDesc,
+                ["ResponseCode"] = completeResponse.CommonData.ResponseCode,
+                ["ResponseDesc"] = completeResponse.CommonData.ResponseDesc,
+                ["SuccessCode"] = completeResponse.CommonData.SuccessCode,
+                ["SuccessDesc"] = completeResponse.CommonData.SuccessDesc,
+            }))
+            {
+                var level = completeResponse.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{completeResponse.ToDisplayString()}",
+                    nameof(GetTransactionDetails), "Response");
+            }
 
             return completeResponse;
         }

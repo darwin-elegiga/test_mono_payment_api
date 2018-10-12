@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using VPay.Payment.Common;
 using VPay.Payment.Common.DataWebService;
 
 namespace VPay.Payment.Api.Dtos
@@ -10,7 +9,7 @@ namespace VPay.Payment.Api.Dtos
         public AuthenticationValues AuthenticationValues { get; set; }
 
         [JsonProperty("transactionDetailRequest")]
-        public TransactionDetailRequest Request { get; set; }
+        public TransactionDetailRequestDto Request { get; set; }
     }
 
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 
@@ -39,6 +40,85 @@ namespace VPay.Payment.Common
             sb.Append(response.Merchant.ToDisplayString());
             sb.Append(response.Payment.ToDisplayString());
             sb.Append(response.SwitchTransaction.ToDisplayString());
+
+            return sb.ToString();
+        }
+
+        public static string ToDisplayString(this ReasonCodeRequest request)
+        {
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(request.TransNumber))
+            {
+                listValues.Add($"TransNumber={request.TransNumber.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.User))
+            {
+                listValues.Add($"User={request.User.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Token))
+            {
+                listValues.Add(request.Token.Length > 63 ? $"Token={request.Token.Substring(1, 4)}..." : $"Token=****");
+            }
+
+            return listValues.Count == 0 ? "" : $"ReasonCodeRequest [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this ReasonCodeResponse response)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(response.CommonData.ToDisplayString());
+
+            if (response.ReasonCodeList != null && response.ReasonCodeList.Any())
+            {
+                sb.Append("ReasonCodes [ \r\n");
+                foreach (var reasonCode in response.ReasonCodeList)
+                {
+                    sb.AppendLine(reasonCode.ToDisplayString());
+                }
+
+                sb.Append("] ");
+            }
+
+
+            return sb.ToString();
+        }
+
+        public static string ToDisplayString(this TransactionDetailResponse response)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(response.CommonData.ToDisplayString());
+            sb.Append(response.HeaderData.ToDisplayString());
+            sb.Append(response.PayTypeDetail.ToDisplayString());
+
+            if (response.DetailList != null && response.DetailList.Any())
+            {
+                sb.Append("DetailList [ \r\n");
+
+                foreach (var detail in response.DetailList)
+                {
+                    sb.Append(detail.ToDisplayString());
+                }
+
+                sb.Append("] \r\n");
+            }
+
+            if (response.CorrespondenceList != null && response.CorrespondenceList.Any())
+            {
+                sb.Append("CorrespondenceList [ \r\n");
+
+                foreach (var detail in response.CorrespondenceList)
+                {
+                    sb.Append(detail.ToDisplayString());
+                }
+
+                sb.Append("] \r\n");
+            }
+
 
             return sb.ToString();
         }
@@ -708,6 +788,367 @@ namespace VPay.Payment.Common
             }
 
             return listValues.Count == 0 ? "" : $"SwitchTransaction [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this ReasonCodeType entity)
+        {
+            if (entity == null)
+            {
+                return "";
+            }
+            return $"ReasonCode={entity.ReasonCode}, ReasonDesc={entity.ReasonDesc}, ActionDesc={entity.ReasonAdsc}";
+        }
+
+        public static string ToDisplayString(this HeaderData entity)
+        {
+            var listValues = new List<string>();
+
+            listValues.Add($"TransNumber={entity.TransNumber}");
+
+            if (!string.IsNullOrWhiteSpace(entity.Client))
+            {
+                listValues.Add($"Client={entity.Client.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.BillCode))
+            {
+                listValues.Add($"BillCode={entity.BillCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.BillType))
+            {
+                listValues.Add($"BillType={entity.BillType.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.AvailBalance))
+            {
+                listValues.Add($"AvailBalance={entity.AvailBalance.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CurrentBalance))
+            {
+                listValues.Add($"CurrentBalance={entity.CurrentBalance.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.SwitchAvailBal))
+            {
+                listValues.Add($"SwitchAvailBal={entity.SwitchAvailBal.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.SwitchCurrentBal))
+            {
+                listValues.Add($"SwitchCurrentBal={entity.SwitchCurrentBal.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PayeeCode))
+            {
+                listValues.Add($"PayeeCode={entity.PayeeCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PayeeName))
+            {
+                listValues.Add($"PayeeName={entity.PayeeName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ProviderName))
+            {
+                listValues.Add($"ProviderName={entity.ProviderName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.RequesterId))
+            {
+                listValues.Add($"RequesterId={entity.RequesterId.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.RequesterName))
+            {
+                listValues.Add($"RequesterName={entity.RequesterName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.TaxId))
+            {
+                listValues.Add($"TaxId=*****");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.UserField1))
+            {
+                listValues.Add($"UserField1={entity.UserField1.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.UserField2))
+            {
+                listValues.Add($"UserField2={entity.UserField2.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.UserField3))
+            {
+                listValues.Add($"UserField3={entity.UserField3.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"HeaderData [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this PayTypeDetail entity)
+        {
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.Association))
+            {
+                listValues.Add($"Association={entity.Association.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Bank))
+            {
+                listValues.Add($"Bank={entity.Bank.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardCvv2))
+            {
+                listValues.Add($"CardCvv2={entity.CardCvv2.Substring(0, 1)}***");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardExp))
+            {
+                listValues.Add($"CardExp={entity.CardExp.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardNumber))
+            {
+                if (entity.CardNumber.Length > 15)
+                {
+                    listValues.Add($"CardNumber={entity.CardNumber.Substring(0, 4)}*********{entity.CardNumber.Substring(14, 2)}");
+                }
+                else
+                {
+                    listValues.Add($"CardNumber=****");
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(entity.OutsideCheck))
+            {
+                listValues.Add($"OutsideCheck={entity.OutsideCheck.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ClearCheck))
+            {
+                listValues.Add($"ClearCheck={entity.ClearCheck.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PosPayCheck))
+            {
+                listValues.Add($"PosPayCheck={entity.PosPayCheck.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.SwitchNumber))
+            {
+                listValues.Add($"SwitchNumber={entity.SwitchNumber.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"PayTypeDetail [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this Detail entity)
+        {
+            var listValues = new List<string>();
+
+
+            listValues.Add($"TranId={entity.TranId}");
+            listValues.Add($"LoadTran={entity.LoadTran}");
+
+            if (!string.IsNullOrWhiteSpace(entity.Status))
+            {
+                listValues.Add($"Status={entity.Status.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Amount))
+            {
+                listValues.Add($"Amount={entity.Amount.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.AuthCode))
+            {
+                listValues.Add($"AuthCode={entity.AuthCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.TranTimeStamp))
+            {
+                listValues.Add($"TranTimeStamp={entity.TranTimeStamp.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Expiration))
+            {
+                listValues.Add($"Expiration={entity.Expiration.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.MerchantCode))
+            {
+                listValues.Add($"MerchantCode={entity.MerchantCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.MerchantName))
+            {
+                listValues.Add($"MerchantName={entity.MerchantName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ReasonCode))
+            {
+                listValues.Add($"ReasonCode={entity.ReasonCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ReasonDesc))
+            {
+                listValues.Add($"ReasonDesc={entity.ReasonDesc.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ActionCode))
+            {
+                listValues.Add($"ActionCode={entity.ActionCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ActionDesc))
+            {
+                listValues.Add($"ActionDesc={entity.ActionDesc.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FinancialType))
+            {
+                listValues.Add($"FinancialType={entity.FinancialType.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.RequesterName))
+            {
+                listValues.Add($"RequesterName={entity.RequesterName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.BatchNumber))
+            {
+                listValues.Add($"BatchNumber={entity.BatchNumber.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.StatusDesc))
+            {
+                listValues.Add($"StatusDesc={entity.StatusDesc.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"Detail [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this CorespDtl entity)
+        {
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.Direction))
+            {
+                listValues.Add($"Direction={entity.Direction.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Type))
+            {
+                listValues.Add($"Type={entity.Type.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Status))
+            {
+                listValues.Add($"Status={entity.Status.Trim()}");
+            }
+
+
+
+            listValues.Add($"RequestDate={entity.RequestDate}");
+            listValues.Add($"StatusDate={entity.StatusDate}");
+
+            if (!string.IsNullOrWhiteSpace(entity.SentBehalfName))
+            {
+                listValues.Add($"SentBehalfName={entity.SentBehalfName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromName))
+            {
+                listValues.Add($"FromName={entity.FromName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromAddress1))
+            {
+                listValues.Add($"FromAddress1={entity.FromAddress1.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromAddress2))
+            {
+                listValues.Add($"FromAddress2={entity.FromAddress2.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromCity))
+            {
+                listValues.Add($"FromCity={entity.FromCity.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromState))
+            {
+                listValues.Add($"FromState={entity.FromState.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromPostalCode))
+            {
+                listValues.Add($"FromPostalCode={entity.FromPostalCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromFax))
+            {
+                listValues.Add($"FromFax={entity.FromFax.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToName))
+            {
+                listValues.Add($"ToName={entity.ToName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToAddress1))
+            {
+                listValues.Add($"ToAddress1={entity.ToAddress1.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToAddress2))
+            {
+                listValues.Add($"ToAddress2={entity.ToAddress2.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToCity))
+            {
+                listValues.Add($"ToCity={entity.ToCity.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToState))
+            {
+                listValues.Add($"ToState={entity.ToState.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToPostalCode))
+            {
+                listValues.Add($"ToPostalCode={entity.ToPostalCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToFax))
+            {
+                listValues.Add($"ToFax={entity.ToFax.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToPhone))
+            {
+                listValues.Add($"ToPhone={entity.ToPhone.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.StatusText))
+            {
+                listValues.Add($"StatusText={entity.StatusText.Trim()}");
+            }
+
+            if (entity.FaxJobList != null)
+            {
+                listValues.Add($"FaxJobListCount={entity.FaxJobList.Count}");
+            }
+
+            listValues.Add($"DmRecId={entity.DmRecId}");
+
+            return listValues.Count == 0 ? "" : $"Correspondence [ {string.Join(", ", listValues)} ]\r\n";
         }
 
     }
