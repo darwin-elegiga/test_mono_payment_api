@@ -9,35 +9,14 @@ namespace VPay.Payment.Common
         public TransactionDetailRequest()
         {
             User = "";
-            PassWord = "";
-            Txid = "";
-            Source = ' ';
-        }
-
-        public TransactionDetailRequest(string user, string passWord,
-            string txid, char source)
-        {
-            User = user;
-            PassWord = passWord;
-            Txid = txid;
-            Source = source;
+            TransNumber = "";
         }
 
         public string User { get; set; }
-        public string PassWord { get; set; }
-        public string Txid { get; set; }
-        public char Source { get; set; } // Source of request P-webPage, S-webSvc, ' '-Other
+        public string Token { get; set; }
 
-        public override string ToString()
-        {
-            // TODO:  Implement real logic
+        public string TransNumber { get; set; }
 
-            return "";
-        }
 
-        public bool IsValid()
-        {
-            return true;
-        }
     }
 }

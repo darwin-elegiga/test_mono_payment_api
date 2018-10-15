@@ -31,21 +31,52 @@ namespace VPay.Payment
             _logger = logger;
         }
 
-        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request, string token)
+        public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request)
         {
-            List<ReasonCodeType> reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(token, request.User, request.TransNumber);
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{request.ToDisplayString()}",
+                nameof(GetReasonCodes), "Starting");
+
+            List<ReasonCodeType> reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(request.Token, request.User, request.TransNumber);
             var reasonCodeResponse = new ReasonCodeResponse();
             reasonCodeResponse.ReasonCodeList = reasonCodes;
             reasonCodeResponse.CommonData = new CommonData() { SuccessCode = "0000", SuccessDesc = "Authorized" };
 
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = reasonCodeResponse.CommonData.ReasonCode,
+                ["ReasonDesc"] = reasonCodeResponse.CommonData.ReasonDesc,
+                ["ResponseCode"] = reasonCodeResponse.CommonData.ResponseCode,
+                ["ResponseDesc"] = reasonCodeResponse.CommonData.ResponseDesc,
+                ["SuccessCode"] = reasonCodeResponse.CommonData.SuccessCode,
+                ["SuccessDesc"] = reasonCodeResponse.CommonData.SuccessDesc,
+            }))
+            {
+                var level = reasonCodeResponse.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{reasonCodeResponse.ToDisplayString()}",
+                    nameof(GetPanNumber), "Response");
+            }
+
             return reasonCodeResponse;
         }
 
-        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request, StandardRequest standardRequest, string token)
+        public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request)
         {
+            var standardRequest = new StandardRequest
+            {
+                CommonData = new CommonData
+                {
+                    TransNumber = request.TransNumber,
+                    User = request.User,
+                    Token = request.Token
+                }
+            };
+
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+                nameof(GetTransactionDetails), "Starting");
+
             TransactionDetailResponse response;
 
-            var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(token, request.User, request.Txid);
+            var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber);
             if (headerDatas.Count > 0)
             {
                 string client = headerDatas[0].Client;
@@ -67,8 +98,8 @@ namespace VPay.Payment
                 payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
                 payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
 
-                var detailList = await _db2Context.TransactionWs.TransactionDetailsData(token, client, billCode, request.Txid);
-                var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(token, request.User, request.Txid);
+                var detailList = await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber);
+                var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(request.Token, request.User, request.TransNumber);
 
                 // when nothing goes wrong
                 string finalSuccessCode = "0000";
@@ -77,11 +108,11 @@ namespace VPay.Payment
                 if (detailList.Count == 0)
                 {
                     finalSuccessCode = "0101";
-                    finalSuccessDesc = "Details Not Found for: " + request.Txid + "," + client + "," + billCode;
+                    finalSuccessDesc = "Details Not Found for: " + request.TransNumber + "," + client + "," + billCode;
                 }
                 else if (correspList.Count == 0)
                 {
-                    finalSuccessDesc = "No Correspondence Data For : " + request.Txid;
+                    finalSuccessDesc = "No Correspondence Data For : " + request.TransNumber;
                 }
 
                 response = new TransactionDetailResponse()
@@ -93,7 +124,7 @@ namespace VPay.Payment
                     CommonData = new CommonData()
                     {
                         User = request.User.ToUpper(),
-                        TransNumber = request.Txid,
+                        TransNumber = request.TransNumber,
                         SuccessCode = finalSuccessCode,
                         SuccessDesc = finalSuccessDesc
                     }
@@ -106,13 +137,28 @@ namespace VPay.Payment
                     CommonData = new CommonData()
                     {
                         User = request.User.ToUpper(),
-                        TransNumber = request.Txid,
+                        TransNumber = request.TransNumber,
                         SuccessCode = "0103",
-                        SuccessDesc = "No Header for: " + request.Txid
+                        SuccessDesc = "No Header for: " + request.TransNumber
                     }
                 };
             }
-            
+
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["ReasonCode"] = response.CommonData.ReasonCode,
+                ["ReasonDesc"] = response.CommonData.ReasonDesc,
+                ["ResponseCode"] = response.CommonData.ResponseCode,
+                ["ResponseDesc"] = response.CommonData.ResponseDesc,
+                ["SuccessCode"] = response.CommonData.SuccessCode,
+                ["SuccessDesc"] = response.CommonData.SuccessDesc,
+            }))
+            {
+                var level = response.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
+                    nameof(GetTransactionDetails), "Response");
+            }
+
             return response;
         }
 

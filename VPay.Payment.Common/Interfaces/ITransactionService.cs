@@ -5,8 +5,8 @@ namespace VPay.Payment.Common
 {
     public interface ITransactionService
     {
-        Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request, string token);
-        Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request, StandardRequest standardRequest, string token);
+        Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request);
+        Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request);
         Task<StandardResponse> GetPanNumber(StandardRequest standardRequest);
         Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest);
         Task<StandardResponse> LoadPan(StandardRequest standardRequest);

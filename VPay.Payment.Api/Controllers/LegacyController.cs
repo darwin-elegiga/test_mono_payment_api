@@ -63,9 +63,9 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(ReasonCodeResponse), 200)]
         public async Task<ReasonCodeResponse> GetReasonCodes(LegacyRequest request)
         {
-            var response = await _transactionService.GetReasonCodes(request.Envelope.Body.GetReasonCodes.Request);
+            var response = await _transactionService.GetReasonCodes(StandardReasonCodeRequest(request.Envelope.Body.GetReasonCodes.Request));
 
-            return new ReasonCodeResponse();
+            return response;
         }
 
         [HttpPost("GetTransactionDetails")]
@@ -73,9 +73,9 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(TransactionDetailResponse), 200)]
         public async Task<TransactionDetailResponse> GetTransactionDetails(LegacyRequest request)
         {
-            var response = await _transactionService.GetTransactionDetails(request.Envelope.Body.GetTransactionDetails.Request);
+            var response = await _transactionService.GetTransactionDetails(StandardTransactionDetailRequest(request.Envelope.Body.GetTransactionDetails.Request));
 
-            return new TransactionDetailResponse();
+            return response;
         }
 
         [HttpPost("GetPanNumber")]
@@ -208,5 +208,31 @@ namespace VPay.Payment.Api.Controllers
 
             return request;
         }
+
+
+        private ReasonCodeRequest StandardReasonCodeRequest(ReasonCodeRequestDto request)
+        {
+            var reasonCodeRequest = new ReasonCodeRequest()
+            {
+                TransNumber = request.Txid,
+                User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
+                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
+            };
+
+            return reasonCodeRequest;
+        }
+
+        private TransactionDetailRequest StandardTransactionDetailRequest(TransactionDetailRequestDto request)
+        {
+            var transactionDetailRequest = new TransactionDetailRequest()
+            {
+                TransNumber = request.Txid,
+                User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
+                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
+            };
+
+            return transactionDetailRequest;
+        }
+
     }
 }

@@ -71,9 +71,8 @@ namespace VPay.Payment.Api.Controllers
         public async Task<ReasonCodeResponse> GetReasonCodes(string transNumber)
         {
             var reasonCodeRequest = StandardReasonCodeRequest(transNumber);
-            string token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-            var reasonCodeResponse = await _transactionService.GetReasonCodes(reasonCodeRequest, token);
+            var reasonCodeResponse = await _transactionService.GetReasonCodes(reasonCodeRequest);
 
             return reasonCodeResponse;
         }
@@ -83,10 +82,8 @@ namespace VPay.Payment.Api.Controllers
         public async Task<TransactionDetailResponse> GetTransactionDetails(string transNumber)
         {
             var transactionDetailRequest = StandardTransactionDetailRequest(transNumber);
-            var standardRequest = DefaultStandardRequest(transNumber);
-            string token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-            var transactionDetailResponse = await _transactionService.GetTransactionDetails(transactionDetailRequest, standardRequest, token);
+            var transactionDetailResponse = await _transactionService.GetTransactionDetails(transactionDetailRequest);
 
             return transactionDetailResponse;
         }
@@ -212,8 +209,7 @@ namespace VPay.Payment.Api.Controllers
                 {
                     TransNumber = transNumber,
                     User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
-                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
-                    PassWord = "yraheem197"
+                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
                 }
             };
 
@@ -228,8 +224,7 @@ namespace VPay.Payment.Api.Controllers
                 {
                     TransNumber = transNumber,
                     User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
-                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
-                    PassWord = "yraheem197"
+                    Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
                 },
                 CardData = new CardData()
                 {
@@ -246,9 +241,8 @@ namespace VPay.Payment.Api.Controllers
             var reasonCodeRequest = new ReasonCodeRequest()
             {
                 TransNumber = transNumber,
-                PassWord = "yraheem197",
-                Source = ' ',
-                User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value
+                User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
+                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
             };
 
             return reasonCodeRequest;
@@ -258,10 +252,9 @@ namespace VPay.Payment.Api.Controllers
         {
             var transactionDetailRequest = new TransactionDetailRequest()
             {
-                PassWord = "yraheem197",
-                Source = ' ',
-                Txid = transNumber,
-                User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value
+                TransNumber = transNumber,
+                User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
+                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
             };
 
             return transactionDetailRequest;
