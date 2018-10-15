@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
+using VPay.Data.Db2.Abstractions.Helpers;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
+using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
 using VPay.Payment.Common.Models;
 
@@ -71,63 +74,92 @@ namespace VPay.Payment
             _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
                 nameof(GetTransactionDetails), "Starting");
 
+            TransactionDetailResponse response;
+
             var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber);
-            List<HeaderData> waitedHeaderDatas = headerDatas;
-            string client = waitedHeaderDatas[0].Client;
-            string billCode = waitedHeaderDatas[0].BillCode;
-
-
-
-            StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
-            headerDatas[0].SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
-            headerDatas[0].SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
-
-            StandardResponse panNumResponse = await GetPanNumber(standardRequest);
-            PayTypeDetail payTypeDetail = new PayTypeDetail();
-            payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
-            payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
-            payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
-            payTypeDetail.Association = panNumResponse.CardData.CardType;
-            payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
-            payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
-            payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
-            payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
-            payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
-
-            var detailList = await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber);
-            var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(request.Token, request.User, request.TransNumber);
-
-            var completeResponse = new TransactionDetailResponse()
+            if (headerDatas.Count > 0)
             {
-                DetailList = detailList,
-                HeaderData = headerDatas[0],
-                CorrespondenceList = correspList,
-                PayTypeDetail = payTypeDetail,
-                CommonData = new CommonData()
+                string client = headerDatas[0].Client;
+                string billCode = headerDatas[0].BillCode;
+
+                StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
+                headerDatas[0].SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
+                headerDatas[0].SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
+
+                StandardResponse panNumResponse = await GetPanNumber(standardRequest);
+                PayTypeDetail payTypeDetail = new PayTypeDetail();
+                payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
+                payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
+                payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
+                payTypeDetail.Association = panNumResponse.CardData.CardType;
+                payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
+                payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
+                payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
+                payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
+                payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
+
+                var detailList = await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber);
+                var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(request.Token, request.User, request.TransNumber);
+
+                // when nothing goes wrong
+                string finalSuccessCode = "0000";
+                string finalSuccessDesc = "Successful Query";
+
+                if (detailList.Count == 0)
                 {
-                    User = request.User.ToUpper(),
-                    TransNumber = request.TransNumber,
-                    SuccessCode = "0000",
-                    SuccessDesc = "Successful Query"
+                    finalSuccessCode = "0101";
+                    finalSuccessDesc = "Details Not Found for: " + request.TransNumber + "," + client + "," + billCode;
                 }
-            };
+                else if (correspList.Count == 0)
+                {
+                    finalSuccessDesc = "No Correspondence Data For : " + request.TransNumber;
+                }
+
+                response = new TransactionDetailResponse()
+                {
+                    DetailList = detailList,
+                    HeaderData = headerDatas[0],
+                    CorrespondenceList = correspList,
+                    PayTypeDetail = payTypeDetail,
+                    CommonData = new CommonData()
+                    {
+                        User = request.User.ToUpper(),
+                        TransNumber = request.TransNumber,
+                        SuccessCode = finalSuccessCode,
+                        SuccessDesc = finalSuccessDesc
+                    }
+                };
+            }
+            else // if no header data exists
+            {
+                response = new TransactionDetailResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        User = request.User.ToUpper(),
+                        TransNumber = request.TransNumber,
+                        SuccessCode = "0103",
+                        SuccessDesc = "No Header for: " + request.TransNumber
+                    }
+                };
+            }
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = completeResponse.CommonData.ReasonCode,
-                ["ReasonDesc"] = completeResponse.CommonData.ReasonDesc,
-                ["ResponseCode"] = completeResponse.CommonData.ResponseCode,
-                ["ResponseDesc"] = completeResponse.CommonData.ResponseDesc,
-                ["SuccessCode"] = completeResponse.CommonData.SuccessCode,
-                ["SuccessDesc"] = completeResponse.CommonData.SuccessDesc,
+                ["ReasonCode"] = response.CommonData.ReasonCode,
+                ["ReasonDesc"] = response.CommonData.ReasonDesc,
+                ["ResponseCode"] = response.CommonData.ResponseCode,
+                ["ResponseDesc"] = response.CommonData.ResponseDesc,
+                ["SuccessCode"] = response.CommonData.SuccessCode,
+                ["SuccessDesc"] = response.CommonData.SuccessDesc,
             }))
             {
-                var level = completeResponse.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{completeResponse.ToDisplayString()}",
+                var level = response.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
                     nameof(GetTransactionDetails), "Response");
             }
 
-            return completeResponse;
+            return response;
         }
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest)
