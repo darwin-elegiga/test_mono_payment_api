@@ -103,6 +103,10 @@ namespace VPay.Payment
                 var detailList = await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber);
                 var correspondences = await _db2Context.Correspondence.GetByTransactionId(long.Parse(request.TransNumber));
                 var correspList = correspondences.ToList();
+                if (correspList.Count > 0)
+                {
+                    var faxes = (await _db2Context.Fax.GetFaxJobByTransactionId(Convert.ToInt64(request.TransNumber))).ToList();
+                }
 
                 // when nothing goes wrong
                 string finalSuccessCode = "0000";
@@ -122,7 +126,7 @@ namespace VPay.Payment
                 {
                     DetailList = detailList,
                     HeaderData = headerDatas[0],
-                    CorrespondenceList = correspList,
+                    CorrespondenceList = correspList.ToCorespDtl().ToList(),
                     PayTypeDetail = payTypeDetail,
                     CommonData = new CommonData()
                     {

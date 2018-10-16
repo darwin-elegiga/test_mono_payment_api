@@ -1033,6 +1033,125 @@ namespace VPay.Payment.Common
             return listValues.Count == 0 ? "" : $"Detail [ {string.Join(", ", listValues)} ]\r\n";
         }
 
+        public static string ToDisplayString(this CorespDtl entity)
+        {
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.Direction))
+            {
+                listValues.Add($"Direction={entity.Direction.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Type))
+            {
+                listValues.Add($"Type={entity.Type.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Status))
+            {
+                listValues.Add($"Status={entity.Status.Trim()}");
+            }
+
+
+
+            listValues.Add($"RequestDate={entity.RequestDate}");
+            listValues.Add($"StatusDate={entity.StatusDate}");
+
+            if (!string.IsNullOrWhiteSpace(entity.SentBehalfName))
+            {
+                listValues.Add($"SentBehalfName={entity.SentBehalfName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromName))
+            {
+                listValues.Add($"FromName={entity.FromName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromAddress1))
+            {
+                listValues.Add($"FromAddress1={entity.FromAddress1.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromAddress2))
+            {
+                listValues.Add($"FromAddress2={entity.FromAddress2.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromCity))
+            {
+                listValues.Add($"FromCity={entity.FromCity.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromState))
+            {
+                listValues.Add($"FromState={entity.FromState.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromPostalCode))
+            {
+                listValues.Add($"FromPostalCode={entity.FromPostalCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.FromFax))
+            {
+                listValues.Add($"FromFax={entity.FromFax.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToName))
+            {
+                listValues.Add($"ToName={entity.ToName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToAddress1))
+            {
+                listValues.Add($"ToAddress1={entity.ToAddress1.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToAddress2))
+            {
+                listValues.Add($"ToAddress2={entity.ToAddress2.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToCity))
+            {
+                listValues.Add($"ToCity={entity.ToCity.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToState))
+            {
+                listValues.Add($"ToState={entity.ToState.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToPostalCode))
+            {
+                listValues.Add($"ToPostalCode={entity.ToPostalCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToFax))
+            {
+                listValues.Add($"ToFax={entity.ToFax.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ToPhone))
+            {
+                listValues.Add($"ToPhone={entity.ToPhone.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.StatusText))
+            {
+                listValues.Add($"StatusText={entity.StatusText.Trim()}");
+            }
+
+            if (entity.FaxJobList != null)
+            {
+                listValues.Add($"FaxJobListCount={entity.FaxJobList.Count}");
+            }
+
+            listValues.Add($"DmRecId={entity.DmRecId}");
+
+            return listValues.Count == 0 ? "" : $"Correspondence [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
         public static string ToDisplayString(this Correspondence entity)
         {
             var listValues = new List<string>();
