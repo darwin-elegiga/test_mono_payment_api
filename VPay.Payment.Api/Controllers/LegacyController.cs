@@ -214,7 +214,7 @@ namespace VPay.Payment.Api.Controllers
         {
             var reasonCodeRequest = new ReasonCodeRequest()
             {
-                TransNumber = request.Txid,
+                TransNumber = request.TransNumber,
                 User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
                 Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
             };
@@ -226,7 +226,7 @@ namespace VPay.Payment.Api.Controllers
         {
             var transactionDetailRequest = new TransactionDetailRequest()
             {
-                TransNumber = request.Txid,
+                TransNumber = request.TransNumber,
                 User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
                 Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
             };
