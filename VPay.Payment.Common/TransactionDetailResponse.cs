@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using VPay.Data.Db2.Abstractions.CorrespondenceRepo;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 
 namespace VPay.Payment.Common
@@ -13,7 +14,7 @@ namespace VPay.Payment.Common
 
         public List<Detail> DetailList { get; set; } = new List<Detail>();
 
-        public List<CorespDtl> CorrespondenceList { get; set; } = new List<CorespDtl>();
+        public List<Correspondence> CorrespondenceList { get; set; } = new List<Correspondence>();
 
 
     }

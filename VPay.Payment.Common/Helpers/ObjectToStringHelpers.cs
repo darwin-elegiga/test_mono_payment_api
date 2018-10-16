@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using VPay.Data.Db2.Abstractions.CorrespondenceRepo;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 
 namespace VPay.Payment.Common
@@ -1032,7 +1033,7 @@ namespace VPay.Payment.Common
             return listValues.Count == 0 ? "" : $"Detail [ {string.Join(", ", listValues)} ]\r\n";
         }
 
-        public static string ToDisplayString(this CorespDtl entity)
+        public static string ToDisplayString(this Correspondence entity)
         {
             var listValues = new List<string>();
 
@@ -1053,92 +1054,92 @@ namespace VPay.Payment.Common
 
 
 
-            listValues.Add($"RequestDate={entity.RequestDate}");
-            listValues.Add($"StatusDate={entity.StatusDate}");
+            listValues.Add($"RequestDate={entity.RequestDateTime}");
+            listValues.Add($"StatusDate={entity.StatusDatePart}");
 
-            if (!string.IsNullOrWhiteSpace(entity.SentBehalfName))
+            if (!string.IsNullOrWhiteSpace(entity.SenderName))
             {
-                listValues.Add($"SentBehalfName={entity.SentBehalfName.Trim()}");
+                listValues.Add($"SentBehalfName={entity.SenderName.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.FromName))
+            if (!string.IsNullOrWhiteSpace(entity.SenderName))
             {
-                listValues.Add($"FromName={entity.FromName.Trim()}");
+                listValues.Add($"FromName={entity.SenderName.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.FromAddress1))
+            if (!string.IsNullOrWhiteSpace(entity.SenderAddress1))
             {
-                listValues.Add($"FromAddress1={entity.FromAddress1.Trim()}");
+                listValues.Add($"FromAddress1={entity.SenderAddress1.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.FromAddress2))
+            if (!string.IsNullOrWhiteSpace(entity.SenderAddress2))
             {
-                listValues.Add($"FromAddress2={entity.FromAddress2.Trim()}");
+                listValues.Add($"FromAddress2={entity.SenderAddress2.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.FromCity))
+            if (!string.IsNullOrWhiteSpace(entity.SenderCity))
             {
-                listValues.Add($"FromCity={entity.FromCity.Trim()}");
+                listValues.Add($"FromCity={entity.SenderCity.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.FromState))
+            if (!string.IsNullOrWhiteSpace(entity.SenderState))
             {
-                listValues.Add($"FromState={entity.FromState.Trim()}");
+                listValues.Add($"FromState={entity.SenderState.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.FromPostalCode))
+            if (!string.IsNullOrWhiteSpace(entity.SenderZip))
             {
-                listValues.Add($"FromPostalCode={entity.FromPostalCode.Trim()}");
+                listValues.Add($"FromPostalCode={entity.SenderZip.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.FromFax))
+            if (!string.IsNullOrWhiteSpace(entity.SenderFax))
             {
-                listValues.Add($"FromFax={entity.FromFax.Trim()}");
+                listValues.Add($"FromFax={entity.SenderFax.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ToName))
+            if (!string.IsNullOrWhiteSpace(entity.ReceiverName))
             {
-                listValues.Add($"ToName={entity.ToName.Trim()}");
+                listValues.Add($"ToName={entity.ReceiverName.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ToAddress1))
+            if (!string.IsNullOrWhiteSpace(entity.ReceiverAddress1))
             {
-                listValues.Add($"ToAddress1={entity.ToAddress1.Trim()}");
+                listValues.Add($"ToAddress1={entity.ReceiverAddress1.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ToAddress2))
+            if (!string.IsNullOrWhiteSpace(entity.ReceiverAddress2))
             {
-                listValues.Add($"ToAddress2={entity.ToAddress2.Trim()}");
+                listValues.Add($"ToAddress2={entity.ReceiverAddress2.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ToCity))
+            if (!string.IsNullOrWhiteSpace(entity.ReceiverCity))
             {
-                listValues.Add($"ToCity={entity.ToCity.Trim()}");
+                listValues.Add($"ToCity={entity.ReceiverCity.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ToState))
+            if (!string.IsNullOrWhiteSpace(entity.ReceiverState))
             {
-                listValues.Add($"ToState={entity.ToState.Trim()}");
+                listValues.Add($"ToState={entity.ReceiverState.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ToPostalCode))
+            if (!string.IsNullOrWhiteSpace(entity.ReceiverZip))
             {
-                listValues.Add($"ToPostalCode={entity.ToPostalCode.Trim()}");
+                listValues.Add($"ToPostalCode={entity.ReceiverZip.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ToFax))
+            if (!string.IsNullOrWhiteSpace(entity.ReceiverFax))
             {
-                listValues.Add($"ToFax={entity.ToFax.Trim()}");
+                listValues.Add($"ToFax={entity.ReceiverFax.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ToPhone))
+            if (!string.IsNullOrWhiteSpace(entity.ReceiverPhone))
             {
-                listValues.Add($"ToPhone={entity.ToPhone.Trim()}");
+                listValues.Add($"ToPhone={entity.ReceiverPhone.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.StatusText))
+            if (!string.IsNullOrWhiteSpace(entity.Status))
             {
-                listValues.Add($"StatusText={entity.StatusText.Trim()}");
+                listValues.Add($"StatusText={entity.Status.Trim()}");
             }
 
             if (entity.FaxJobList != null)
@@ -1146,7 +1147,7 @@ namespace VPay.Payment.Common
                 listValues.Add($"FaxJobListCount={entity.FaxJobList.Count}");
             }
 
-            listValues.Add($"DmRecId={entity.DmRecId}");
+            listValues.Add($"DmRecId={entity.Id}");
 
             return listValues.Count == 0 ? "" : $"Correspondence [ {string.Join(", ", listValues)} ]\r\n";
         }

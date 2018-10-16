@@ -46,8 +46,8 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="VPay.Data.Db2.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\VPay.Data.Db2.Abstractions.1.0.0.15\lib\netstandard2.0\VPay.Data.Db2.Abstractions.dll</HintPath>
+    <Reference Include="VPay.Data.Db2.Abstractions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\VPay.Data.Db2.Abstractions.1.1.0.18\lib\netstandard2.0\VPay.Data.Db2.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
