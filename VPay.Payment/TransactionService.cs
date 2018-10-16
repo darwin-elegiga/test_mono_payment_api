@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;using System.Threading.Tasks;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
 using VPay.Data.Db2.Abstractions.Helpers;
@@ -99,7 +101,8 @@ namespace VPay.Payment
                 payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
 
                 var detailList = await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber);
-                var correspList = await _db2Context.TransactionWs.TransactionCorrespondenceData(request.Token, request.User, request.TransNumber);
+                var correspondences = await _db2Context.Correspondence.GetByTransactionId(long.Parse(request.TransNumber));
+                var correspList = correspondences.ToList();
 
                 // when nothing goes wrong
                 string finalSuccessCode = "0000";
