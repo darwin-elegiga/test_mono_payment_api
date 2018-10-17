@@ -14,7 +14,7 @@ namespace VPay.Payment.Common
 
         public List<Detail> DetailList { get; set; } = new List<Detail>();
 
-        public List<Correspondence> CorrespondenceList { get; set; } = new List<Correspondence>();
+        public List<CorespDtl> CorrespondenceList { get; set; } = new List<CorespDtl>();
 
 
     }
