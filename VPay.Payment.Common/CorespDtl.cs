@@ -27,8 +27,6 @@ namespace VPay.Payment.Common
             ToPhone = " ";
             StatusText = " ";
             DmRecId = 0;
-            LastStatRank = 10;
-            LastStatText = "";
         }
 
         public string Direction { get; set; }
@@ -55,7 +53,6 @@ namespace VPay.Payment.Common
         public string StatusText { get; set; }
         public List<FaxJob> FaxJobList { get; set; }
         public long DmRecId { get; set; }
-        public int LastStatRank { get; set; }
-        public string LastStatText { get; set; }
+
     }
 }

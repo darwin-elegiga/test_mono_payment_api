@@ -27,11 +27,10 @@ namespace VPay.Payment.Common
         public string FaxStatus { get; set; }
         public int Priority { get; set; }
         public DateTime CreateTS { get; set; }
-        public DateTime LastStatTS { get; set; }
+        public DateTime LastStatusTS { get; set; }
         public int RetryCount { get; set; }
         public string FaxNumber { get; set; }
         public string ReserveName { get; set; }
-        public List<FaxStat> FaxStatList { get; set; }
 
         public string HoldAble { get; set; }
         public string ReleaseAble { get; set; }

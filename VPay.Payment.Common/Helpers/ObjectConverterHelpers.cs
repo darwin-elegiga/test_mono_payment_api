@@ -36,15 +36,47 @@ namespace VPay.Payment.Common
                 ToPostalCode = entity.ReceiverZip,
                 ToPhone = entity.ReceiverPhone,
                 ToFax = entity.ReceiverFax,
-                StatusText = entity.Status,
+                Status = entity.Status,
                 RequestDate = Convert.ToInt32(entity.RequestDatePart),
                 StatusDate = Convert.ToInt32(entity.StatusDatePart),
+                FaxJobList = entity.FaxJobList.ToFaxJobs()?.ToList(),
             };
         }
 
         public static IEnumerable<CorespDtl> ToCorespDtl(this IEnumerable<Correspondence> entities)
         {
             return entities?.Select(x => x.ToCorespDtl());
+        }
+
+        public static FaxJob ToFaxJob(this VPay.Data.Db2.Abstractions.Fax.FaxJob entity)
+        {
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return new FaxJob
+            {
+                FaxJobId = entity.Id,
+                FaxQueue = entity.Queue,
+                FaxStatus = entity.FaxStatus,
+                Priority = entity.Priority,
+                CreateTS = entity.CreatedTimeStamp,
+                LastStatusTS = entity.LastStatusTimeStamp,
+                RetryCount = entity.RetryCount,
+                FaxNumber = entity.FaxNumber,
+                ReserveName = entity.ReserveName,
+                ReleaseAble = entity.CanRelease ? "TRUE" : "FALSE",
+                HoldAble = entity.CanHold ? "TRUE": "FALSE",
+                CancelAble = entity.CanCancel ? "TRUE": "FALSE",
+                DropToMailAble = entity.CanDropToMail ? "TRUE": "FALSE",
+                EditAble = entity.CanEdit ? "TRUE": "FALSE"
+            };
+        }
+
+        public static IEnumerable<FaxJob> ToFaxJobs(this IEnumerable<VPay.Data.Db2.Abstractions.Fax.FaxJob> entities)
+        {
+            return entities?.Select(x => x.ToFaxJob());
         }
 
     }

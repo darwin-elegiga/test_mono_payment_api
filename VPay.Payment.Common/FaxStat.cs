@@ -2,23 +2,12 @@
 {
     public class FaxStat
     {
-        public FaxStat()
-        {
-            JobId = 0;
-            Status = " ";
-            StatCode = "000       ";
-            StatText = " ";
-            LastStatRank = 10;
-            LastStatText = "";
-        }
 
-        public int JobId { get; set; }
-        public string Status { get; set; }
-        public string StatCode { get; set; }
-        public string StatText { get; set; }
+        public int FaxJobId { get; set; }
+        public string FaxStatus { get; set; } = " ";
+        public string StatusCode { get; set; } = "000       ";
+        public string StatusText { get; set; } = " ";
 
-        public int LastStatRank { get; set; }
-        public string LastStatText { get; set; }
 
     }
 }
