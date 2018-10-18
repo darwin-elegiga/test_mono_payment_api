@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using VPay.Payment.Common;
 using VPay.Payment.Common.MySql;
@@ -13,11 +14,14 @@ namespace VPay.Payment.MySql
     public class MySqlPaymentOps : IMySqlPaymentOps, IHealthCheck
     {
         private readonly MySqlConnectionConfig _connectionConfig;
+        private readonly ILogger _logger;
+
         private MySqlConnection _dbConnection;
 
-        public MySqlPaymentOps(MySqlConnectionConfig connectionConfig)
+        public MySqlPaymentOps(MySqlConnectionConfig connectionConfig, ILogger<MySqlPaymentOps> logger)
         {
             _connectionConfig = connectionConfig ?? throw new ArgumentNullException(nameof(connectionConfig));
+            _logger = logger;
 
         }
 
@@ -28,10 +32,18 @@ namespace VPay.Payment.MySql
             try
             {
                 var connection = await GetOpenConnection();
-                return connection.State == ConnectionState.Open;
+                var result = connection.State == ConnectionState.Open;
+
+                if (!result)
+                {
+                    _logger.LogWarning("Could not open connection to the MySql: {ConnectionState}", connection.State.ToString());
+                }
+
+                return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Could not connect to the MySql");
                 return false;
             }
         }
