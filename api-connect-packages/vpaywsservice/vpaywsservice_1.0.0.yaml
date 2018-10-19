@@ -1121,12 +1121,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
-           <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
-           
+           <telephone>string</telephone>         
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -1301,7 +1300,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -1868,11 +1866,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -2044,7 +2042,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -2231,11 +2228,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -2407,7 +2404,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -2594,11 +2590,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -2770,7 +2766,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -2957,11 +2952,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -3133,7 +3128,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -3320,11 +3314,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -3496,7 +3490,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -3683,11 +3676,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -3859,7 +3852,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -4046,11 +4038,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -4222,7 +4214,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -4409,11 +4400,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -4585,7 +4576,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -4772,11 +4762,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -4948,7 +4938,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -5135,11 +5124,11 @@ definitions:
           <merchant>
            <contactPerson>string</contactPerson>
            <fax>string</fax>
+           <emailAddress>string</emailAddress>
            <payeeCode>string</payeeCode>
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -5311,7 +5300,6 @@ definitions:
            <payeeName>string</payeeName>
            <postalCode>string</postalCode>
            <telephone>string</telephone>
-           <emailAddress>string</emailAddress>
           </merchant>
           <payment>
            <accountNumber>string</accountNumber>
@@ -5519,11 +5507,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -5679,7 +5667,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -6054,11 +6041,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -6211,7 +6198,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -6366,11 +6352,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -6523,7 +6509,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -6678,11 +6663,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -6835,7 +6820,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -6990,11 +6974,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -7147,7 +7131,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -7302,11 +7285,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -7459,7 +7442,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -7614,11 +7596,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -7771,7 +7753,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -7926,11 +7907,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -8083,7 +8064,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -8238,11 +8218,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -8395,7 +8375,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -8550,11 +8529,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -8707,7 +8686,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -8862,11 +8840,11 @@ definitions:
         <merchant>
          <contactPerson>string</contactPerson>
          <fax>string</fax>
+         <emailAddress>string</emailAddress>
          <payeeCode>string</payeeCode>
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -9019,7 +8997,6 @@ definitions:
          <payeeName>string</payeeName>
          <postalCode>string</postalCode>
          <telephone>string</telephone>
-         <emailAddress>string</emailAddress>
         </merchant>
         <payment>
          <accountNumber>string</accountNumber>
@@ -9170,7 +9147,7 @@ definitions:
       coveredItem:
         $ref: '#/definitions/coveredItem_tns'
       merchant:
-        $ref: '#/definitions/merchant_tns'
+        $ref: '#/definitions/merchantNoE_tns'
       payment:
         $ref: '#/definitions/payment_tns'
       switchTransaction:
@@ -9466,6 +9443,8 @@ definitions:
     properties:
       contactPerson:
         type: string
+      emailAddress:
+        type: string
       fax:
         type: string
       payeeCode:
@@ -9476,13 +9455,34 @@ definitions:
         type: string
       telephone:
         type: string
-      emailAddress:
-        type: string
     x-xsi-type: merchant
     x-xsi-type-xml:
       namespace: 'http://webinterface.vpay.com/'
       prefix: tns
     x-xsi-type-uniquename: merchant_tns
+  merchantNoE_tns:
+    xml:
+      namespace: ''
+      prefix: ''
+    type: object
+    properties:
+      contactPerson:
+        type: string
+      fax:
+        type: string
+      payeeCode:
+        type: string
+      payeeName:
+        type: string
+      postalCode:
+        type: string
+      telephone:
+        type: string
+    x-xsi-type: merchantNoE
+    x-xsi-type-xml:
+      namespace: 'http://webinterface.vpay.com/'
+      prefix: tns
+    x-xsi-type-uniquename: merchantNoE_tns
   payment_tns:
     xml:
       namespace: ''
