@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -63,9 +64,30 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(ReasonCodeResponse), 200)]
         public async Task<ReasonCodeResponse> GetReasonCodes(LegacyRequest request)
         {
-            var response = await _transactionService.GetReasonCodes(StandardReasonCodeRequest(request.Envelope.Body.GetReasonCodes.Request));
+            try
+            {
+                var response =
+                    await _transactionService.GetReasonCodes(
+                        StandardReasonCodeRequest(request.Envelope.Body.GetReasonCodes.Request));
 
-            return response;
+                return response;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with GetReasonCodes");
+
+                ReasonCodeResponse errorResponse = new ReasonCodeResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with GetReasonCodes"
+                    }
+                };
+
+                return errorResponse;
+            }
+
         }
 
         [HttpPost("GetTransactionDetails")]
@@ -73,9 +95,28 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(TransactionDetailResponse), 200)]
         public async Task<TransactionDetailResponse> GetTransactionDetails(LegacyRequest request)
         {
-            var response = await _transactionService.GetTransactionDetails(StandardTransactionDetailRequest(request.Envelope.Body.GetTransactionDetails.Request));
+            try
+            {
+                var response = await _transactionService.GetTransactionDetails(
+                    StandardTransactionDetailRequest(request.Envelope.Body.GetTransactionDetails.Request));
 
-            return response;
+                return response;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with GetTransactionDetails");
+
+                TransactionDetailResponse errorResponse = new TransactionDetailResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with GetTransactionDetails"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("GetPanNumber")]
@@ -83,11 +124,29 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> GetPanNumber(LegacyRequest request)
         {
-            var sr = DefaultStandardRequest(request.Envelope.Body.GetPanNumber?.Request);
+            try
+            {
+                var sr = DefaultStandardRequest(request.Envelope.Body.GetPanNumber?.Request);
 
-            var result = await _transactionService.GetPanNumber(sr);
+                var result = await _transactionService.GetPanNumber(sr);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with GetPanNumber");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with GetPanNumber"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("OpenPreAuth")]
@@ -95,11 +154,29 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> OpenPreAuth(LegacyRequest request)
         {
-            var sr = DefaultStandardRequest(request.Envelope.Body.OpenPreAuth?.Request);
+            try
+            {
+                var sr = DefaultStandardRequest(request.Envelope.Body.OpenPreAuth?.Request);
 
-            var result = await _transactionService.OpenPreAuth(sr);
+                var result = await _transactionService.OpenPreAuth(sr);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with OpenPreAuth");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with OpenPreAuth"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("LoadPan")]
@@ -107,11 +184,29 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> LoadPan(LegacyRequest request)
         {
-            var sr = DefaultStandardRequest(request.Envelope.Body.LoadPan?.Request);
+            try
+            {
+                var sr = DefaultStandardRequest(request.Envelope.Body.LoadPan?.Request);
 
-            var result = await _transactionService.LoadPan(sr);
+                var result = await _transactionService.LoadPan(sr);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with LoadPan");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with LoadPan"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("BalanceRequest")]
@@ -119,11 +214,29 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> BalanceRequest(LegacyRequest request)
         {
-            var sr = DefaultStandardRequest(request.Envelope.Body.BalanceRequest?.Request);
+            try
+            {
+                var sr = DefaultStandardRequest(request.Envelope.Body.BalanceRequest?.Request);
 
-            var result = await _transactionService.GetBalanceRequest(sr);
+                var result = await _transactionService.GetBalanceRequest(sr);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with BalanceRequest");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with BalanceRequest"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("UnloadPan")]
@@ -131,11 +244,29 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> UnloadPan(LegacyRequest request)
         {
-            var sr = DefaultStandardRequest(request.Envelope.Body.UnloadPan?.Request);
+            try
+            {
+                var sr = DefaultStandardRequest(request.Envelope.Body.UnloadPan?.Request);
 
-            var result = await _transactionService.UnloadPan(sr);
+                var result = await _transactionService.UnloadPan(sr);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with UnloadPan");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with UnloadPan"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("StopPay")]
@@ -143,11 +274,29 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> StopPay(LegacyRequest request)
         {
-            var sr = DefaultStandardRequest(request.Envelope.Body.StopPay?.Request);
+            try
+            {
+                var sr = DefaultStandardRequest(request.Envelope.Body.StopPay?.Request);
 
-            var result = await _transactionService.StopPay(sr);
+                var result = await _transactionService.StopPay(sr);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with StopPay");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with StopPay"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("CancelFax")]
@@ -155,9 +304,27 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> CancelFax(LegacyRequest request)
         {
-            var result = await _transactionService.CancelFax(request.Envelope.Body.CancelFax.Request);
+            try
+            {
+                var result = await _transactionService.CancelFax(request.Envelope.Body.CancelFax.Request);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with CancelFax");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with CancelFax"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("ChangeFaxNumber")]
@@ -165,9 +332,27 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> ChangeFaxNumber(LegacyRequest request)
         {
-            var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ChangeFaxNumber.Request);
+            try
+            {
+                var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ChangeFaxNumber.Request);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with ChangeFaxNumber");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with ChangeFaxNumber"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("HoldFax")]
@@ -175,9 +360,27 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> HoldFax(LegacyRequest request)
         {
-            var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.HoldFax.Request);
+            try
+            {
+                var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.HoldFax.Request);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with HoldFax");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with HoldFax"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("ReleaseFax")]
@@ -185,9 +388,27 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> ReleaseFax(LegacyRequest request)
         {
-            var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ReleaseFax.Request);
+            try
+            {
+                var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ReleaseFax.Request);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with ReleaseFax");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with ReleaseFax"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         [HttpPost("ResendFax")]
@@ -195,9 +416,27 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public async Task<StandardResponse> ResendFax(LegacyRequest request)
         {
-            var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ResendFax.Request);
+            try
+            {
+                var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ResendFax.Request);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected Error with ResendFax");
+
+                StandardResponse errorResponse = new StandardResponse()
+                {
+                    CommonData = new CommonData()
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = "Unexpected Error with ResendFax"
+                    }
+                };
+
+                return errorResponse;
+            }
         }
 
         private StandardRequest DefaultStandardRequest(StandardRequest request)
