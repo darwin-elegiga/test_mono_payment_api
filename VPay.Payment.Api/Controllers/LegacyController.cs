@@ -74,7 +74,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with GetReasonCodes");
 
                 ReasonCodeResponse errorResponse = new ReasonCodeResponse()
                 {
@@ -104,7 +104,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with GetTransactionDetails");
 
                 TransactionDetailResponse errorResponse = new TransactionDetailResponse()
                 {
@@ -134,7 +134,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with GetPanNumber");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -164,7 +164,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with OpenPreAuth");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -194,7 +194,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with LoadPan");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -224,7 +224,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with BalanceRequest");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -254,7 +254,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with UnloadPan");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -284,7 +284,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with StopPay");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -312,7 +312,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with CancelFax");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -340,7 +340,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with ChangeFaxNumber");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -368,7 +368,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with HoldFax");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -396,7 +396,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with ReleaseFax");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
@@ -424,7 +424,7 @@ namespace VPay.Payment.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.StackTrace);
+                _logger.LogError(e, "Unexpected Error with ResendFax");
 
                 StandardResponse errorResponse = new StandardResponse()
                 {
