@@ -49,8 +49,7 @@ namespace VPay.Payment.Api
                 .AddOptions()
                 .AddSwaggerGenService()
                 .SetupAuth()
-                .SetupDb2(Configuration)
-                .SetupMySql(Configuration);
+                .SetupDb2(Configuration);
             
             services.Configure<PaymentConfig>(Configuration.GetSection("PaymentSettings"));
             services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<PaymentConfig>>().Value);

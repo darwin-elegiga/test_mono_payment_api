@@ -57,7 +57,7 @@ namespace VPay.Payment.Api.Auth
             byte[] headerValueBytes = Convert.FromBase64String(headerValue.Parameter);
             string userAndPassword = Encoding.UTF8.GetString(headerValueBytes);
             string[] parts = userAndPassword.Split(':');
-            if (parts.Length != 4 && parts.Length != 3)
+            if (parts.Length != 4)
             {
                 return AuthenticateResult.Fail("Invalid VPay authentication header");
             }
@@ -69,30 +69,14 @@ namespace VPay.Payment.Api.Auth
 
             ip = map.ToString();
 
-            AuthenticationParam av;
-
-            if (parts.Length == 4)
+            var av = new AuthenticationParam()
             {
-                av = new AuthenticationParam()
-                {
-                    Id = parts[0],
-                    PassPhrase = parts[1],
-                    IpAddress = ip,
-                    UserId = parts[2],
-                    Password = parts[3]
-                };
-            }
-            else
-            {
-                av = new AuthenticationParam()
-                {
-                    Id = parts[0],
-                    PassPhrase = parts[1],
-                    IpAddress = ip,
-                    Token = parts[2]
-                };
-            }
-
+                Id = parts[0],
+                PassPhrase = parts[1],
+                IpAddress = ip,
+                UserId = parts[2],
+                Password = parts[3]
+            };
             
             var user = await _authenticationService.Login(av);
 
