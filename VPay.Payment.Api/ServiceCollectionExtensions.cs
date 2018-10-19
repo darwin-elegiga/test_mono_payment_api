@@ -18,9 +18,7 @@ using VPay.Data.Db2.Odbc;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
 using VPay.Payment.Common.Db2;
-using VPay.Payment.Common.MySql;
 using VPay.Payment.Db2;
-using VPay.Payment.MySql;
 
 namespace VPay.Payment.Api
 {
@@ -52,17 +50,6 @@ namespace VPay.Payment.Api
 
             services.AddScoped<IDbPaymentOps, DbPaymentOps>();
             services.AddScoped<IHealthCheck, DbPaymentOps>();
-
-            return services;
-        }
-
-        public static IServiceCollection SetupMySql(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<MySqlConnectionConfig>(configuration.GetSection("MySql"));
-            services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<MySqlConnectionConfig>>().Value);
-
-            services.AddScoped<IMySqlPaymentOps, MySqlPaymentOps>();
-            services.AddScoped<IHealthCheck, MySqlPaymentOps>();
 
             return services;
         }

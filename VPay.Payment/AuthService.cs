@@ -1,16 +1,11 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
 using VPay.Data.Db2.Abstractions.Security;
 using VPay.Payment.Common;
 using VPay.Payment.Common.DataWebService;
 using VPay.Payment.Common.Db2;
-using VPay.Payment.Common.Login;
 using VPay.Payment.Common.Models;
-using VPay.Payment.Common.MySql;
 using SecurityCheckParam = VPay.Data.Db2.Abstractions.Security.SecurityCheckParam;
 
 namespace VPay.Payment
@@ -18,21 +13,13 @@ namespace VPay.Payment
     public class AuthService : IAuthService
     {
         private readonly IDb2Context _db;
-        private readonly IMySqlPaymentOps _mySql;
         private readonly ILogger<AuthService> _logger;
         private readonly PaymentConfig _config;
 
-        /// <summary>
-        /// This is used to determine if this is suppose to be a session or a single run
-        /// </summary>
-        private const int _tokenLength = 64;
-
-        public AuthService(IDb2Context db, IMySqlPaymentOps mySql, ILogger<AuthService> logger, PaymentConfig config)
+        public AuthService(IDb2Context db, ILogger<AuthService> logger, PaymentConfig config)
         {
             _db = db;
-            _mySql = mySql;
             _config = config;
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             _logger = logger;
         }
@@ -78,24 +65,12 @@ namespace VPay.Payment
 
             UserSessionInfo userSession = null;
 
-            if (param.Token?.Length >= _tokenLength)
-            {
-                userSession = await GetTokenAndUserId(param.Token);
-            }
+            var loginTry = await DoLogin(param.UserId, param.Password, "WEBSERVICE");
 
-            if (userSession == null)
+            if (loginTry != null)
             {
-                var loginTry = await DoLogin(param.UserId, param.Password, "WEBSERVICE");
-
-                if (loginTry != null)
-                {
-                    userSession = loginTry;
-                    userSession.Source = 'S';
-                }
-            }
-            else
-            {
-                userSession.Source = 'P'; // Set source to web(P)age
+                userSession = loginTry;
+                userSession.Source = 'S';
             }
 
             return userSession;
@@ -138,107 +113,6 @@ namespace VPay.Payment
                 UserName = name,
                 Token = remoteLogin.Token
             };
-        }
-
-        public async Task<UserSessionInfo> GetTokenAndUserId(string token)
-        {
-            try
-            {
-                //    _logIt.LogInfo("GetToken from SessionID: " + cd.getToken());
-                var sessionEntry = await _mySql.GetSessionEntryBySessionId(token);
-                if (sessionEntry == null)
-                {
-                    //        _logIt.LogInfo("Login - No Token Found");
-                    return null;
-                }
-                else if (sessionEntry.Active == false)
-                {
-                    //            _logIt.LogInfo("Login - Token is InActive");
-                    return null;
-                }
-                else
-                {
-                    //            cd.setToken(st.getToken());
-                    //            cd.setUser(st.getUserName());
-                    return new UserSessionInfo()
-                    {
-                        Token = sessionEntry.Token,
-                        UserName = sessionEntry.UserName
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Could not Get Token for login");
-            }
-
-            return null;
-        }
-
-        public string HashPassword(string userName, string password)
-        {
-            var result = "";
-            var trimmedPassword = $"a{password}".Trim().Substring(1);
-
-            try
-            {
-                //combines password and username padleft by 10
-                var combinedValue = $"{trimmedPassword}{userName,10}";
-
-                var inputLen = combinedValue.Length;
-
-                var precursor = new byte[] {0, (byte) inputLen};
-
-                var resultBytes = new byte[inputLen];
-
-                //Encoding 1047 = cp1047 in the java code. This requires the CodePagesEncodingProvider be registed in Encoding.
-                var encoding = Encoding.GetEncoding(1047);
-                var trailor = encoding.GetBytes(combinedValue);
-
-                // from JAVA: System.arraycopy(precursor, 0, result, 0, precursor.length);
-                resultBytes[0] = precursor[0];
-                resultBytes[1] = precursor[1];
-
-                // from JAVA: System.arraycopy(trailor, 0, result, precursor.length, trailor.length-2);
-
-                for (int i = 0; i < trailor.Length - 2; i++)
-                {
-                    resultBytes[i + 2] = trailor[i];
-                }
-
-                result = CalculateHash(SHA1.Create(), resultBytes);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Could not hash password");
-                result = "";
-            }
-
-
-            return result;
-        }
-
-        public string CalculateHash(HashAlgorithm algorithmm, byte[] inputBytes)
-        {
-            var hash = algorithmm.ComputeHash(inputBytes);
-
-            return HexStringFromBytes(hash);
-        }
-
-        /// <summary>
-        /// Convert an array of bytes to a string of hex digits
-        /// </summary>
-        /// <param name="bytes">array of bytes</param>
-        /// <returns>String of hex digits</returns>
-        public static string HexStringFromBytes(byte[] bytes)
-        {
-            var sb = new StringBuilder();
-            foreach (var b in bytes)
-            {
-                var hex = b.ToString("x2");
-                sb.Append(hex.ToUpper());
-            }
-            return sb.ToString();
         }
     }
 }
