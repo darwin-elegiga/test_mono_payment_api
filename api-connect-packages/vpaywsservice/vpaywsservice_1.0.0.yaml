@@ -877,7 +877,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -895,9 +895,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -912,8 +912,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:Echo xmlns:tns="http://webinterface.vpay.com/">
         <!-- mandatory -->
          <av>
@@ -922,8 +922,8 @@ definitions:
          </av>
          <es>string</es>
         </tns:Echo>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   EchoHeader:
     type: object
     properties:
@@ -934,7 +934,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -948,9 +948,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:EchoResponse xmlns:tns="http://webinterface.vpay.com/">
          <commonData>
           <passWord>string</passWord>
@@ -969,14 +969,14 @@ definitions:
           <user>string</user>
          </commonData>
         </tns:EchoResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   LoadPanInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -994,9 +994,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1011,8 +1011,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:LoadPan xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory
       -->
          <av>
@@ -1164,8 +1164,8 @@ definitions:
           <clientData>string</clientData>
          </cd>
         </tns:LoadPan>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   LoadPanHeader:
     type: object
     properties:
@@ -1176,7 +1176,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1190,9 +1190,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:LoadPanResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -1335,14 +1335,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:LoadPanResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   getVerInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1360,9 +1360,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1377,11 +1377,11 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:getVer xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory--></tns:getVer>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   getVerHeader:
     type: object
     properties:
@@ -1392,7 +1392,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1406,20 +1406,20 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:getVerResponse xmlns:tns="http://webinterface.vpay.com/">
          <return>string</return>
         </tns:getVerResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   GetTransactionDetailsInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1437,9 +1437,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1454,8 +1454,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:GetTransactionDetails xmlns:tns="http://webinterface.vpay.com/">
         <!--mandatory -->
          <av>
@@ -1468,8 +1468,8 @@ definitions:
           <user>string</user>
          </transactionDetailRequest>
         </tns:GetTransactionDetails>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   GetTransactionDetailsHeader:
     type: object
     properties:
@@ -1480,7 +1480,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1494,10 +1494,10 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
 
-       <soapenv:Body>
+       <S:Body>
 
         <tns:GetTransactionDetailsResponse xmlns:tns="http://webinterface.vpay.com/">
          <transactionDetailResponse>
@@ -1604,14 +1604,14 @@ definitions:
           </payTypeDetail>
          </transactionDetailResponse>
         </tns:GetTransactionDetailsResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   GetReasonCodesInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1629,9 +1629,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1646,8 +1646,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:GetReasonCodes xmlns:tns="http://webinterface.vpay.com/">
         <!--mandatory -->
          <av>
@@ -1660,8 +1660,8 @@ definitions:
           <user>string</user>
          </reasonCodeRequest>
         </tns:GetReasonCodes>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   GetReasonCodesHeader:
     type: object
     properties:
@@ -1672,7 +1672,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1686,9 +1686,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:GetReasonCodesResponse xmlns:tns="http://webinterface.vpay.com/">
          <reasonCodeResponse>
           <commonData>
@@ -1715,14 +1715,14 @@ definitions:
           </reasonCodeList>
          </reasonCodeResponse>
         </tns:GetReasonCodesResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   GetPanNumberInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1740,9 +1740,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1757,8 +1757,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:GetPanNumber xmlns:tns="http://webinterface.vpay.com/"><!--mandatory -->
          <av>
           <id>string</id>
@@ -1906,8 +1906,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:GetPanNumber>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   GetPanNumberHeader:
     type: object
     properties:
@@ -1918,7 +1918,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -1932,9 +1932,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:GetPanNumberResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -2077,14 +2077,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:GetPanNumberResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   OpenPreAuthInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -2102,9 +2102,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -2119,8 +2119,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:OpenPreAuth xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory-->
          <av>
           <id>string</id>
@@ -2268,8 +2268,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:OpenPreAuth>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   OpenPreAuthHeader:
     type: object
     properties:
@@ -2280,7 +2280,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -2294,9 +2294,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:OpenPreAuthResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -2439,14 +2439,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:OpenPreAuthResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   BalanceRequestInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -2464,9 +2464,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -2481,8 +2481,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:BalanceRequest xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory -->
          <av>
           <id>string</id>
@@ -2630,8 +2630,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:BalanceRequest>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   BalanceRequestHeader:
     type: object
     properties:
@@ -2642,7 +2642,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -2656,9 +2656,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:BalanceRequestResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -2801,14 +2801,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:BalanceRequestResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   UnloadPanInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -2826,9 +2826,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -2843,8 +2843,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:UnloadPan xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory -->
          <av>
           <id>string</id>
@@ -2992,8 +2992,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:UnloadPan>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   UnloadPanHeader:
     type: object
     properties:
@@ -3004,7 +3004,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -3018,9 +3018,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:UnloadPanResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -3163,14 +3163,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:UnloadPanResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   StopPayInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -3188,9 +3188,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -3205,8 +3205,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:StopPay xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory -->
          <av>
           <id>string</id>
@@ -3354,8 +3354,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:StopPay>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   StopPayHeader:
     type: object
     properties:
@@ -3366,7 +3366,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -3380,9 +3380,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:StopPayResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -3525,14 +3525,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:StopPayResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   CancelFaxInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -3550,9 +3550,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -3567,8 +3567,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:CancelFax xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory -->
          <av>
           <id>string</id>
@@ -3716,8 +3716,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:CancelFax>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   CancelFaxHeader:
     type: object
     properties:
@@ -3728,7 +3728,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -3742,9 +3742,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:CancelFaxResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -3887,14 +3887,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:CancelFaxResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   ChangeFaxNumberInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -3912,9 +3912,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -3929,8 +3929,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:ChangeFaxNumber xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory -->
          <av>
           <id>string</id>
@@ -4078,8 +4078,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:ChangeFaxNumber>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   ChangeFaxNumberHeader:
     type: object
     properties:
@@ -4090,7 +4090,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -4104,9 +4104,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:ChangeFaxNumberResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -4249,14 +4249,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:ChangeFaxNumberResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   HoldFaxInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -4274,9 +4274,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -4291,8 +4291,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:HoldFax xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory -->
          <av>
           <id>string</id>
@@ -4440,8 +4440,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:HoldFax>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   HoldFaxHeader:
     type: object
     properties:
@@ -4452,7 +4452,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -4466,9 +4466,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:HoldFaxResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -4611,14 +4611,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:HoldFaxResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   ReleaseFaxInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -4636,9 +4636,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -4653,8 +4653,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:ReleaseFax xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory -->
          <av>
           <id>string</id>
@@ -4802,8 +4802,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:ReleaseFax>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   ReleaseFaxHeader:
     type: object
     properties:
@@ -4814,7 +4814,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -4828,9 +4828,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:ReleaseFaxResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -4973,14 +4973,14 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:ReleaseFaxResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   ResendFaxInput:
     type: object
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -4998,9 +4998,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Header>
         <wsse:Security
       xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -5015,8 +5015,8 @@ definitions:
           <wsu:Expires>string</wsu:Expires>
          </wsu:Timestamp>
         </wsse:Security>
-       </soapenv:Header>
-       <soapenv:Body>
+       </S:Header>
+       <S:Body>
         <tns:ResendFax xmlns:tns="http://webinterface.vpay.com/"><!-- mandatory -->
          <av>
           <id>string</id>
@@ -5164,8 +5164,8 @@ definitions:
           </switchTransaction>
          </sr>
         </tns:ResendFax>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   ResendFaxHeader:
     type: object
     properties:
@@ -5176,7 +5176,7 @@ definitions:
     properties:
       Envelope:
         xml:
-          prefix: soapenv
+          prefix: S
           namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
         type: object
         properties:
@@ -5190,9 +5190,9 @@ definitions:
     required:
       - Envelope
     example: >-
-      <soapenv:Envelope
-      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Body>
+      <S:Envelope
+      xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+       <S:Body>
         <tns:ResendFaxResponse xmlns:tns="http://webinterface.vpay.com/">
          <standardResponse>
           <cardData>
@@ -5335,8 +5335,8 @@ definitions:
           </switchTransaction>
          </standardResponse>
         </tns:ResendFaxResponse>
-       </soapenv:Body>
-      </soapenv:Envelope>
+       </S:Body>
+      </S:Envelope>
   Echo_tns:
     xml:
       namespace: 'http://webinterface.vpay.com/'
