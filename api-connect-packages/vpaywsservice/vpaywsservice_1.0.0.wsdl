@@ -30,8 +30,6 @@
       <xs:element name="StopPayResponse" type="tns:StopPayResponse"/>
       <xs:element name="UnloadPan" type="tns:UnloadPan"/>
       <xs:element name="UnloadPanResponse" type="tns:UnloadPanResponse"/>
-      <xs:element name="getVer" type="tns:getVer"/>
-      <xs:element name="getVerResponse" type="tns:getVerResponse"/>
       <xs:complexType name="ChangeFaxNumber">
         <xs:sequence>
           <xs:element name="av" type="tns:authenticationValues" minOccurs="0"/>
@@ -170,12 +168,12 @@
       <xs:complexType name="merchant">
         <xs:sequence>
           <xs:element name="contactPerson" type="xs:string" minOccurs="0"/>
+          <xs:element name="emailAddress" type="xs:string" minOccurs="0"/>
           <xs:element name="fax" type="xs:string" minOccurs="0"/>
           <xs:element name="payeeCode" type="xs:string" minOccurs="0"/>
           <xs:element name="payeeName" type="xs:string" minOccurs="0"/>
           <xs:element name="postalCode" type="xs:string" minOccurs="0"/>
           <xs:element name="telephone" type="xs:string" minOccurs="0"/>
-          <xs:element name="emailAddress" type="xs:string" minOccurs="0"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="payment">
@@ -227,9 +225,19 @@
           <xs:element name="commonData" type="tns:commonData" minOccurs="0"/>
           <xs:element name="correspondenceData" type="tns:correspondenceData" minOccurs="0"/>
           <xs:element name="coveredItem" type="tns:coveredItem" minOccurs="0"/>
-          <xs:element name="merchant" type="tns:merchant" minOccurs="0"/>
+          <xs:element name="merchant" type="tns:merchantNoE" minOccurs="0"/>
           <xs:element name="payment" type="tns:payment" minOccurs="0"/>
           <xs:element name="switchTransaction" type="tns:switchTransaction" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="merchantNoE">
+        <xs:sequence>
+          <xs:element name="contactPerson" type="xs:string" minOccurs="0"/>
+          <xs:element name="fax" type="xs:string" minOccurs="0"/>
+          <xs:element name="payeeCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="payeeName" type="xs:string" minOccurs="0"/>
+          <xs:element name="postalCode" type="xs:string" minOccurs="0"/>
+          <xs:element name="telephone" type="xs:string" minOccurs="0"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="ResendFax">
@@ -252,14 +260,6 @@
       <xs:complexType name="EchoResponse">
         <xs:sequence>
           <xs:element name="commonData" type="tns:commonData" minOccurs="0"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getVer">
-        <xs:sequence/>
-      </xs:complexType>
-      <xs:complexType name="getVerResponse">
-        <xs:sequence>
-          <xs:element name="return" type="xs:string" minOccurs="0"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="BalanceRequest">
@@ -523,24 +523,6 @@
       </xs:complexType>
     </xs:schema>
   </types>
-  <message name="Echo">
-    <part name="parameters" element="tns:Echo"/>
-  </message>
-  <message name="EchoResponse">
-    <part name="parameters" element="tns:EchoResponse"/>
-  </message>
-  <message name="LoadPan">
-    <part name="parameters" element="tns:LoadPan"/>
-  </message>
-  <message name="LoadPanResponse">
-    <part name="parameters" element="tns:LoadPanResponse"/>
-  </message>
-  <message name="getVer">
-    <part name="parameters" element="tns:getVer"/>
-  </message>
-  <message name="getVerResponse">
-    <part name="parameters" element="tns:getVerResponse"/>
-  </message>
   <message name="GetTransactionDetails">
     <part name="parameters" element="tns:GetTransactionDetails"/>
   </message>
@@ -553,6 +535,12 @@
   <message name="GetReasonCodesResponse">
     <part name="parameters" element="tns:GetReasonCodesResponse"/>
   </message>
+  <message name="Echo">
+    <part name="parameters" element="tns:Echo"/>
+  </message>
+  <message name="EchoResponse">
+    <part name="parameters" element="tns:EchoResponse"/>
+  </message>
   <message name="GetPanNumber">
     <part name="parameters" element="tns:GetPanNumber"/>
   </message>
@@ -564,6 +552,12 @@
   </message>
   <message name="OpenPreAuthResponse">
     <part name="parameters" element="tns:OpenPreAuthResponse"/>
+  </message>
+  <message name="LoadPan">
+    <part name="parameters" element="tns:LoadPan"/>
+  </message>
+  <message name="LoadPanResponse">
+    <part name="parameters" element="tns:LoadPanResponse"/>
   </message>
   <message name="BalanceRequest">
     <part name="parameters" element="tns:BalanceRequest"/>
@@ -614,18 +608,6 @@
     <part name="parameters" element="tns:ResendFaxResponse"/>
   </message>
   <portType name="VPayWS">
-    <operation name="Echo">
-      <input wsam:Action="http://webinterface.vpay.com/VPayWS/EchoRequest" message="tns:Echo"/>
-      <output wsam:Action="http://webinterface.vpay.com/VPayWS/EchoResponse" message="tns:EchoResponse"/>
-    </operation>
-    <operation name="LoadPan">
-      <input wsam:Action="http://webinterface.vpay.com/VPayWS/LoadPanRequest" message="tns:LoadPan"/>
-      <output wsam:Action="http://webinterface.vpay.com/VPayWS/LoadPanResponse" message="tns:LoadPanResponse"/>
-    </operation>
-    <operation name="getVer">
-      <input wsam:Action="http://webinterface.vpay.com/VPayWS/getVerRequest" message="tns:getVer"/>
-      <output wsam:Action="http://webinterface.vpay.com/VPayWS/getVerResponse" message="tns:getVerResponse"/>
-    </operation>
     <operation name="GetTransactionDetails">
       <input wsam:Action="http://webinterface.vpay.com/VPayWS/GetTransactionDetailsRequest" message="tns:GetTransactionDetails"/>
       <output wsam:Action="http://webinterface.vpay.com/VPayWS/GetTransactionDetailsResponse" message="tns:GetTransactionDetailsResponse"/>
@@ -634,6 +616,10 @@
       <input wsam:Action="http://webinterface.vpay.com/VPayWS/GetReasonCodesRequest" message="tns:GetReasonCodes"/>
       <output wsam:Action="http://webinterface.vpay.com/VPayWS/GetReasonCodesResponse" message="tns:GetReasonCodesResponse"/>
     </operation>
+    <operation name="Echo">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/EchoRequest" message="tns:Echo"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/EchoResponse" message="tns:EchoResponse"/>
+    </operation>
     <operation name="GetPanNumber">
       <input wsam:Action="http://webinterface.vpay.com/VPayWS/GetPanNumberRequest" message="tns:GetPanNumber"/>
       <output wsam:Action="http://webinterface.vpay.com/VPayWS/GetPanNumberResponse" message="tns:GetPanNumberResponse"/>
@@ -641,6 +627,10 @@
     <operation name="OpenPreAuth">
       <input wsam:Action="http://webinterface.vpay.com/VPayWS/OpenPreAuthRequest" message="tns:OpenPreAuth"/>
       <output wsam:Action="http://webinterface.vpay.com/VPayWS/OpenPreAuthResponse" message="tns:OpenPreAuthResponse"/>
+    </operation>
+    <operation name="LoadPan">
+      <input wsam:Action="http://webinterface.vpay.com/VPayWS/LoadPanRequest" message="tns:LoadPan"/>
+      <output wsam:Action="http://webinterface.vpay.com/VPayWS/LoadPanResponse" message="tns:LoadPanResponse"/>
     </operation>
     <operation name="BalanceRequest">
       <input wsam:Action="http://webinterface.vpay.com/VPayWS/BalanceRequestRequest" message="tns:BalanceRequest"/>
@@ -677,33 +667,6 @@
   </portType>
   <binding name="VPayWSPortBinding" type="tns:VPayWS">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-    <operation name="Echo">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="LoadPan">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="getVer">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
     <operation name="GetTransactionDetails">
       <soap:operation soapAction=""/>
       <input>
@@ -722,6 +685,15 @@
         <soap:body use="literal"/>
       </output>
     </operation>
+    <operation name="Echo">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
     <operation name="GetPanNumber">
       <soap:operation soapAction=""/>
       <input>
@@ -732,6 +704,15 @@
       </output>
     </operation>
     <operation name="OpenPreAuth">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="LoadPan">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="literal"/>
