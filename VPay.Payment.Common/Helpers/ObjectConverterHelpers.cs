@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VPay.Data.Db2.Abstractions.CorrespondenceRepo;
+using VPay.Data.Db2.Abstractions.TransactionWs;
 
 namespace VPay.Payment.Common
 {
@@ -77,6 +78,67 @@ namespace VPay.Payment.Common
         public static IEnumerable<FaxJob> ToFaxJobs(this IEnumerable<VPay.Data.Db2.Abstractions.Fax.FaxJob> entities)
         {
             return entities?.Select(x => x.ToFaxJob());
+        }
+
+        public static HeaderData ToHeaderData(this TransactionHeader entity)
+        {
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return new HeaderData()
+            {
+                TransNumber = Convert.ToInt32(entity.TransactionId),
+                Client = entity.ClientCode,
+                BillCode = entity.BillingEntity,
+                BillType = entity.PaymentType,
+                CurrentBalance = entity.CurrentBalance.ToString("F2"),
+                PayeeCode = entity.PayeeCode,
+                PayeeName = entity.PayeeName,
+                ProviderName = entity.ProviderName,
+                RequesterId = entity.RequesterId,
+                RequesterName = entity.RequesterName,
+                TaxId = entity.TaxId,
+                AvailBalance = entity.AvailableBalance.ToString("F2"),
+                UserField1 = entity.UserField1,
+                UserField2 = entity.UserField2,
+                UserField3 = entity.UserField3
+            };
+        }
+
+        public static Detail ToDetail(this TransactionDetail entity)
+        {
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return new Detail
+            {
+                TranId = Convert.ToInt32(entity.TransactionId),
+                LoadTran = Convert.ToInt32(entity.TransactionId),
+                Status = entity.Status,
+                Amount = entity.Amount.ToString("F2"),
+                AuthCode = entity.AuthCode,
+                TranTimeStamp = entity.TranTimeStamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff"),
+                Expiration = entity.Expiration.ToString("F0"),
+                MerchantCode = entity.MerchantCode,
+                MerchantName = entity.MerchantName,
+                ReasonCode = entity.ReasonCode,
+                ReasonDesc = entity.ReasonDescription,
+                ActionCode = entity.ActionCode,
+                ActionDesc = entity.ActionDescription,
+                FinancialType = entity.FinancialType,
+                RequesterName = entity.RequesterName,
+                BatchNumber = entity.BatchNumber.ToString("F0"),
+                StatusDesc = entity.StatusDescription
+            };
+        }
+
+        public static IEnumerable<Detail> ToDetail(this IEnumerable<TransactionDetail> entities)
+        {
+            return entities?.Select(x => x.ToDetail());
         }
 
     }
