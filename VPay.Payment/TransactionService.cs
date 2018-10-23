@@ -79,15 +79,17 @@ namespace VPay.Payment
 
             TransactionDetailResponse response;
 
-            var headerDatas = await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber);
-            if (headerDatas.Count > 0)
+            var headerData = (await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber)).FirstOrDefault();
+            if (headerData != null)
             {
-                string client = headerDatas[0].Client;
-                string billCode = headerDatas[0].BillCode;
+                var convHeaderData = headerData.ToHeaderData();
+
+                string client = convHeaderData.Client;
+                string billCode = convHeaderData.BillCode;
 
                 StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
-                headerDatas[0].SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
-                headerDatas[0].SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
+                convHeaderData.SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
+                convHeaderData.SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
 
                 StandardResponse panNumResponse = await GetPanNumber(standardRequest);
                 PayTypeDetail payTypeDetail = new PayTypeDetail();
@@ -101,7 +103,7 @@ namespace VPay.Payment
                 payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
                 payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
 
-                var detailList = await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber);
+                var detailList = (await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber)).ToDetail().ToList();
                 var correspList = await GetCorrespondenceList(long.Parse(request.TransNumber));
 
                 // when nothing goes wrong
@@ -121,7 +123,7 @@ namespace VPay.Payment
                 response = new TransactionDetailResponse()
                 {
                     DetailList = detailList,
-                    HeaderData = headerDatas[0],
+                    HeaderData = convHeaderData,
                     CorrespondenceList = correspList,
                     PayTypeDetail = payTypeDetail,
                     CommonData = new CommonData()
