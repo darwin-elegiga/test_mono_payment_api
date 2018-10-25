@@ -42,7 +42,13 @@ namespace VPay.Payment
             List<ReasonCodeType> reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(request.Token, request.User, request.TransNumber);
             var reasonCodeResponse = new ReasonCodeResponse();
             reasonCodeResponse.ReasonCodeList = reasonCodes;
-            reasonCodeResponse.CommonData = new CommonData() { SuccessCode = "0000", SuccessDesc = "Authorized" };
+            reasonCodeResponse.CommonData = new CommonData
+            {
+                SuccessCode = "0000",
+                SuccessDesc = "Successful Completion",
+                User = request.User,
+                TransNumber = request.TransNumber
+            };
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
