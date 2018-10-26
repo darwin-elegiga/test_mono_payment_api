@@ -721,19 +721,19 @@ namespace VPay.Payment
                 }
                 if (string.IsNullOrWhiteSpace(sr.Claim.ClaimOdometer))
                 {
-                    sr.Claim.Amount = "000000";
+                    sr.Claim.ClaimOdometer = "000000";
                 }
                 if (string.IsNullOrWhiteSpace(sr.Claim.ClaimDeductible))
                 {
-                    sr.Claim.Amount = "0.00";
+                    sr.Claim.ClaimDeductible = "0.00";
                 }
                 if (string.IsNullOrWhiteSpace(sr.Claim.ClaimDate))
                 {
-                    sr.Claim.Amount = "10000101";
+                    sr.Claim.ClaimDate = "10000101";
                 }
                 if (string.IsNullOrWhiteSpace(sr.Claim.CurrencyType))
                 {
-                    sr.Claim.Amount = "USD";
+                    sr.Claim.CurrencyType = "USD";
                 }
 
                 if (!string.IsNullOrWhiteSpace(sr.Claim.UserField1))
