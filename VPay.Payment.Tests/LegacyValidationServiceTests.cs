@@ -301,7 +301,7 @@ namespace VPay.Payment.Tests
             var expected = new ValidationMessage()
             {
                 Code = "0990",
-                Message = "Fields too long: itemType, itemId, itemYear, manufacturer, model, bookStateOrProvince, postalCode, planCode, planDescription, deductible, newUsed, beginDate, expireDate, odometerType, beginOdometer, expireOdometer, ownerLastName, ownerFirstName, "
+                Message = "Fields too long: itemType, itemId, year, manufacturer, model, bookStateOrProvince, postalCode, planCode, planDescription, deductible, newUsed, beginDate, expireDate, odometerType, beginOdometer, expireOdometer, ownerLastName, ownerFirstName, "
             };
 
             var actual = await _sut.ValidateStandardRequest(standardRequest);
@@ -479,7 +479,7 @@ namespace VPay.Payment.Tests
             {
                 ItemType = new String('A', 1000),
                 ItemId = new String('A', 1000),
-                ItemYear = new String('A', 1000),
+                Year = new String('A', 1000),
                 Manufacturer = new String('A', 1000),
                 Model = new String('A', 1000),
                 BookStateOrProvince = new String('A', 1000),
@@ -644,7 +644,7 @@ namespace VPay.Payment.Tests
                 {
                     ItemType = "ItemType",
                     ItemId = "ItemId",
-                    ItemYear = "2018",
+                    Year = "2018",
                     Manufacturer = "Manufacturer",
                     Model = "Model",
                     BookStateOrProvince = "TXT",

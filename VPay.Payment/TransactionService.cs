@@ -777,9 +777,9 @@ namespace VPay.Payment
 
             if (sr.CoveredItem != null)
             {
-                if (string.IsNullOrWhiteSpace(sr.CoveredItem.ItemYear))
+                if (string.IsNullOrWhiteSpace(sr.CoveredItem.Year))
                 {
-                    sr.CoveredItem.ItemYear = "1000";
+                    sr.CoveredItem.Year = "1000";
                 }
                 if (string.IsNullOrWhiteSpace(sr.CoveredItem.Deductible))
                 {
@@ -838,9 +838,9 @@ namespace VPay.Payment
                 result = (code: "0930", message: $"{notEqualMsg} amount {request.Claim.Amount}");
             }
 
-            if (!int.TryParse(request.CoveredItem.ItemYear, out _))
+            if (!int.TryParse(request.CoveredItem.Year, out _))
             {
-                result = (code: "0931", message: $"{notEqualMsg} year {request.CoveredItem.ItemYear}");
+                result = (code: "0931", message: $"{notEqualMsg} year {request.CoveredItem.Year}");
             }
 
             if (!decimal.TryParse(request.CoveredItem.Deductible, NumberStyles.Float, CultureInfo.CurrentCulture, out _))

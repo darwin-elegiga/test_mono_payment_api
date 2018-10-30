@@ -500,9 +500,9 @@ namespace VPay.Payment.Common
                 listValues.Add($"ItemId={entity.ItemId.Trim()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(entity.ItemYear))
+            if (!string.IsNullOrWhiteSpace(entity.Year))
             {
-                listValues.Add($"ItemYear={entity.ItemYear.Trim()}");
+                listValues.Add($"ItemYear={entity.Year.Trim()}");
             }
 
             if (!string.IsNullOrWhiteSpace(entity.Manufacturer))
