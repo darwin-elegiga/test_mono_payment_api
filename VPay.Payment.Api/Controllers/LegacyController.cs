@@ -362,7 +362,7 @@ namespace VPay.Payment.Api.Controllers
         {
             try
             {
-                var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.HoldFax.Request);
+                var result = await _transactionService.HoldFax(request.Envelope.Body.HoldFax.Request);
 
                 return result;
             }
@@ -390,7 +390,7 @@ namespace VPay.Payment.Api.Controllers
         {
             try
             {
-                var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ReleaseFax.Request);
+                var result = await _transactionService.ReleaseFax(request.Envelope.Body.ReleaseFax.Request);
 
                 return result;
             }
@@ -418,7 +418,7 @@ namespace VPay.Payment.Api.Controllers
         {
             try
             {
-                var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ResendFax.Request);
+                var result = await _transactionService.ResendFax(request.Envelope.Body.ResendFax.Request);
 
                 return result;
             }
