@@ -54,6 +54,10 @@ namespace VPay.Payment
 
             if (panRequest.CommonData.SuccessCode == "0002")
             {
+                reasonCodeResponse = new ReasonCodeResponse(panRequest.CommonData);
+            }
+            else
+            {
                 var reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(request.Token, request.User, request.TransNumber);
 
                 reasonCodeResponse.ReasonCodeList = reasonCodes;
@@ -64,10 +68,6 @@ namespace VPay.Payment
                     User = request.User,
                     TransNumber = request.TransNumber
                 };
-            }
-            else
-            {
-                reasonCodeResponse = new ReasonCodeResponse(panRequest.CommonData);
             }
 
             using (_logger.BeginScope(new Dictionary<string, object>
@@ -84,6 +84,9 @@ namespace VPay.Payment
                 _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{reasonCodeResponse.ToDisplayString()}",
                     nameof(GetPanNumber), "Response");
             }
+
+            reasonCodeResponse.CommonData.ReasonDesc = "";
+            reasonCodeResponse.CommonData.ReasonCode = "";
 
             return reasonCodeResponse;
         }
@@ -202,6 +205,9 @@ namespace VPay.Payment
                 _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
                     nameof(GetTransactionDetails), "Response");
             }
+
+            response.CommonData.ReasonDesc = "";
+            response.CommonData.ReasonCode = "";
 
             return response;
         }
