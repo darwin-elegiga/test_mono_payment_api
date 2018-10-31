@@ -85,6 +85,9 @@ namespace VPay.Payment
                     nameof(GetPanNumber), "Response");
             }
 
+            reasonCodeResponse.CommonData.ReasonDesc = "";
+            reasonCodeResponse.CommonData.ReasonCode = "";
+
             return reasonCodeResponse;
         }
 
@@ -202,6 +205,9 @@ namespace VPay.Payment
                 _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
                     nameof(GetTransactionDetails), "Response");
             }
+
+            response.CommonData.ReasonDesc = "";
+            response.CommonData.ReasonCode = "";
 
             return response;
         }
