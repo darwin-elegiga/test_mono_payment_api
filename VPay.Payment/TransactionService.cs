@@ -242,8 +242,7 @@ namespace VPay.Payment
                     nameof(GetPanNumber), "Response");
             }
 
-            result.CommonData.ReasonDesc = "";
-            result.CommonData.ReasonCode = "";
+            ClearCommonData(result);
 
             return result;
         }
@@ -276,8 +275,7 @@ namespace VPay.Payment
                 _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}", nameof(OpenPreAuth), "Response");
             }
 
-            result.CommonData.ReasonDesc = "";
-            result.CommonData.ReasonCode = "";
+            ClearCommonData(result);
 
             return result;
         }
@@ -330,8 +328,7 @@ namespace VPay.Payment
                 result.CommonData.SuccessDesc = checkDeclineMessages.message;
             }
 
-            result.CommonData.ReasonDesc = "";
-            result.CommonData.ReasonCode = "";
+            ClearCommonData(result);
 
             return result;
         }
@@ -365,8 +362,7 @@ namespace VPay.Payment
                     nameof(GetBalanceRequest), "Response");
             }
 
-            result.CommonData.ReasonDesc = "";
-            result.CommonData.ReasonCode = "";
+            ClearCommonData(result);
 
             return result;
         }
@@ -400,8 +396,7 @@ namespace VPay.Payment
                     nameof(UnloadPan), "Response");
             }
 
-            result.CommonData.ReasonDesc = "";
-            result.CommonData.ReasonCode = "";
+            ClearCommonData(result);
 
             return result;
         }
@@ -435,8 +430,7 @@ namespace VPay.Payment
                     nameof(StopPay), "Response");
             }
 
-            result.CommonData.ReasonDesc = "";
-            result.CommonData.ReasonCode = "";
+            ClearCommonData(result);
 
             return result;
         }
@@ -956,6 +950,13 @@ namespace VPay.Payment
 
             return result;
 
+        }
+
+        private void ClearCommonData(StandardResponse response)
+        {
+            response.CommonData.ReasonCode = "";
+            response.CommonData.ReasonDesc = "";
+            response.CommonData.Token = "";
         }
     }
 }
