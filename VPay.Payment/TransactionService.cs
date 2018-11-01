@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
 using VPay.Data.Db2.Abstractions.TransactionWs;
+using VPay.Data.Db2.Abstractions.Helpers;
 using VPay.Payment.Common;
 
 namespace VPay.Payment
@@ -441,22 +442,9 @@ namespace VPay.Payment
 
             var dbResult = await _db2Context.Fax.CancelFaxAsync(_user.Token, faxCode);
 
-            var sResp = new StandardResponse()
-            {
-                CommonData = new CommonData()
-                {
-                    SuccessCode = dbResult.SuccessCode,
-                    SuccessDesc = dbResult.SuccessDescription
-                },
-                CardData = new CardData(),
-                CheckData = new CheckData(),
-                Claim = new ClaimData(),
-                CorrespondenceData = new CorrespondenceData(),
-                CoveredItem = new CoveredItemData(),
-                Merchant = new MerchantData(),
-                Payment = new PaymentData(),
-                SwitchTransaction = new SwitchTransactionData()
-            };
+            var sResp = PackAndUnpackResponse();
+            sResp.CommonData.SuccessCode = dbResult.SuccessCode;
+            sResp.CommonData.SuccessDesc = dbResult.SuccessDescription;
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
@@ -478,22 +466,9 @@ namespace VPay.Payment
 
             var dbResult = await _db2Context.Fax.ChangeFaxNumberAsync(_user.Token, faxCode, faxNumber);
 
-            var sResp = new StandardResponse()
-            {
-                CommonData = new CommonData()
-                {
-                    SuccessCode = dbResult.SuccessCode,
-                    SuccessDesc = dbResult.SuccessDescription
-                },
-                CardData = new CardData(),
-                CheckData = new CheckData(),
-                Claim = new ClaimData(),
-                CorrespondenceData = new CorrespondenceData(),
-                CoveredItem = new CoveredItemData(),
-                Merchant = new MerchantData(),
-                Payment = new PaymentData(),
-                SwitchTransaction = new SwitchTransactionData()
-            };
+            var sResp = PackAndUnpackResponse();
+            sResp.CommonData.SuccessCode = dbResult.SuccessCode;
+            sResp.CommonData.SuccessDesc = dbResult.SuccessDescription;
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
@@ -515,22 +490,9 @@ namespace VPay.Payment
 
             var dbResult = await _db2Context.Fax.HoldFaxAsync(_user.Token, faxCode);
 
-            var sResp = new StandardResponse()
-            {
-                CommonData = new CommonData()
-                {
-                    SuccessCode = dbResult.SuccessCode,
-                    SuccessDesc = dbResult.SuccessDescription
-                },
-                CardData = new CardData(),
-                CheckData = new CheckData(),
-                Claim = new ClaimData(),
-                CorrespondenceData = new CorrespondenceData(),
-                CoveredItem = new CoveredItemData(),
-                Merchant = new MerchantData(),
-                Payment = new PaymentData(),
-                SwitchTransaction = new SwitchTransactionData()
-            };
+            var sResp = PackAndUnpackResponse();
+            sResp.CommonData.SuccessCode = dbResult.SuccessCode;
+            sResp.CommonData.SuccessDesc = dbResult.SuccessDescription;
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
@@ -552,22 +514,9 @@ namespace VPay.Payment
 
             var dbResult = await _db2Context.Fax.ReleaseFaxAsync(_user.Token, faxCode);
 
-            var sResp = new StandardResponse()
-            {
-                CommonData = new CommonData()
-                {
-                    SuccessCode = dbResult.SuccessCode,
-                    SuccessDesc = dbResult.SuccessDescription
-                },
-                CardData = new CardData(),
-                CheckData = new CheckData(),
-                Claim = new ClaimData(),
-                CorrespondenceData = new CorrespondenceData(),
-                CoveredItem = new CoveredItemData(),
-                Merchant = new MerchantData(),
-                Payment = new PaymentData(),
-                SwitchTransaction = new SwitchTransactionData()
-            };
+            var sResp = PackAndUnpackResponse();
+            sResp.CommonData.SuccessCode = dbResult.SuccessCode;
+            sResp.CommonData.SuccessDesc = dbResult.SuccessDescription;
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
@@ -588,25 +537,10 @@ namespace VPay.Payment
 
             var dbResult = await _db2Context.Fax.ResendFaxAsync(_user.Token, faxCode, faxNumber ?? "");
 
-            var sResp = new StandardResponse()
-            {
-                CommonData = new CommonData()
-                {
-                    SuccessCode = dbResult.SuccessCode,
-                    SuccessDesc = dbResult.SuccessDescription
-                },
-                CardData = new CardData(),
-                CheckData = new CheckData(),
-                Claim = new ClaimData(),
-                CorrespondenceData = new CorrespondenceData()
-                {
-                    PhoneNumber = dbResult.FaxNumber
-                },
-                CoveredItem = new CoveredItemData(),
-                Merchant = new MerchantData(),
-                Payment = new PaymentData(),
-                SwitchTransaction = new SwitchTransactionData()
-            };
+            var sResp = PackAndUnpackResponse();
+            sResp.CommonData.SuccessCode = dbResult.SuccessCode;
+            sResp.CommonData.SuccessDesc = dbResult.SuccessDescription;
+            sResp.CorrespondenceData.PhoneNumber = dbResult.FaxNumber;
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
@@ -957,6 +891,26 @@ namespace VPay.Payment
             response.CommonData.ReasonCode = "";
             response.CommonData.ReasonDesc = "";
             response.CommonData.Token = "";
+        }
+
+        private StandardResponse PackAndUnpackResponse()
+        {
+            StandardRequest blankRequest = new StandardRequest()
+            {
+                CommonData = new CommonData(),
+                CardData = new CardData(),
+                CheckData = new CheckData(),
+                Claim = new ClaimData(),
+                CorrespondenceData = new CorrespondenceData(),
+                CoveredItem = new CoveredItemData(),
+                Merchant = new MerchantData(),
+                Payment = new PaymentData(),
+                SwitchTransaction = new SwitchTransactionData()
+            };
+            string packedRequest = blankRequest.Pack();
+            StandardResponse unpackedResponse = TransactionWsStringHelpers.Unpack(packedRequest);
+
+            return unpackedResponse;
         }
     }
 }
