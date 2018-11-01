@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Api.Auth;
@@ -23,17 +30,85 @@ namespace VPay.Payment.Api.Controllers
 
         private readonly IHttpContextAccessor _accessor;
         private readonly ILegacyTransactionService _transactionService;
+        private readonly IFileProvider _fileProvider;
 
         private readonly ILogger _logger;
 
-        public LegacyController(IHttpContextAccessor accessor, ILegacyTransactionService transactionService, ILogger<LegacyController> logger)
+        public LegacyController(IHostingEnvironment fileProvider, IHttpContextAccessor accessor, ILegacyTransactionService transactionService, ILogger<LegacyController> logger)
         {
+            _fileProvider = fileProvider.WebRootFileProvider;
             _accessor = accessor;
             _transactionService = transactionService;
             _logger = logger;
 
             // TODO:  Initialize private variables
             _version = "2018-08-10";
+        }
+
+        [HttpGet("wsdl")]
+        [Produces("text/xml")]
+        [AllowAnonymous]
+        public IActionResult GetWsdl([FromQuery] string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                var request = _accessor.HttpContext.Request;
+                var location = new Uri($"{request.Scheme}://{request.Host}{request.Path}");
+
+                url = location.AbsoluteUri;
+            }
+            var doc = XDocument.Load(_fileProvider.GetFileInfo("VPayWSService.xml").PhysicalPath);
+            XNamespace nsSoap = "http://schemas.xmlsoap.org/wsdl/soap/";
+            XNamespace nsXsd = "http://www.w3.org/2001/XMLSchema";
+
+            var addressElement = doc.Descendants(nsSoap + "address").FirstOrDefault();
+            if (addressElement != null)
+            {
+                var location = addressElement.Attribute("location");
+                if (location != null)
+                {
+                    location.Value = url;
+                }
+            }
+
+            var importElement = doc.Descendants(nsXsd + "import").FirstOrDefault();
+            if (importElement != null)
+            {
+                var location = importElement.Attribute("schemaLocation");
+                if (location != null)
+                {
+                    location.Value = $"{url}?xsd=1";
+                }
+            }
+
+            var settings = new XmlWriterSettings { OmitXmlDeclaration = false, Encoding = Encoding.UTF8 };
+            using (var memoryStream = new MemoryStream())
+            using (var xmlWriter = XmlWriter.Create(memoryStream, settings))
+            {
+                doc.WriteTo(xmlWriter);
+                xmlWriter.Flush();
+                return File(memoryStream.ToArray(), "text/xml");
+            }
+        }
+
+        [HttpGet("xsd")]
+        [Produces("text/xml")]
+        [AllowAnonymous]
+        public IActionResult GetSchemaXsd([FromQuery] string url)
+        {
+            foreach (var requestHeader in _accessor.HttpContext.Request.Headers)
+            {
+                Console.WriteLine($"{requestHeader.Key} = {requestHeader.Value}");
+            }
+            var doc = XDocument.Load(_fileProvider.GetFileInfo("VPayWSServiceXSD.xml").PhysicalPath);
+            var settings = new XmlWriterSettings { OmitXmlDeclaration = false, Encoding = Encoding.UTF8 };
+            using (var memoryStream = new MemoryStream())
+            using (var xmlWriter = XmlWriter.Create(memoryStream, settings))
+            {
+                doc.WriteTo(xmlWriter);
+                xmlWriter.Flush();
+                return File(memoryStream.ToArray(), "text/xml");
+            }
         }
 
         [HttpGet("version")]
@@ -95,6 +170,12 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(TransactionDetailResponse), 200)]
         public async Task<TransactionDetailResponse> GetTransactionDetails(LegacyRequest request)
         {
+
+            foreach (var requestHeader in _accessor.HttpContext.Request.Headers)
+            {
+                Console.WriteLine($"{requestHeader.Key} = {requestHeader.Value}");
+            }
+
             try
             {
                 var response = await _transactionService.GetTransactionDetails(

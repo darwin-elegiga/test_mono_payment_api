@@ -1,0 +1,81 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: VPay WS Service Docs
+  x-ibm-name: VPayWSServiceDocs
+paths:
+  /wsdl:
+    get:
+      tags:
+        - Legacy
+      operationId: ApiLegacyWsdlGet
+      consumes: []
+      parameters:
+        - name: url
+          in: query
+          required: false
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: string
+        '404':
+          description: Not Found
+      produces:
+        - text/xml
+  /xsd:
+    get:
+      responses:
+        '200':
+          description: 200 OK
+          schema:
+            type: string
+      produces:
+        - text/xml
+x-ibm-configuration:
+  assembly:
+    execute:
+      - gatewayscript:
+          title: gatewayscript
+          version: 1.0.0
+          source: |-
+            var path = apim.getvariable('request.path').toLowerCase();
+            var basePath = '/' + apim.getvariable('api.root').toLowerCase();
+            var newPath = path.replace(basePath, '');
+            apim.setvariable('new-request-path', newPath);
+      - proxy:
+          title: proxy
+          timeout: 60
+          verb: GET
+          cache-response: protocol
+          cache-ttl: 900
+          version: 1.0.0
+          target-url: $(api.properties.api-endpoint)$(new-request-path)$(request.search)
+          description: ''
+    catch: []
+  gateway: datapower-gateway
+  properties:
+    api-endpoint:
+      value: 'http://172.17.0.1:5013/api/Legacy'
+      description: ''
+      encoded: false
+  catalogs:
+    Sandbox:
+      properties:
+        api-endpoint: 'http://hqdevlds01.vpayusa.net:5013/api/Legacy'
+    Stage:
+      properties:
+        api-endpoint: 'https://stg-payapi.vpayusa.net/api/Legacy'
+    Prod:
+      properties:
+        api-endpoint: 'https://payapi.vpayusa.net/api/Legacy'
+host: $(catalog.host)
+basePath: /vpaywsservice-docs
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - text/xml
