@@ -3,10 +3,6 @@ using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
 using VPay.Data.Db2.Abstractions.Security;
 using VPay.Payment.Common;
-using VPay.Payment.Common.DataWebService;
-using VPay.Payment.Common.Db2;
-using VPay.Payment.Common.Models;
-using SecurityCheckParam = VPay.Data.Db2.Abstractions.Security.SecurityCheckParam;
 
 namespace VPay.Payment
 {
@@ -22,18 +18,6 @@ namespace VPay.Payment
             _config = config;
 
             _logger = logger;
-        }
-
-        public async Task<bool> IsAuthenticated(AuthenticationValues av, string ipAddress)
-        {
-            var result = await _db.Security.AuthenticateWebUserAsync(new AuthenticateUserParam()
-            {
-                UserId = av.Id,
-                Password = av.PassPhrase,
-                IpAddress = ipAddress
-            });
-
-            return result.ReturnCode == "0";
         }
 
         public async Task<AuthenticationResult> TestAuthentication(AuthenticationParam param)

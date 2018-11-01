@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Models;
 
 namespace VPay.Payment
 {

@@ -1,4 +1,4 @@
-﻿namespace VPay.Payment.Common.Db2
+﻿namespace VPay.Payment.Common
 {
     public class AuthenticationResult
     {

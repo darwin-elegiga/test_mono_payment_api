@@ -10,7 +10,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Models;
 
 namespace VPay.Payment.Api
 {

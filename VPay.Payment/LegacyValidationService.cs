@@ -7,7 +7,6 @@ using VPay.Data.Db2.Abstractions.Attributes;
 using VPay.Data.Db2.Abstractions.Helpers;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Models;
 
 namespace VPay.Payment
 {

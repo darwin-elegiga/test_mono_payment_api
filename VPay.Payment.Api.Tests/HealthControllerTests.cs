@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -6,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using VPay.Payment.Api.Controllers;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Models;
 using Xunit;
 
 namespace VPay.Payment.Api.Tests

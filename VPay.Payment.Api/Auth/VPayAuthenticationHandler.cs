@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Db2;
 
 namespace VPay.Payment.Api.Auth
 {

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using VPay.Data.Db2.Abstractions.CorrespondenceRepo;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 
 namespace VPay.Payment.Common

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Models;
 using Xunit;
 
 namespace VPay.Payment.Tests

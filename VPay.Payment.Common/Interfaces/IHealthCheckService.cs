@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using VPay.Payment.Common.Models;
 
 namespace VPay.Payment.Common
 {
