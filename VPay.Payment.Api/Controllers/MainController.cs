@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Api.Dtos;
 using VPay.Payment.Common;
-using VPay.Payment.Common.DataWebService;
 
 namespace VPay.Payment.Api.Controllers
 {
@@ -21,49 +15,11 @@ namespace VPay.Payment.Api.Controllers
     {
         private readonly IHttpContextAccessor _accessor;
         private readonly ITransactionService _transactionService;
-
+        
         public MainController(IHttpContextAccessor accessor, ITransactionService transactionService)
         {
             _accessor = accessor;
             _transactionService = transactionService;
-
-            // TODO:  Initialize private variables
-            version = "2018-08-10";
-        }
-
-        [HttpGet("version")]
-        [AllowAnonymous]
-        public string GetVer()
-        {
-            return version;
-        }
-
-        // private WebServiceContext wsContext;
-        // Common Utilities
-        // private VPayWSBase vbase;
-        // Validation object
-        // private ValidateParm vparm;
-        // Logging Object
-        private ILogger li;
-
-        // Add version tag
-        private string version;
-
-        [HttpPost("echo")]
-        [AllowAnonymous]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(StandardResponse), 200)]
-        public Task<StandardResponse> PostEcho(EchoRequest entity)
-        {
-            return Task.FromResult(new StandardResponse()
-            {
-                CommonData = new CommonData()
-                {
-                    ResponseDesc = entity.Es,
-                    SuccessCode = "0",
-                    ReasonCode = "0"
-                }
-            });
         }
 
         [HttpGet("ReasonCodes")]

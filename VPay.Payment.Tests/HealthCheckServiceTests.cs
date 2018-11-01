@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Models;
 using Xunit;
 
 namespace VPay.Payment.Tests

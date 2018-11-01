@@ -11,14 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using VPay.Data.Db2.Odbc;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
-using VPay.Payment.Common.Db2;
-using VPay.Payment.Db2;
 
 namespace VPay.Payment.Api
 {
@@ -48,8 +45,7 @@ namespace VPay.Payment.Api
             services.Configure<OdbcConnectionConfig>(configuration.GetSection("Db2"));
             services.AddDb2OdbcConnection();
 
-            services.AddScoped<IDbPaymentOps, DbPaymentOps>();
-            services.AddScoped<IHealthCheck, DbPaymentOps>();
+            services.AddScoped<IHealthCheck, Db2HealthCheckService>();
 
             return services;
         }

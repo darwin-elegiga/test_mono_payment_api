@@ -438,7 +438,7 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> CancelFax(int faxCode)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \nFaxCode={{FaxCode}}", nameof(CancelFax), "Starting", faxCode);
+            _logger.LogInformation("{ServiceName} - {Step} with: \nFaxCode={FaxCode}", nameof(CancelFax), "Starting", faxCode);
 
             var dbResult = await _db2Context.Fax.CancelFaxAsync(_user.Token, faxCode);
 
@@ -486,7 +486,7 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> HoldFax(int faxCode)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \nFaxCode={{FaxCode}}", nameof(HoldFax), "Starting", faxCode);
+            _logger.LogInformation("{ServiceName} - {Step} with: \nFaxCode={FaxCode}", nameof(HoldFax), "Starting", faxCode);
 
             var dbResult = await _db2Context.Fax.HoldFaxAsync(_user.Token, faxCode);
 
@@ -510,7 +510,7 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> ReleaseFax(int faxCode)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \nFaxCode={{FaxCode}}", nameof(ReleaseFax), "Starting", faxCode);
+            _logger.LogInformation("{ServiceName} - {Step} with: \nFaxCode={FaxCode}", nameof(ReleaseFax), "Starting", faxCode);
 
             var dbResult = await _db2Context.Fax.ReleaseFaxAsync(_user.Token, faxCode);
 
@@ -575,7 +575,6 @@ namespace VPay.Payment
                         corr.FaxJobList = faxes.Where(x => x.CorrespondenceId == corr.DmRecId).ToFaxJobs().ToList();
 
                         var lastStatRank = 10;
-                        var lastStatText = "";
 
                         foreach (var faxJob in corr.FaxJobList)
                         {
@@ -589,7 +588,6 @@ namespace VPay.Payment
                                         if (8 < lastStatRank)
                                         {
                                             corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 8;
                                         }
 
@@ -598,7 +596,6 @@ namespace VPay.Payment
                                         if (7 < lastStatRank)
                                         {
                                             corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 7;
                                         }
 
@@ -607,7 +604,6 @@ namespace VPay.Payment
                                         if (6 < lastStatRank)
                                         {
                                             corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 6;
                                         }
 
@@ -616,7 +612,6 @@ namespace VPay.Payment
                                         if (5 < lastStatRank)
                                         {
                                             corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 5;
                                         }
 
@@ -625,7 +620,6 @@ namespace VPay.Payment
                                         if (4 < lastStatRank)
                                         {
                                             corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 4;
                                         }
 
@@ -634,7 +628,6 @@ namespace VPay.Payment
                                         if (3 < lastStatRank)
                                         {
                                             corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 3;
                                         }
 
@@ -643,7 +636,6 @@ namespace VPay.Payment
                                         if (2 < lastStatRank)
                                         {
                                             corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 2;
                                         }
 
@@ -652,7 +644,6 @@ namespace VPay.Payment
                                         if (1 < lastStatRank)
                                         {
                                             corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 1;
                                         }
 
@@ -661,7 +652,6 @@ namespace VPay.Payment
                                         if (0 < lastStatRank)
                                         {
                                             corr.StatusText = "";
-                                            lastStatText = faxJobStatus.StatusText;
                                             lastStatRank = 0;
                                         }
 
@@ -744,7 +734,6 @@ namespace VPay.Payment
         private (string code, string message) CheckLoadPanForDeclineErrorMessages(StandardRequest request)
         {
             var notEqualMsg = "Invalid Numeric Format:";
-            var invalidDateMsg = "Date format not ISO ";
             var greaterThanAmtMsg = "Amount must be >= 0.00 ";
             var equalAmtMsg = "Amount must be = 0.00 ";
 
@@ -814,71 +803,71 @@ namespace VPay.Payment
 
             if (string.IsNullOrWhiteSpace(request.Payment.Client))
             {
-                result = (code: "0912", message: $"Client Code cannot be Blank");
+                result = (code: "0912", message: "Client Code cannot be Blank");
             }
 
             if (string.IsNullOrWhiteSpace(request.Claim.UserKey))
             {
-                result = (code: "0903", message: $"User Key cannot be Blank");
+                result = (code: "0903", message: "User Key cannot be Blank");
             }
 
             if (string.IsNullOrWhiteSpace(request.Merchant.Fax))
             {
-                result = (code: "0959", message: $"merchant fax cannot be Blank");
+                result = (code: "0959", message: "merchant fax cannot be Blank");
             }
 
             if (string.IsNullOrWhiteSpace(request.Merchant.PayeeName))
             {
-                result = (code: "0904", message: $"Payee Name cannot be Blank");
+                result = (code: "0904", message: "Payee Name cannot be Blank");
             }
 
             if (string.IsNullOrWhiteSpace(request.Payment.BillCode))
             {
-                result = (code: "0906", message: $"Bill Code cannot be blank");
+                result = (code: "0906", message: "Bill Code cannot be blank");
             }
 
             if (string.IsNullOrWhiteSpace(request.Payment.Type))
             {
-                result = (code: "0905", message: $"Bill Type cannot be blank");
+                result = (code: "0905", message: "Bill Type cannot be blank");
             }
 
             if (string.IsNullOrWhiteSpace(request.Merchant.PayeeCode))
             {
-                result = (code: "0909", message: $"Payee Code cannot be Blank");
+                result = (code: "0909", message: "Payee Code cannot be Blank");
             }
 
             if (request.Payment.Type == "CLCHK")
             {
                 if (string.IsNullOrEmpty(request.CheckData.CheckDate))
                 {
-                    result = (code: "0952", message: $"Check Date cannot be Blank");
+                    result = (code: "0952", message: "Check Date cannot be Blank");
                 }
                 if (string.IsNullOrEmpty(request.CheckData.Address1))
                 {
-                    result = (code: "0953", message: $"Check Address1 cannot be Blank");
+                    result = (code: "0953", message: "Check Address1 cannot be Blank");
                 }
                 if (string.IsNullOrEmpty(request.CheckData.City))
                 {
-                    result = (code: "0954", message: $"Check City cannot be Blank");
+                    result = (code: "0954", message: "Check City cannot be Blank");
                 }
                 if (string.IsNullOrEmpty(request.CheckData.StateOrProvince))
                 {
-                    result = (code: "0955", message: $"Check State cannot be Blank");
+                    result = (code: "0955", message: "Check State cannot be Blank");
                 }
                 if (string.IsNullOrEmpty(request.CheckData.Zip))
                 {
-                    result = (code: "0956", message: $"Check Zip cannot be Blank");
+                    result = (code: "0956", message: "Check Zip cannot be Blank");
                 }
             }
             else if (request.Payment.Type == "CLEFT")
             {
                 if (string.IsNullOrEmpty(request.Payment.RoutingNumber))
                 {
-                    result = (code: "0957", message: $"RoutingNumber cannot be Blank");
+                    result = (code: "0957", message: "RoutingNumber cannot be Blank");
                 }
                 if (string.IsNullOrEmpty(request.Payment.AccountNumber))
                 {
-                    result = (code: "0958", message: $"AccountNumber cannot be Blank");
+                    result = (code: "0958", message: "AccountNumber cannot be Blank");
                 }
             }
 

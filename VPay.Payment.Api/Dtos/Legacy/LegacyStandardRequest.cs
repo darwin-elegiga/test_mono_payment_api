@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using VPay.Data.Db2.Abstractions.TransactionWs;
-using VPay.Payment.Common.DataWebService;
+using VPay.Payment.Common;
 
 namespace VPay.Payment.Api.Dtos
 {

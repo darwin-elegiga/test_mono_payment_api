@@ -1,4 +1,4 @@
-﻿namespace VPay.Payment.Common.Models
+﻿namespace VPay.Payment.Common
 {
     /// <summary>
     /// Class to represent the status of various components used by a service

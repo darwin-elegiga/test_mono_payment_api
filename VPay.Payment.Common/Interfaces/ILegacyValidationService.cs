@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using VPay.Data.Db2.Abstractions.TransactionWs;
-using VPay.Payment.Common.Models;
 
 namespace VPay.Payment.Common
 {

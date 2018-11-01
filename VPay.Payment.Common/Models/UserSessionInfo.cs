@@ -1,4 +1,4 @@
-﻿namespace VPay.Payment.Common.Models
+﻿namespace VPay.Payment.Common
 {
     public class UserSessionInfo
     {

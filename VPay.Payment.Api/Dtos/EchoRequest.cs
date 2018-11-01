@@ -1,4 +1,4 @@
-﻿using VPay.Payment.Common.DataWebService;
+﻿using VPay.Payment.Common;
 
 namespace VPay.Payment.Api.Dtos
 {

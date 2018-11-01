@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
@@ -25,9 +24,6 @@ namespace VPay.Payment.Api.Controllers
     [ApiController]
     public class LegacyController : ControllerBase
     {
-        // Add version tag
-        private readonly string _version;
-
         private readonly IHttpContextAccessor _accessor;
         private readonly ILegacyTransactionService _transactionService;
         private readonly IFileProvider _fileProvider;
@@ -41,8 +37,6 @@ namespace VPay.Payment.Api.Controllers
             _transactionService = transactionService;
             _logger = logger;
 
-            // TODO:  Initialize private variables
-            _version = "2018-08-10";
         }
 
         [HttpGet("wsdl")]
@@ -96,10 +90,6 @@ namespace VPay.Payment.Api.Controllers
         [AllowAnonymous]
         public IActionResult GetSchemaXsd([FromQuery] string url)
         {
-            foreach (var requestHeader in _accessor.HttpContext.Request.Headers)
-            {
-                Console.WriteLine($"{requestHeader.Key} = {requestHeader.Value}");
-            }
             var doc = XDocument.Load(_fileProvider.GetFileInfo("VPayWSServiceXSD.xml").PhysicalPath);
             var settings = new XmlWriterSettings { OmitXmlDeclaration = false, Encoding = Encoding.UTF8 };
             using (var memoryStream = new MemoryStream())
@@ -115,25 +105,35 @@ namespace VPay.Payment.Api.Controllers
         [AllowAnonymous]
         public string GetVer()
         {
-            return _version;
+            var aboutInfo = AboutInfo.GetBuildAboutInfo();
+
+            return $"{aboutInfo.VersionInfo} - {aboutInfo.BuildTime}";
         }
+
 
         [HttpPost("echo")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public Task<StandardResponse> PostEcho(EchoRequest entity)
         {
+            var aboutInfo = AboutInfo.GetBuildAboutInfo();
+
             return Task.FromResult(new StandardResponse()
             {
                 CommonData = new CommonData()
                 {
-                    ResponseDesc = entity.Es,
+                    ResponseDesc = $"VPayWs: {aboutInfo.BuildTime} {aboutInfo.VersionInfo} {entity.Es}",
                     SuccessCode = "0",
                     ReasonCode = "0"
                 }
             });
         }
 
+        /// <summary>
+        /// This service returns a list of reasons for transaction
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("GetReasonCodes")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
         [ProducesResponseType(typeof(ReasonCodeResponse), 200)]
@@ -165,17 +165,16 @@ namespace VPay.Payment.Api.Controllers
 
         }
 
+        /// <summary>
+        /// This service will return related information about a transaction
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("GetTransactionDetails")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
         [ProducesResponseType(typeof(TransactionDetailResponse), 200)]
         public async Task<TransactionDetailResponse> GetTransactionDetails(LegacyRequest request)
         {
-
-            foreach (var requestHeader in _accessor.HttpContext.Request.Headers)
-            {
-                Console.WriteLine($"{requestHeader.Key} = {requestHeader.Value}");
-            }
-
             try
             {
                 var response = await _transactionService.GetTransactionDetails(
@@ -200,6 +199,12 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This service retrieves the payment identification information for the transaction.
+        /// The payment numbers returned are based on the transaction type.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("GetPanNumber")]
         [ServicePermissionAuthorize(ServicePermission.GetPan)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -230,6 +235,12 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This service tests the card payment specified by the transaction number for a Pre-Authorization without a corresponding Reversal or Settlement.
+        /// When only a transaction number is input the web service tests all Pre-Authorization transactions for the card.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("OpenPreAuth")]
         [ServicePermissionAuthorize(ServicePermission.OpenPreAuth)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -260,6 +271,15 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This service is used to specify payments and load funds for all payment types.
+        /// For card payments, VPay® manages the card numbers and assigns a card number to the payment.
+        /// For check payments outside of the VPay® Positive Pay system, an input check number is required.
+        /// Checks in the VPay® Positive Pay system can be configured to use a client input check number or have the Positive Pay system generate the check number for the payment.
+        /// For EFT payments, the bank routing number and account number are required to identify the account for the deposit.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("LoadPan")]
         [ServicePermissionAuthorize(ServicePermission.LoadPan)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -290,6 +310,12 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This retrieves the VPay® available and current balance information for the specified transaction.
+        /// For payments processed through a switch, the available and current balances from the switch are returned.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("BalanceRequest")]
         [ServicePermissionAuthorize(ServicePermission.BalanceRequest)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -320,6 +346,12 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This service accepts a transaction number and an unload reason code as input.
+        /// This service verifies the card has no pending pre-Authorizations, then unloads the funds from the card.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("UnloadPan")]
         [ServicePermissionAuthorize(ServicePermission.Unload)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -350,6 +382,12 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This service accepts a transaction number and an unload reason code as input.
+        /// A stop payment transaction is initiated for the check identified by the transaction number.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("StopPay")]
         [ServicePermissionAuthorize(ServicePermission.StopPay)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -380,6 +418,11 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This will cancel the Fax job specified by the faxCode.  Only Fax jobs in HOLD status can be cancelled.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("CancelFax")]
         [ServicePermissionAuthorize(ServicePermission.CancelFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -408,6 +451,12 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This will update the fax number for the Fax job specified by the faxCode.
+        /// Only Fax jobs in HOLD status can have the fax number updated.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("ChangeFaxNumber")]
         [ServicePermissionAuthorize(ServicePermission.ChangeFaxNumber)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -436,6 +485,11 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary> 
+        /// This will place the specified Fax job in HOLD status. You cannot put a CANCELLED Fax job on Hold.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("HoldFax")]
         [ServicePermissionAuthorize(ServicePermission.HoldFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -464,6 +518,12 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This will releases the Fax job from HOLD status to DUPENUMBER status.
+        /// Letting the fax able able to be processed and sent.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("ReleaseFax")]
         [ServicePermissionAuthorize(ServicePermission.ReleaseFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -492,6 +552,11 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// This creates a new Fax job to resend the specified Fax job.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("ResendFax")]
         [ServicePermissionAuthorize(ServicePermission.ResendFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
