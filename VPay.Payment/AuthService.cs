@@ -22,6 +22,14 @@ namespace VPay.Payment
 
         public async Task<AuthenticationResult> TestAuthentication(AuthenticationParam param)
         {
+            param.Id = param.Id ?? "";
+            param.PassPhrase = param.PassPhrase ?? "";
+
+            if (param.Id.Length > 10 || param.PassPhrase.Length > 10)
+            {
+                _logger.LogWarning("Id or Passphrase is greather than 10 characters: {Id}", param.Id);
+            }
+
             var result = await _db.Security.AuthenticateWebUserAsync(new AuthenticateUserParam()
             {
                 UserId = param.Id,
@@ -79,7 +87,13 @@ namespace VPay.Payment
             // Force userid to uppercase
             name = name.ToUpper();
 
-           var remoteLogin = await _db.Security.RemoteLoginAsync(new RemoteLoginParam()
+            if (name.Length > 10 || password.Length > 10)
+            {
+                _logger.LogWarning("UserName or Password is greather than 10 characters: {UserName}", name);
+                return null;
+            }
+
+            var remoteLogin = await _db.Security.RemoteLoginAsync(new RemoteLoginParam()
             {
                 UserId = name,
                 Password = password,
