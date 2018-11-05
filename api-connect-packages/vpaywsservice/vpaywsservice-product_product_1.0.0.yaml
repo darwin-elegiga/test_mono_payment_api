@@ -17,6 +17,8 @@ visibility:
 apis:
   vpaywsservice:
     $ref: vpaywsservice_1.0.0.yaml
+  VPayWSServiceDocs:
+    $ref: VPayWSServiceDocs_1.0.0.yaml
 plans:
   default:
     title: Default Plan

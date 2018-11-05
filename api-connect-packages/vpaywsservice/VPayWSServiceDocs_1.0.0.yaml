@@ -52,7 +52,7 @@ x-ibm-configuration:
           cache-response: protocol
           cache-ttl: 900
           version: 1.0.0
-          target-url: $(api.properties.api-endpoint)$(new-request-path)$(request.search)
+          target-url: $(api.properties.api-endpoint)$(new-request-path)
           description: ''
     catch: []
   gateway: datapower-gateway
@@ -71,8 +71,13 @@ x-ibm-configuration:
     Prod:
       properties:
         api-endpoint: 'https://payapi.vpayusa.net/api/Legacy'
+  enforced: true
+  testable: true
+  phase: realized
+  cors:
+    enabled: true
 host: $(catalog.host)
-basePath: /vpaywsservice-docs
+basePath: /WSServiceDocs
 schemes:
   - https
 consumes:
