@@ -51,6 +51,11 @@ namespace VPay.Payment.Api.Controllers
 
                 url = location.AbsoluteUri;
             }
+            else
+            {
+                var uri = new Uri(url);
+                url = uri.GetLeftPart(UriPartial.Path);
+            }
             var doc = XDocument.Load(_fileProvider.GetFileInfo("VPayWSService.xml").PhysicalPath);
             XNamespace nsSoap = "http://schemas.xmlsoap.org/wsdl/soap/";
             XNamespace nsXsd = "http://www.w3.org/2001/XMLSchema";
