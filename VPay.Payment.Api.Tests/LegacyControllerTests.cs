@@ -148,7 +148,7 @@ namespace VPay.Payment.Api.Tests
             };
 
             _transactionService
-                .Setup(_ => _.LoadPan(It.IsAny<StandardRequest>(), CancellationToken.None))
+                .Setup(_ => _.LoadPan(It.IsAny<StandardRequest>(), "", CancellationToken.None))
                 .ThrowsAsync(new Exception("General Exception"));
 
             var result = await _sut.LoadPan(setupObj);

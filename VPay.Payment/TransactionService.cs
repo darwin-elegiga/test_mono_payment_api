@@ -281,9 +281,9 @@ namespace VPay.Payment
             return result;
         }
 
-        public async Task<StandardResponse> LoadPan(StandardRequest standardRequest)
+        public async Task<StandardResponse> LoadPan(StandardRequest standardRequest, string clientData)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}", nameof(LoadPan), "Starting");
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nclientData: {clientData}", nameof(LoadPan), "Starting");
 
             SetupDefaultValuesForLoadPan(standardRequest);
 
@@ -295,7 +295,7 @@ namespace VPay.Payment
             standardRequest.CommonData.ResponseCode = checkDeclineMessages.code;
             standardRequest.CommonData.ResponseDesc = checkDeclineMessages.message;
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}", nameof(LoadPan), "After CheckMessage");
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage");
 
             var request = new TransactionWsRequest()
             {
@@ -305,7 +305,7 @@ namespace VPay.Payment
                 Request = standardRequest
             };
 
-            var result = await _db2Context.TransactionWs.LoadPan(request);
+            var result = await _db2Context.TransactionWs.LoadPan(request, clientData);
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
@@ -318,7 +318,7 @@ namespace VPay.Payment
             }))
             {
                 var level = result.CommonData.SuccessCode == "0000" && checkDeclineMessages.code == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
+                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}\nclientData: {clientData}",
                     nameof(LoadPan), "Response");
             }
 

@@ -9,6 +9,9 @@ namespace VPay.Payment.Common
         Task<ValidationMessage> ValidateStandardRequest(StandardRequest standardRequest,
             CancellationToken cancellationToken = default(CancellationToken));
 
+        Task<ValidationMessage> ValidateLoadPanStandardRequest(StandardRequest standardRequest, string clientData,
+            CancellationToken cancellationToken = default(CancellationToken));
+
         Task<ValidationMessage> ValidateChangeFaxNumberRequest(StandardRequest standardRequest,
             string originalFaxNumber,
             CancellationToken cancellationToken = default(CancellationToken));

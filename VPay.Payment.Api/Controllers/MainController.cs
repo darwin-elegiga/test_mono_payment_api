@@ -72,7 +72,7 @@ namespace VPay.Payment.Api.Controllers
         {
             var sr = DefaultStandardRequest(transNumber);
 
-            var result = await _transactionService.LoadPan(sr);
+            var result = await _transactionService.LoadPan(sr, "");
 
             return result;
         }
