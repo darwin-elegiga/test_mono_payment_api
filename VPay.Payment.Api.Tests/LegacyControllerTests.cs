@@ -141,7 +141,11 @@ namespace VPay.Payment.Api.Tests
                         LoadPan = new LegacyLoadPanRequest()
                         {
                             AuthenticationValues = new AuthenticationValues(),
-                            Request = new StandardRequest()
+                            Request = new StandardRequest(),
+                            CustomData = new LegacyCustomData()
+                            {
+                                ClientData = ""
+                            }
                         }
                     }
                 }
