@@ -10,7 +10,7 @@ namespace VPay.Payment.Common
         Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request, CancellationToken cancellationToken = default(CancellationToken));
         Task<StandardResponse> GetPanNumber(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));
         Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));
-        Task<StandardResponse> LoadPan(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));
+        Task<StandardResponse> LoadPan(StandardRequest standardRequest, string clientData, CancellationToken cancellationToken = default(CancellationToken));
         Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));
         Task<StandardResponse> UnloadPan(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));
         Task<StandardResponse> StopPay(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken));

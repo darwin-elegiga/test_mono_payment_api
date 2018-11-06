@@ -294,7 +294,7 @@ namespace VPay.Payment.Api.Controllers
             {
                 var sr = DefaultStandardRequest(request.Envelope.Body.LoadPan?.Request);
 
-                var result = await _transactionService.LoadPan(sr);
+                var result = await _transactionService.LoadPan(sr, request.Envelope.Body.LoadPan?.CustomData?.ClientData);
 
                 return result;
             }

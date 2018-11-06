@@ -77,6 +77,26 @@ namespace VPay.Payment
             });
         }
 
+        public async Task<ValidationMessage> ValidateLoadPanStandardRequest(StandardRequest standardRequest, string clientData,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var request = await ValidateStandardRequest(standardRequest, cancellationToken);
+
+            if (request.Code != "0000")
+            {
+                if (clientData?.Length > 1024)
+                {
+                    return new ValidationMessage()
+                    {
+                        Code = "0990",
+                        Message = $"Fields too long: clientData, "
+                    };
+                }
+            }
+
+            return request;
+        }
+
         public async Task<ValidationMessage> ValidateChangeFaxNumberRequest(StandardRequest standardRequest, string originalFaxNumber,
             CancellationToken cancellationToken = default(CancellationToken))
         {

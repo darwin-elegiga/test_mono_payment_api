@@ -152,11 +152,11 @@ namespace VPay.Payment
             return await _transactionService.OpenPreAuth(standardRequest);
         }
 
-        public async Task<StandardResponse> LoadPan(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<StandardResponse> LoadPan(StandardRequest standardRequest, string clientData, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nCustomData: {clientData}",
                 nameof(LoadPan), "Validating");
-            var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
+            var validation = await _validationService.ValidateLoadPanStandardRequest(standardRequest, clientData, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
             {
@@ -175,7 +175,7 @@ namespace VPay.Payment
             _logger.LogInformation("{ServiceName} - {ValidationStatus}",
                 nameof(LoadPan), "Valid");
 
-            return await _transactionService.LoadPan(standardRequest);
+            return await _transactionService.LoadPan(standardRequest, clientData);
         }
 
         public async Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest,

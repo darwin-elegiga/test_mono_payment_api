@@ -34,10 +34,10 @@ namespace VPay.Payment.Tests
             request.Claim.CurrencyType = "";
 
             _db2Context.TransactionWsMock
-                .Setup(x => x.LoadPan(It.IsAny<TransactionWsRequest>(), default(CancellationToken)))
+                .Setup(x => x.LoadPan(It.IsAny<TransactionWsRequest>(), "", default(CancellationToken)))
                 .ReturnsAsync(new StandardResponse());
 
-            var result = await _sut.LoadPan(request);
+            var result = await _sut.LoadPan(request, "");
 
             request.Claim.Amount.Should().Be("0.00");
             request.Claim.ClaimOdometer.Should().Be("000000");
