@@ -505,9 +505,12 @@ x-ibm-configuration:
     Sandbox:
       properties:
         endpoint-url: 'http://hqdevlds01.vpayusa.net:5013/api/'
-    Stage:
+    Internal Stage:
       properties:
         endpoint-url: 'https://stg-payapi.vpayusa.net/api/'
+    Internal Prod:
+      properties:
+        endpoint-url: 'https://payapi.vpayusa.net/api/'
   enforced: true
   testable: true
   phase: realized

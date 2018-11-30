@@ -65,10 +65,10 @@ x-ibm-configuration:
     Sandbox:
       properties:
         api-endpoint: 'http://hqdevlds01.vpayusa.net:5013/api/Legacy'
-    Stage:
+    Internal Stage:
       properties:
         api-endpoint: 'https://stg-payapi.vpayusa.net/api/Legacy'
-    Prod:
+    Internal Prod:
       properties:
         api-endpoint: 'https://payapi.vpayusa.net/api/Legacy'
   enforced: true
