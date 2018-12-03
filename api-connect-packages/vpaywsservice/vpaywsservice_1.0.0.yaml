@@ -69,7 +69,7 @@ x-ibm-configuration:
                     stop-on-error:
                       - null
                     version: 1.0.0
-                    target-url: $(api.properties.endpoint-url)Main/echo
+                    target-url: $(api.properties.endpoint-url)Legacy/echo
                     output: echo_invoke
                 - map:
                     title: map
