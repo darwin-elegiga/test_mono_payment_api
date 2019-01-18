@@ -21,10 +21,14 @@ namespace VPay.Payment.Tests.Models
         public IPreferencing Preferencing => PreferencingMock.Object;
         public ICorrespondenceRepo Correspondence => CorrespondenceMock.Object;
 
+        public IProviderRepository ProviderRepository => ProviderMock.Object;
+
         public Mock<IFax> FaxMock { get; } = new Mock<IFax>();
         public Mock<ISecurity> SecurityMock { get; } = new Mock<ISecurity>();
         public Mock<ITransactionWs> TransactionWsMock { get; } = new Mock<ITransactionWs>();
         public Mock<IPreferencing> PreferencingMock { get; } = new Mock<IPreferencing>();
         public Mock<ICorrespondenceRepo> CorrespondenceMock { get; } = new Mock<ICorrespondenceRepo>();
+
+        public Mock<IProviderRepository> ProviderMock { get; } = new Mock<IProviderRepository>();
     }
 }

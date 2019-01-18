@@ -10,7 +10,7 @@ namespace VPay.Payment.Tests
     public class LegacyValidationServiceTests
     {
         private readonly LegacyValidationService _sut;
-        
+
 
         public LegacyValidationServiceTests()
         {
@@ -300,7 +300,7 @@ namespace VPay.Payment.Tests
             var expected = new ValidationMessage()
             {
                 Code = "0990",
-                Message = "Fields too long: itemType, itemId, year, manufacturer, model, bookStateOrProvince, postalCode, planCode, planDescription, deductible, newUsed, beginDate, expireDate, odometerType, beginOdometer, expireOdometer, ownerLastName, ownerFirstName, "
+                Message = "Fields too long: itemType, itemId, year, manufacturer, model, bookStateOrProvince, postalCode, planCode, planDescription, deductible, newUsed, beginDate, expireDate, odometerType, beginOdometer, expireOdometer, ownerFirstName, ownerLastName, "
             };
 
             var actual = await _sut.ValidateStandardRequest(standardRequest);
