@@ -24,7 +24,8 @@ namespace VPay.Payment.Api
                     configurationBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
                         .AddJsonFile($"appsettings.Local.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.secure.json", optional: true, reloadOnChange: true);
+                        .AddJsonFile($"appsettings.secure.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.about.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureLogging((builderContext, loggingBuilder) =>
                 {

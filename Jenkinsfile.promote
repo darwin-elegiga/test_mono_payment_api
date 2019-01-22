@@ -1,0 +1,16 @@
+@Library('jenkins-shared-library@master')
+import com.vpay.jenkins.pipeline.promote.*
+
+properties(vpayPromoteProps.props())
+
+def promote = new VpayPromote()
+
+node(label: 'docker') {
+
+  promote.wrap {
+    stage('Promote'){
+      promote.promote()
+    }
+  }
+
+}

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace VPay.Payment.Api.Controllers
 {
@@ -7,6 +7,12 @@ namespace VPay.Payment.Api.Controllers
     [ApiController]
     public class AboutController : ControllerBase
     {
+        private readonly AboutInfo _info;
+
+        public AboutController(AboutInfo info)
+        {
+          _info = info;
+        }
 
         /// <summary>
         /// About the build that created the service
@@ -17,7 +23,7 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(AboutInfo), 200)]
         public AboutInfo GetDetail()
         {
-            return AboutInfo.GetBuildAboutInfo();
+            return _info;
         }
 
     }

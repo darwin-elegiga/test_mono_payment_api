@@ -1,0 +1,15 @@
+version: "3.4"
+
+services:
+  api:
+    build:
+      args:
+        - GIT_COMMIT_SHORT_HASH=${GIT_COMMIT_SHORT_HASH:-docker}
+      context: ./api/
+      dockerfile: Dockerfile
+    image: payment-api/payment-web-api:${GIT_COMMIT_SHORT_HASH:-docker}
+    container_name: payment-web-api-push
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:5000"

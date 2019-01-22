@@ -262,6 +262,12 @@ __pycache__/
 /src/VPay.DocSys.Common/Models/Storage/CreateArchiveParam.cs
 /src/VPay.DocSys.Common/Models/Storage/GenericStorageResponse.cs
 
+# Visual Studio Code
+.vscode
+
+# Allow Build files
+!build/**/*
+
 *.Local.*
 
 # Api-Connect folders

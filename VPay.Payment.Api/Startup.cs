@@ -49,7 +49,7 @@ namespace VPay.Payment.Api
                 .AddSwaggerGenService()
                 .SetupAuth()
                 .SetupDb2(Configuration);
-            
+
             services.Configure<PaymentConfig>(Configuration.GetSection("PaymentSettings"));
             services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<PaymentConfig>>().Value);
 
@@ -57,6 +57,7 @@ namespace VPay.Payment.Api
             services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
             services.AddTransient<ILegacyValidationService, LegacyValidationService>();
+            services.AddSingleton<AboutInfo, AboutInfo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
