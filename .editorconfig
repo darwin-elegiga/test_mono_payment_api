@@ -10,6 +10,8 @@ indent_size = 4
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+dotnet_sort_system_directives_first = true
+
 dotnet_naming_rule.private_members_with_underscore.symbols  = private_fields
 dotnet_naming_rule.private_members_with_underscore.style    = prefix_underscore
 dotnet_naming_rule.private_members_with_underscore.severity = suggestion
