@@ -1,6 +1,9 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using VPay.Data.Db2.Abstractions.Attributes;
+using VPay.Data.Db2.Abstractions.Helpers;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
 
@@ -155,7 +158,13 @@ namespace VPay.Payment
         public async Task<StandardResponse> LoadPan(StandardRequest standardRequest, string clientData, CancellationToken cancellationToken = default(CancellationToken))
         {
             _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nCustomData: {clientData}",
+                nameof(LoadPan), "TruncatingData");
+
+            TruncateFieldsForLoadPan(standardRequest);
+
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nCustomData: {clientData}",
                 nameof(LoadPan), "Validating");
+
             var validation = await _validationService.ValidateLoadPanStandardRequest(standardRequest, clientData, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
@@ -416,5 +425,50 @@ namespace VPay.Payment
 
             return await _transactionService.ResendFax(faxCode, standardRequest.CorrespondenceData.PhoneNumber);
         }
+
+
+        #region Private fields
+
+        /// <summary>
+        /// Sets up and calls truncation for fields and entities to truncate to the Maximum allowed length for that field.
+        /// This one is meant only for the LoadPan at this point in time.
+        /// </summary>
+        /// <param name="standardRequest"></param>
+        private void TruncateFieldsForLoadPan(StandardRequest standardRequest)
+        {
+            var merchantFieldsToTruncate = new List<string>
+            {
+                nameof(standardRequest.Merchant.PayeeName),
+                nameof(standardRequest.Merchant.ContactPerson)
+            };
+
+            TruncateFieldsToMaxLengthForEntity(standardRequest.Merchant, merchantFieldsToTruncate);
+        }
+
+        /// <summary>
+        /// Loop through the fields on the entity and check if it past its length and the property is one that we want to truncate.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entity"></param>
+        /// <param name="fieldsToTruncate"></param>
+        private void TruncateFieldsToMaxLengthForEntity<T>(T entity, List<string> fieldsToTruncate)
+        {
+            if (entity == null || fieldsToTruncate == null || fieldsToTruncate.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var (prop, attr) in ModelTools.GetTypePropertyAttributes<FixedLengthAttribute>(typeof(T)))
+            {
+                var value = (string)prop.GetValue(entity);
+
+                if (value != null && value.Length > attr.Length && fieldsToTruncate.Contains(prop.Name))
+                {
+                    prop.SetValue(entity, value.Substring(0, attr.Length));
+                }
+            }
+
+        }
+        #endregion
     }
 }
