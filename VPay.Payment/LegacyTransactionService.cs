@@ -442,7 +442,14 @@ namespace VPay.Payment
                 nameof(standardRequest.Merchant.ContactPerson)
             };
 
+            var coverItemFieldsToTruncate = new List<string>()
+            {
+                nameof(standardRequest.CoveredItem.OwnerFirstName),
+                nameof(standardRequest.CoveredItem.OwnerLastName)
+            };
+
             TruncateFieldsToMaxLengthForEntity(standardRequest.Merchant, merchantFieldsToTruncate);
+            TruncateFieldsToMaxLengthForEntity(standardRequest.CoveredItem, coverItemFieldsToTruncate);
         }
 
         /// <summary>
