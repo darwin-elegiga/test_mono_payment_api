@@ -1,0 +1,12 @@
+common:
+  images:
+    - payment-api/payment-web-api
+build:
+  composeProfileMap:
+    'sdk': './build/docker/sdk'
+    'push': './build/docker/push'
+  pullImages:
+    - plinfharbor.vpayusa.net/base-images/dotnet-sdk-2-1:commit-master
+    - plinfharbor.vpayusa.net/base-images/dotnet-aspnetcore-runtime-2-1:commit-master
+promote:
+  baseVersion: "0.1.0"

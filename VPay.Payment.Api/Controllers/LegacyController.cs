@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
@@ -28,10 +28,13 @@ namespace VPay.Payment.Api.Controllers
         private readonly ILegacyTransactionService _transactionService;
         private readonly IFileProvider _fileProvider;
 
+        private readonly AboutInfo _aboutInfo;
+
         private readonly ILogger _logger;
 
-        public LegacyController(IHostingEnvironment fileProvider, IHttpContextAccessor accessor, ILegacyTransactionService transactionService, ILogger<LegacyController> logger)
+        public LegacyController(IHostingEnvironment fileProvider, IHttpContextAccessor accessor, ILegacyTransactionService transactionService, AboutInfo aboutInfo, ILogger<LegacyController> logger)
         {
+            _aboutInfo = aboutInfo;
             _fileProvider = fileProvider.WebRootFileProvider;
             _accessor = accessor;
             _transactionService = transactionService;
@@ -110,7 +113,7 @@ namespace VPay.Payment.Api.Controllers
         [AllowAnonymous]
         public string GetVer()
         {
-            var aboutInfo = AboutInfo.GetBuildAboutInfo();
+            var aboutInfo = _aboutInfo;
 
             return $"{aboutInfo.VersionInfo} - {aboutInfo.BuildTime}";
         }
@@ -121,7 +124,7 @@ namespace VPay.Payment.Api.Controllers
         [ProducesResponseType(typeof(StandardResponse), 200)]
         public Task<StandardResponse> PostEcho(EchoRequest entity)
         {
-            var aboutInfo = AboutInfo.GetBuildAboutInfo();
+            var aboutInfo = _aboutInfo;
 
             return Task.FromResult(new StandardResponse()
             {
@@ -490,7 +493,7 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
-        /// <summary> 
+        /// <summary>
         /// This will place the specified Fax job in HOLD status. You cannot put a CANCELLED Fax job on Hold.
         /// </summary>
         /// <param name="request"></param>

@@ -1,0 +1,13 @@
+version: "3.4"
+
+services:
+  api:
+    build:
+      context: ../../../
+      dockerfile: ./build/docker/sdk/api/Dockerfile
+    image: payment-api/payment-web-api-sdk:${GIT_COMMIT_SHORT_HASH:-docker}
+    container_name: payment-web-api-sdk
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:5000"

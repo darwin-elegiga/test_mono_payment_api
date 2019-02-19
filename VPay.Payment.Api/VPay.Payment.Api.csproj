@@ -37,5 +37,27 @@
     <ProjectReference Include="..\VPay.Payment.Common\VPay.Payment.Common.csproj" />
     <ProjectReference Include="..\VPay.Payment\VPay.Payment.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <AppConfig Include="appsettings*.json" />
+  </ItemGroup>
+
+  <Target Name="CopyAfterBuild" AfterTargets="Build">
+    <Copy
+      SourceFiles="@(AppConfig)"
+      DestinationFolder="$(OutDir)\%(RecursiveDir)"
+      SkipUnchangedFiles="true"
+      OverwriteReadOnlyFiles="true"
+      Retries="3"
+      RetryDelayMilliseconds="300"/>
+  </Target>
+  <Target Name="CopyAfterPublish" AfterTargets="Publish">
+    <Copy
+      SourceFiles="@(AppConfig)"
+      DestinationFolder="$(PublishDir)\%(RecursiveDir)"
+      SkipUnchangedFiles="true"
+      OverwriteReadOnlyFiles="true"
+      Retries="3"
+      RetryDelayMilliseconds="300"/>
+  </Target>
 
 </Project>

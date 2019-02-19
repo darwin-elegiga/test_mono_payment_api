@@ -42,7 +42,7 @@ namespace VPay.Payment.Api.Tests
 
             hostingEnv.Setup(_ => _.WebRootFileProvider).Returns(_fileProvider.Object);
 
-            _sut = new LegacyController(hostingEnv.Object, mockHttpContextAccessor.Object, _transactionService.Object, _logger);
+            _sut = new LegacyController(hostingEnv.Object, mockHttpContextAccessor.Object, _transactionService.Object, new AboutInfo(), _logger);
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace VPay.Payment.Api.Tests
             result.CommonData.SuccessCode.Should().Be("9997");
             result.CommonData.SuccessDesc.Should().Be("Unexpected Error with GetTransactionDetails");
         }
-        
+
         [Fact]
         public async Task GetPanNumber_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
         {
