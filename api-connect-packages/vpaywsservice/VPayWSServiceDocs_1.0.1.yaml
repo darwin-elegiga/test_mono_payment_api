@@ -64,7 +64,7 @@ x-ibm-configuration:
   catalogs:
     Sandbox:
       properties:
-        api-endpoint: 'http://hqdevlds01.vpayusa.net:5013/api/Legacy'
+        api-endpoint: 'http://hqdevlds01.vpayusa.net:5003/api/Legacy'
     Internal Stage:
       properties:
         api-endpoint: 'https://stg-payapi.vpayusa.net/api/Legacy'

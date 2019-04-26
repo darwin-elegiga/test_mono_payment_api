@@ -504,7 +504,7 @@ x-ibm-configuration:
   catalogs:
     Sandbox:
       properties:
-        endpoint-url: 'http://hqdevlds01.vpayusa.net:5013/api/'
+        endpoint-url: 'http://hqdevlds01.vpayusa.net:5003/api/'
     Internal Stage:
       properties:
         endpoint-url: 'https://stg-payapi.vpayusa.net/api/'
