@@ -97,8 +97,6 @@ namespace VPay.Payment.Api.Auth
                     if (Request.Path.StartsWithSegments("/api/legacy", StringComparison.OrdinalIgnoreCase) &&
                         Request.Method == "POST")
                     {
-
-                        string bodyAsText;
                         try
                         {
                             Request.EnableRewind();
@@ -106,7 +104,8 @@ namespace VPay.Payment.Api.Auth
                             using (var reader = new MemoryStream())
                             {
                                 await Request.Body.CopyToAsync(reader);
-                                bodyAsText = Encoding.UTF8.GetString(reader.ToArray());
+                                var bodyAsText = Encoding.UTF8.GetString(reader.ToArray());
+
                                 TryToLogFailureBody(av.UserId, bodyAsText);
                             }
                         }
@@ -122,7 +121,8 @@ namespace VPay.Payment.Api.Auth
 
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.Name, user.UserName), new Claim(ClaimTypes.NameIdentifier, user.Token),
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.NameIdentifier, user.Token),
                     new Claim(ClaimTypes.System, user.Source.ToString())
                 };
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
