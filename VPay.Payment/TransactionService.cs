@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
-using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Data.Db2.Abstractions.Helpers;
+using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
 
 namespace VPay.Payment
@@ -45,9 +45,6 @@ namespace VPay.Payment
                     }
                 }
             };
-
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{request.ToDisplayString()}",
-                nameof(GetReasonCodes), "Testing Security");
 
             var panRequest = await _db2Context.TransactionWs.GetPan(panRequestParam);
 
@@ -295,7 +292,7 @@ namespace VPay.Payment
             standardRequest.CommonData.ResponseCode = checkDeclineMessages.code;
             standardRequest.CommonData.ResponseDesc = checkDeclineMessages.message;
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage");
+            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage");
 
             var request = new TransactionWsRequest()
             {
@@ -554,7 +551,7 @@ namespace VPay.Payment
 
             return sResp;
         }
-        
+
 
         private async Task<List<CorespDtl>> GetCorrespondenceList(long transactionId)
         {
@@ -790,7 +787,7 @@ namespace VPay.Payment
             {
                 result = (code: "0935", message: $"{notEqualMsg} claimDate {request.Claim.ClaimDate}");
             }
-            
+
             if (!int.TryParse(request.CoveredItem.BeginDate, out _))
             {
                 result = (code: "0948", message: $"{notEqualMsg} beginDate {request.CoveredItem.BeginDate}");
