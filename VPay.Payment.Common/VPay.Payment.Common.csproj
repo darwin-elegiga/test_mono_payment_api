@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.2.0.36" />
-    <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.2.0.36" />
+    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.2.0.37" />
   </ItemGroup>
 
 </Project>

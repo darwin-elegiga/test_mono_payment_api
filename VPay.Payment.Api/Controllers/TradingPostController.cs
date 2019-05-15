@@ -93,7 +93,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpGet("Load")]
         public async Task<TradingPostData.LoadResult> LoadCard(TradingPostRequest request)
         {
-            TradingPostData.AuthenticationValuesAndIp auth = CurrentAuthentication();
+            TradingPostData.AuthenticationValuesAndIp auth = request.Envelope.Body.NotificationRequest.AuthenticationValues;
             TradingPostData.LoadRequest loadRequest = request.Envelope.Body.LoadRequest.LoadRequest;
 
             var response = await _tradingPostService.LoadCard(auth, loadRequest);
@@ -104,7 +104,7 @@ namespace VPay.Payment.Api.Controllers
         [HttpGet("Retrieve")]
         public async Task<TradingPostData.RetrieveResult> RetrieveCard(TradingPostRequest request)
         {
-            TradingPostData.AuthenticationValuesAndIp auth = CurrentAuthentication();
+            TradingPostData.AuthenticationValuesAndIp auth = request.Envelope.Body.NotificationRequest.AuthenticationValues;
             TradingPostData.RetrieveRequest retrieveRequest = request.Envelope.Body.RetrieveRequest.RetrieveRequest;
 
             var response = await _tradingPostService.RetrieveCard(auth, retrieveRequest);
@@ -115,25 +115,12 @@ namespace VPay.Payment.Api.Controllers
         [HttpGet("Notification")]
         public async Task<TradingPostData.NotificationResult> CardNotificationRelease(TradingPostRequest request)
         {
-            TradingPostData.AuthenticationValuesAndIp auth = CurrentAuthentication();
+            TradingPostData.AuthenticationValuesAndIp auth = request.Envelope.Body.NotificationRequest.AuthenticationValues;
             TradingPostData.ReleaseNotification releaseRequest = request.Envelope.Body.NotificationRequest.NotificationRequest;
 
             var response = await _tradingPostService.CardNotificationRelease(auth, releaseRequest);
 
             return response;
         }
-
-        private TradingPostData.AuthenticationValuesAndIp CurrentAuthentication()
-        {
-            TradingPostData.AuthenticationValuesAndIp auth = new TradingPostData.AuthenticationValuesAndIp();
-            auth.UserId = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value;
-            auth.Password = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            auth.InitialErrorCode = "0";
-            auth.InitialErrorMessage = "";
-            auth.IpAddress = "10.120.202.129"; // TODO:  Maybe don't hard-code this value
-
-            return auth;
-        }
-
     }
 }

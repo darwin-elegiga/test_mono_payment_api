@@ -12,16 +12,14 @@ namespace VPay.Payment
     public class TradingPostService : ITradingPostService
     {
         private readonly IDb2Context _db2Context;
-        private readonly IUserInfo _user;
         private readonly ILogger _logger;
         private readonly ITradingPostWs _tradingPostWs;
 
-        public TradingPostService(IDb2Context db2Context, IUserInfo user, ILogger<TradingPostService> logger, ITradingPostWs tradingPostWs)
+        public TradingPostService(IDb2Context db2Context, ILogger<TradingPostService> logger)
         {
             _db2Context = db2Context;
-            _user = user;
             _logger = logger;
-            _tradingPostWs = tradingPostWs;
+            _tradingPostWs = db2Context.TradingPostWs;
         }
 
         public async Task<TradingPostData.LoadResult> LoadCard(TradingPostData.AuthenticationValuesAndIp auth, TradingPostData.LoadRequest request)

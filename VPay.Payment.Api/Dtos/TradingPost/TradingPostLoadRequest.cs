@@ -11,5 +11,8 @@ namespace VPay.Payment.Api.Dtos
     {
         [JsonProperty("LoadRequest")]
         public TradingPostData.LoadRequest LoadRequest { get; set; }
+
+        [JsonProperty("AuthenticationValues")]
+        public TradingPostData.AuthenticationValuesAndIp AuthenticationValues { get; set; }
     }
 }
