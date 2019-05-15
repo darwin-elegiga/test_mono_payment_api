@@ -55,6 +55,7 @@ namespace VPay.Payment.Api
 
             services.AddTransient<IHealthCheckService, HealthCheckService>();
             services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<ITradingPostService, TradingPostService>();
             services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
             services.AddTransient<ILegacyValidationService, LegacyValidationService>();
         }
