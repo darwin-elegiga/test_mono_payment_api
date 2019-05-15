@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +12,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using VPay.Data.Db2.Abstractions.TransactionWs;
+using VPay.Payment.Api.Dtos;
+using VPay.Payment.Common;
 
 namespace VPay.Payment.Api.Controllers
 {
@@ -17,14 +22,15 @@ namespace VPay.Payment.Api.Controllers
     [ApiController]
     public class TradingPostController : ControllerBase
     {
-
+        private readonly ITradingPostService _tradingPostService;
         private readonly IHttpContextAccessor _accessor;
         private readonly IFileProvider _fileProvider;
 
         private readonly ILogger _logger;
 
-        public TradingPostController(IHostingEnvironment fileProvider, IHttpContextAccessor accessor, ILogger<LegacyController> logger)
+        public TradingPostController(ITradingPostService tradingPostService, IHostingEnvironment fileProvider, IHttpContextAccessor accessor, ILogger<LegacyController> logger)
         {
+            _tradingPostService = tradingPostService;
             _fileProvider = fileProvider.WebRootFileProvider;
             _accessor = accessor;
             _logger = logger;
@@ -82,6 +88,51 @@ namespace VPay.Payment.Api.Controllers
                 xmlWriter.Flush();
                 return File(memoryStream.ToArray(), "text/xml");
             }
+        }
+
+        [HttpGet("Load")]
+        public async Task<TradingPostData.LoadResult> LoadCard(TradingPostRequest request)
+        {
+            TradingPostData.AuthenticationValuesAndIp auth = CurrentAuthentication();
+            TradingPostData.LoadRequest loadRequest = request.Envelope.Body.LoadRequest.LoadRequest;
+
+            var response = await _tradingPostService.LoadCard(auth, loadRequest);
+
+            return response;
+        }
+
+        [HttpGet("Retrieve")]
+        public async Task<TradingPostData.RetrieveResult> RetrieveCard(TradingPostRequest request)
+        {
+            TradingPostData.AuthenticationValuesAndIp auth = CurrentAuthentication();
+            TradingPostData.RetrieveRequest retrieveRequest = request.Envelope.Body.RetrieveRequest.RetrieveRequest;
+
+            var response = await _tradingPostService.RetrieveCard(auth, retrieveRequest);
+
+            return response;
+        }
+        
+        [HttpGet("Notification")]
+        public async Task<TradingPostData.NotificationResult> CardNotificationRelease(TradingPostRequest request)
+        {
+            TradingPostData.AuthenticationValuesAndIp auth = CurrentAuthentication();
+            TradingPostData.ReleaseNotification releaseRequest = request.Envelope.Body.NotificationRequest.NotificationRequest;
+
+            var response = await _tradingPostService.CardNotificationRelease(auth, releaseRequest);
+
+            return response;
+        }
+
+        private TradingPostData.AuthenticationValuesAndIp CurrentAuthentication()
+        {
+            TradingPostData.AuthenticationValuesAndIp auth = new TradingPostData.AuthenticationValuesAndIp();
+            auth.UserId = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value;
+            auth.Password = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            auth.InitialErrorCode = "0";
+            auth.InitialErrorMessage = "";
+            auth.IpAddress = "10.120.202.129"; // TODO:  Maybe don't hard-code this value
+
+            return auth;
         }
 
     }
