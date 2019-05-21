@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
-using VPay.Data.Db2.Abstractions.TransactionWs;
+using VPay.Data.Db2.Abstractions.TradingPostWs;
 using VPay.Payment.Common;
 
 namespace VPay.Payment
@@ -32,6 +32,8 @@ namespace VPay.Payment
         public async Task<TradingPostData.RetrieveResult> RetrieveCard(TradingPostData.AuthenticationValuesAndIp auth, TradingPostData.RetrieveRequest request)
         {
             var response = await _tradingPostWs.RetrieveCard(auth, request);
+
+            //todo: decimal values are not being returned with correct precision (i.e. 0.00)
 
             return response;
         }

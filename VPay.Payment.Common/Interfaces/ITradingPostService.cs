@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using VPay.Data.Db2.Abstractions.TransactionWs;
+﻿using System.Threading.Tasks;
+using VPay.Data.Db2.Abstractions.TradingPostWs;
 
 namespace VPay.Payment.Common
 {

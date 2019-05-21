@@ -16,3 +16,5 @@ plans:
 apis:
   TradingPostServiceDocs:
     $ref: TradingPostServiceDocs_1.0.0.yaml
+  tradingpostservices:
+    $ref: TradingPostServices_1.0.0.yaml

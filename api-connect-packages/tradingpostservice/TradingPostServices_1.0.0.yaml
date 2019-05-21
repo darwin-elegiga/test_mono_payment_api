@@ -1,0 +1,1642 @@
+swagger: '2.0'
+info:
+  title: Trading Post Services
+  description: ''
+  x-ibm-name: tradingpostservices
+  version: 1.0.0
+schemes:
+  - https
+basePath: /tradingpostservices
+produces:
+  - text/xml
+consumes:
+  - text/xml
+securityDefinitions: {}
+security:
+  - {}
+x-ibm-configuration:
+  type: wsdl
+  phase: realized
+  enforced: true
+  testable: true
+  gateway: datapower-gateway
+  cors:
+    enabled: true
+  wsdl-definition:
+    wsdl: TradingPostServices.xml
+    service: SEcureCardServices
+    port: SEcureCardServicesSoap
+    soap-version: '1.1'
+  assembly:
+    execute:
+      - xml-to-json:
+          title: xml-to-json
+          version: 1.0.0
+      - gatewayscript:
+          title: gatewayscript
+          version: 1.0.0
+          source: "var body = apim.getvariable('message.body');\r\nvar op = apim.getvariable('api.operation.id');\r\n\r\nfunction flatten(data) {\r\n    function isEmpty(obj) {\r\n        for(var key in obj) {\r\n            if(obj.hasOwnProperty(key))\r\n                return false;\r\n        }\r\n        return true;\r\n    }\r\n\r\n    function recurse (cur, prop, last) {\r\n        if (Object(cur) === cur) {\r\n        \tif (!!cur[\"@xmlns\"]) {\r\n        \t\tdelete cur[\"@xmlns\"];\r\n          }\r\n          var split = prop.split(':');\r\n          if (split.length == 2) {\r\n          \tlast[split[1]] = last[prop];\r\n            delete last[prop];\r\n            prop = split[1];\r\n          }\r\n          if (!!cur['$']) {\r\n            last[prop] = cur['$'];\r\n          } else if (isEmpty(cur)){\r\n              last[prop] = '';\r\n          } else {\r\n            for (var p in cur) {\r\n              recurse(cur[p], p, cur);\r\n            }\r\n          }\r\n       }\r\n    }\r\n    recurse(data, \"\");\r\n    return data;\r\n}\r\nbody = flatten(body);\r\n\r\napim.setvariable('message.body', body);\r\napim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
+      - proxy:
+          title: proxy
+          target-url: $(api.properties.api-endpoint)/$(api.operation.id)
+          output: echo_invoke
+      - operation-switch:
+          title: operation-switch
+          case:
+            - operations:
+                - LoadCard
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/LoadResult_web'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/LoadCardOutput'
+                        variable: message.body
+                        content: text/xml
+                    actions:
+                      - set: output.Envelope.Body.LoadCardResponse.LoadCardResult
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - RetrieveCard
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/RetrieveResult_web'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/RetrieveCardOutput'
+                        variable: message.body
+                        content: text/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.RetrieveCardResponse.RetrieveCardResult
+                        from: input
+                    version: 1.0.0
+            - operations:
+                - CardNotificationRelease
+              execute:
+                - map:
+                    title: map
+                    inputs:
+                      input:
+                        schema:
+                          $ref: '#/definitions/NotificationResult_web'
+                        variable: echo_invoke.body
+                        content: application/json
+                    outputs:
+                      output:
+                        schema:
+                          $ref: '#/definitions/CardNotificationReleaseOutput'
+                        variable: message.body
+                        content: text/xml
+                    actions:
+                      - set: >-
+                          output.Envelope.Body.CardNotificationReleaseResponse.CardNotificationReleaseResult
+                        from: input
+                    version: 1.0.0
+          otherwise: []
+          version: 1.0.0
+  properties:
+    api-endpoint:
+      value: 'http://172.17.0.1:5013/api/TradingPost'
+      description: ''
+      encoded: false
+  catalogs:
+    Internal Sandbox:
+      properties:
+        api-endpoint: 'http://hqdevlds01.vpayusa.net:5003/api/TradingPost'
+    Internal Stage:
+      properties:
+        api-endpoint: 'https://stg-payapi.vpayusa.net/api/TradingPost'
+    Internal Prod:
+      properties:
+        api-endpoint: 'https://payapi.vpayusa.net/api/TradingPost'
+    Stage:
+      properties:
+        api-endpoint: 'https://stg-payapi.vpayusa.net/api/TradingPost'
+paths:
+  /LoadCard:
+    post:
+      summary: Operation LoadCard
+      description: ''
+      operationId: LoadCard
+      x-ibm-soap:
+        soap-action: 'http://stoneeagle.com/webservices/LoadCard'
+        soap-operation: '{http://stoneeagle.com/webservices/}LoadCard'
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoadCardInput'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/LoadCardOutput'
+  /RetrieveCard:
+    post:
+      summary: Operation RetrieveCard
+      description: ''
+      operationId: RetrieveCard
+      x-ibm-soap:
+        soap-action: 'http://stoneeagle.com/webservices/RetrieveCard'
+        soap-operation: '{http://stoneeagle.com/webservices/}RetrieveCard'
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/RetrieveCardInput'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/RetrieveCardOutput'
+  /CardNotificationRelease:
+    post:
+      summary: Operation CardNotificationRelease
+      description: ''
+      operationId: CardNotificationRelease
+      x-ibm-soap:
+        soap-action: 'http://stoneeagle.com/webservices/CardNotificationRelease'
+        soap-operation: '{http://stoneeagle.com/webservices/}CardNotificationRelease'
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/CardNotificationReleaseInput'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/CardNotificationReleaseOutput'
+definitions:
+  Security:
+    xml:
+      namespace: >-
+        http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
+      prefix: wsse
+    description: Header for WS-Security
+    type: object
+    properties:
+      UsernameToken:
+        xml:
+          namespace: >-
+            http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
+          prefix: wsse
+        type: object
+        properties:
+          Username:
+            xml:
+              namespace: >-
+                http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
+              prefix: wsse
+            type: string
+          Password:
+            xml:
+              namespace: >-
+                http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
+              prefix: wsse
+            type: string
+          Nonce:
+            xml:
+              namespace: >-
+                http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
+              prefix: wsse
+            type: string
+            properties:
+              EncodingType:
+                xml:
+                  namespace: ''
+                  attribute: true
+                type: string
+          Created:
+            xml:
+              namespace: >-
+                http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
+              prefix: wsu
+            type: string
+      Timestamp:
+        xml:
+          namespace: >-
+            http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
+          prefix: wsu
+        type: object
+        properties:
+          Created:
+            xml:
+              namespace: >-
+                http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
+              prefix: wsu
+            type: string
+          Expires:
+            xml:
+              namespace: >-
+                http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
+              prefix: wsu
+            type: string
+          Id:
+            xml:
+              namespace: >-
+                http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
+              prefix: wsu
+              attribute: true
+            type: string
+  LoadCardInput:
+    type: object
+    properties:
+      Envelope:
+        xml:
+          prefix: soap
+          namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+        type: object
+        properties:
+          Header:
+            $ref: '#/definitions/LoadCardHeader'
+          Body:
+            type: object
+            properties:
+              LoadCard:
+                $ref: '#/definitions/LoadCard_web'
+            required:
+              - LoadCard
+        required:
+          - Body
+    required:
+      - Envelope
+    example: |-
+
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+       <soap:Header>
+        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken>
+          <wsse:Username>string</wsse:Username>
+          <wsse:Password>string</wsse:Password>
+          <wsse:Nonce EncodingType="string">string</wsse:Nonce>
+          <wsu:Created>string</wsu:Created>
+         </wsse:UsernameToken>
+         <wsu:Timestamp wsu:Id="string">
+          <wsu:Created>string</wsu:Created>
+          <wsu:Expires>string</wsu:Expires>
+         </wsu:Timestamp>
+        </wsse:Security>
+       </soap:Header>
+       <soap:Body>
+        <web:LoadCard xmlns:web="http://stoneeagle.com/webservices/"><!-- mandatory -->
+         <web:authentication>
+          <web:id>string</web:id>
+          <web:passphrase>string</web:passphrase>
+         </web:authentication>
+         <web:loadRequest>
+          <web:cardHolder>
+           <web:client>string</web:client>
+           <web:billingType>string</web:billingType>
+           <web:billingCode>string</web:billingCode>
+          </web:cardHolder>
+          <web:merchant>
+           <web:payeeCode>string</web:payeeCode>
+           <web:payeeName>string</web:payeeName>
+           <web:contactPerson>string</web:contactPerson>
+           <web:postalCode>string</web:postalCode>
+           <web:telephone>string</web:telephone>
+           <web:fax>string</web:fax>
+          </web:merchant>
+          <web:claim>
+           <web:userKey>string</web:userKey>
+           <web:userField1>string</web:userField1>
+           <web:userField2>string</web:userField2>
+           <web:userField3>string</web:userField3>
+           <web:currencyType>string</web:currencyType>
+           <web:amount>string</web:amount>
+           <web:claimDeductible>string</web:claimDeductible>
+           <web:claimDate>string</web:claimDate>
+           <web:claimOdometer>string</web:claimOdometer>
+           <web:claimDescription>string</web:claimDescription>
+           <web:requesterId>string</web:requesterId>
+           <web:requesterName>string</web:requesterName>
+           <web:repairOrderId>string</web:repairOrderId>
+           <web:claimNotes>string</web:claimNotes>
+          </web:claim>
+          <web:coveredItem>
+           <web:itemType>string</web:itemType>
+           <web:itemId>string</web:itemId>
+           <web:year>string</web:year>
+           <web:manufacturer>string</web:manufacturer>
+           <web:model>string</web:model>
+           <web:bookStateOrProvince>string</web:bookStateOrProvince>
+           <web:postalCode>string</web:postalCode>
+           <web:planCode>string</web:planCode>
+           <web:planDescription>string</web:planDescription>
+           <web:deductible>string</web:deductible>
+           <web:newUsed>string</web:newUsed>
+           <web:beginDate>string</web:beginDate>
+           <web:expireDate>string</web:expireDate>
+           <web:odometerType>string</web:odometerType>
+           <web:beginOdometer>string</web:beginOdometer>
+           <web:expireOdometer>string</web:expireOdometer>
+           <web:ownerLastName>string</web:ownerLastName>
+           <web:ownerFirstName>string</web:ownerFirstName>
+          </web:coveredItem>
+          <web:correspondence>
+           <web:sendFaxCode>string</web:sendFaxCode>
+           <web:attachmentLocation>string</web:attachmentLocation>
+          </web:correspondence>
+          <web:achDirections>
+           <web:payeeRoutingNumber>string</web:payeeRoutingNumber>
+           <web:payeeAccountNumber>string</web:payeeAccountNumber>
+          </web:achDirections>
+          <web:checkInformation>
+           <web:checkNumber>string</web:checkNumber>
+           <web:checkDate>string</web:checkDate>
+          </web:checkInformation>
+         </web:loadRequest>
+        </web:LoadCard>
+       </soap:Body>
+      </soap:Envelope>
+  LoadCardHeader:
+    type: object
+    properties:
+      Security:
+        $ref: '#/definitions/Security'
+  LoadCardOutput:
+    type: object
+    properties:
+      Envelope:
+        xml:
+          prefix: soap
+          namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+        type: object
+        properties:
+          Body:
+            type: object
+            properties:
+              LoadCardResponse:
+                $ref: '#/definitions/LoadCardResponse_web'
+        required:
+          - Body
+    required:
+      - Envelope
+    example: |-
+
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+       <soap:Body>
+        <web:LoadCardResponse xmlns:web="http://stoneeagle.com/webservices/">
+         <web:LoadCardResult>
+          <web:transactionInformation>
+           <web:responseCode>string</web:responseCode>
+           <web:responseDescription>string</web:responseDescription>
+           <web:statusCode>string</web:statusCode>
+           <web:statusDescription>string</web:statusDescription>
+           <web:transactionId>string</web:transactionId>
+           <web:auditNumber>string</web:auditNumber>
+           <web:transactionTime>string</web:transactionTime>
+           <web:accountingCode>string</web:accountingCode>
+           <web:accountingDescription>string</web:accountingDescription>
+          </web:transactionInformation>
+          <web:cardInformation>
+           <web:cardType>string</web:cardType>
+           <web:cardNumber>string</web:cardNumber>
+           <web:cardSecurityValue>string</web:cardSecurityValue>
+           <web:cardExpiration>string</web:cardExpiration>
+           <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+           <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+           <web:loadFee><!-- mandatory -->3</web:loadFee>
+           <web:payeeName>string</web:payeeName>
+           <web:cardholderName>string</web:cardholderName>
+           <web:cardholderAddress>string</web:cardholderAddress>
+           <web:cardholderPostalCode>string</web:cardholderPostalCode>
+          </web:cardInformation>
+          <web:claim>
+           <web:userKey>string</web:userKey>
+           <web:userField1>string</web:userField1>
+           <web:userField2>string</web:userField2>
+           <web:userField3>string</web:userField3>
+           <web:currencyType>string</web:currencyType>
+           <web:amount>string</web:amount>
+           <web:claimDeductible>string</web:claimDeductible>
+           <web:claimDate>string</web:claimDate>
+           <web:claimOdometer>string</web:claimOdometer>
+           <web:claimDescription>string</web:claimDescription>
+           <web:requesterId>string</web:requesterId>
+           <web:requesterName>string</web:requesterName>
+           <web:repairOrderId>string</web:repairOrderId>
+           <web:claimNotes>string</web:claimNotes>
+          </web:claim>
+         </web:LoadCardResult>
+        </web:LoadCardResponse>
+       </soap:Body>
+      </soap:Envelope>
+  RetrieveCardInput:
+    type: object
+    properties:
+      Envelope:
+        xml:
+          prefix: soap
+          namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+        type: object
+        properties:
+          Header:
+            $ref: '#/definitions/RetrieveCardHeader'
+          Body:
+            type: object
+            properties:
+              RetrieveCard:
+                $ref: '#/definitions/RetrieveCard_web'
+            required:
+              - RetrieveCard
+        required:
+          - Body
+    required:
+      - Envelope
+    example: |-
+
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+       <soap:Header>
+        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken>
+          <wsse:Username>string</wsse:Username>
+          <wsse:Password>string</wsse:Password>
+          <wsse:Nonce EncodingType="string">string</wsse:Nonce>
+          <wsu:Created>string</wsu:Created>
+         </wsse:UsernameToken>
+         <wsu:Timestamp wsu:Id="string">
+          <wsu:Created>string</wsu:Created>
+          <wsu:Expires>string</wsu:Expires>
+         </wsu:Timestamp>
+        </wsse:Security>
+       </soap:Header>
+       <soap:Body>
+        <web:RetrieveCard xmlns:web="http://stoneeagle.com/webservices/"><!-- mandatory -->
+         <web:authentication>
+          <web:id>string</web:id>
+          <web:passphrase>string</web:passphrase>
+         </web:authentication>
+         <web:retrieveRequest>
+          <web:cardInformation>
+           <web:cardType>string</web:cardType>
+           <web:cardNumber>string</web:cardNumber>
+           <web:cardSecurityValue>string</web:cardSecurityValue>
+           <web:cardExpiration>string</web:cardExpiration>
+           <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+           <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+           <web:loadFee><!-- mandatory -->3</web:loadFee>
+           <web:payeeName>string</web:payeeName>
+           <web:cardholderName>string</web:cardholderName>
+           <web:cardholderAddress>string</web:cardholderAddress>
+           <web:cardholderPostalCode>string</web:cardholderPostalCode>
+          </web:cardInformation>
+          <web:cardHolder>
+           <web:client>string</web:client>
+           <web:billingType>string</web:billingType>
+           <web:billingCode>string</web:billingCode>
+          </web:cardHolder>
+          <web:merchant>
+           <web:payeeCode>string</web:payeeCode>
+           <web:payeeName>string</web:payeeName>
+           <web:contactPerson>string</web:contactPerson>
+           <web:postalCode>string</web:postalCode>
+           <web:telephone>string</web:telephone>
+           <web:fax>string</web:fax>
+          </web:merchant>
+          <web:claim>
+           <web:userKey>string</web:userKey>
+           <web:userField1>string</web:userField1>
+           <web:userField2>string</web:userField2>
+           <web:userField3>string</web:userField3>
+           <web:currencyType>string</web:currencyType>
+           <web:amount>string</web:amount>
+           <web:claimDeductible>string</web:claimDeductible>
+           <web:claimDate>string</web:claimDate>
+           <web:claimOdometer>string</web:claimOdometer>
+           <web:claimDescription>string</web:claimDescription>
+           <web:requesterId>string</web:requesterId>
+           <web:requesterName>string</web:requesterName>
+           <web:repairOrderId>string</web:repairOrderId>
+           <web:claimNotes>string</web:claimNotes>
+          </web:claim>
+          <web:coveredItem>
+           <web:itemType>string</web:itemType>
+           <web:itemId>string</web:itemId>
+           <web:year>string</web:year>
+           <web:manufacturer>string</web:manufacturer>
+           <web:model>string</web:model>
+           <web:bookStateOrProvince>string</web:bookStateOrProvince>
+           <web:postalCode>string</web:postalCode>
+           <web:planCode>string</web:planCode>
+           <web:planDescription>string</web:planDescription>
+           <web:deductible>string</web:deductible>
+           <web:newUsed>string</web:newUsed>
+           <web:beginDate>string</web:beginDate>
+           <web:expireDate>string</web:expireDate>
+           <web:odometerType>string</web:odometerType>
+           <web:beginOdometer>string</web:beginOdometer>
+           <web:expireOdometer>string</web:expireOdometer>
+           <web:ownerLastName>string</web:ownerLastName>
+           <web:ownerFirstName>string</web:ownerFirstName>
+          </web:coveredItem>
+          <web:correspondence>
+           <web:sendFaxCode>string</web:sendFaxCode>
+           <web:attachmentLocation>string</web:attachmentLocation>
+          </web:correspondence>
+          <web:achDirections>
+           <web:payeeRoutingNumber>string</web:payeeRoutingNumber>
+           <web:payeeAccountNumber>string</web:payeeAccountNumber>
+          </web:achDirections>
+          <web:checkInformation>
+           <web:checkNumber>string</web:checkNumber>
+           <web:checkDate>string</web:checkDate>
+          </web:checkInformation>
+         </web:retrieveRequest>
+        </web:RetrieveCard>
+       </soap:Body>
+      </soap:Envelope>
+  RetrieveCardHeader:
+    type: object
+    properties:
+      Security:
+        $ref: '#/definitions/Security'
+  RetrieveCardOutput:
+    type: object
+    properties:
+      Envelope:
+        xml:
+          prefix: soap
+          namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+        type: object
+        properties:
+          Body:
+            type: object
+            properties:
+              RetrieveCardResponse:
+                $ref: '#/definitions/RetrieveCardResponse_web'
+        required:
+          - Body
+    required:
+      - Envelope
+    example: |-
+
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+       <soap:Body>
+        <web:RetrieveCardResponse xmlns:web="http://stoneeagle.com/webservices/">
+         <web:RetrieveCardResult>
+          <web:transactionInformation>
+           <web:responseCode>string</web:responseCode>
+           <web:responseDescription>string</web:responseDescription>
+           <web:statusCode>string</web:statusCode>
+           <web:statusDescription>string</web:statusDescription>
+           <web:transactionId>string</web:transactionId>
+           <web:auditNumber>string</web:auditNumber>
+           <web:transactionTime>string</web:transactionTime>
+           <web:accountingCode>string</web:accountingCode>
+           <web:accountingDescription>string</web:accountingDescription>
+          </web:transactionInformation>
+          <web:cardHolder>
+           <web:client>string</web:client>
+           <web:billingType>string</web:billingType>
+           <web:billingCode>string</web:billingCode>
+          </web:cardHolder>
+          <web:cardInformation>
+           <web:cardType>string</web:cardType>
+           <web:cardNumber>string</web:cardNumber>
+           <web:cardSecurityValue>string</web:cardSecurityValue>
+           <web:cardExpiration>string</web:cardExpiration>
+           <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+           <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+           <web:loadFee><!-- mandatory -->3</web:loadFee>
+           <web:payeeName>string</web:payeeName>
+           <web:cardholderName>string</web:cardholderName>
+           <web:cardholderAddress>string</web:cardholderAddress>
+           <web:cardholderPostalCode>string</web:cardholderPostalCode>
+          </web:cardInformation>
+          <web:claim>
+           <web:userKey>string</web:userKey>
+           <web:userField1>string</web:userField1>
+           <web:userField2>string</web:userField2>
+           <web:userField3>string</web:userField3>
+           <web:currencyType>string</web:currencyType>
+           <web:amount>string</web:amount>
+           <web:claimDeductible>string</web:claimDeductible>
+           <web:claimDate>string</web:claimDate>
+           <web:claimOdometer>string</web:claimOdometer>
+           <web:claimDescription>string</web:claimDescription>
+           <web:requesterId>string</web:requesterId>
+           <web:requesterName>string</web:requesterName>
+           <web:repairOrderId>string</web:repairOrderId>
+           <web:claimNotes>string</web:claimNotes>
+          </web:claim>
+         </web:RetrieveCardResult>
+        </web:RetrieveCardResponse>
+       </soap:Body>
+      </soap:Envelope>
+  CardNotificationReleaseInput:
+    type: object
+    properties:
+      Envelope:
+        xml:
+          prefix: soap
+          namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+        type: object
+        properties:
+          Header:
+            $ref: '#/definitions/CardNotificationReleaseHeader'
+          Body:
+            type: object
+            properties:
+              CardNotificationRelease:
+                $ref: '#/definitions/CardNotificationRelease_web'
+            required:
+              - CardNotificationRelease
+        required:
+          - Body
+    required:
+      - Envelope
+    example: |-
+
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+       <soap:Header>
+        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken>
+          <wsse:Username>string</wsse:Username>
+          <wsse:Password>string</wsse:Password>
+          <wsse:Nonce EncodingType="string">string</wsse:Nonce>
+          <wsu:Created>string</wsu:Created>
+         </wsse:UsernameToken>
+         <wsu:Timestamp wsu:Id="string">
+          <wsu:Created>string</wsu:Created>
+          <wsu:Expires>string</wsu:Expires>
+         </wsu:Timestamp>
+        </wsse:Security>
+       </soap:Header>
+       <soap:Body>
+        <web:CardNotificationRelease xmlns:web="http://stoneeagle.com/webservices/"><!-- mandatory -->
+         <web:authentication>
+          <web:id>string</web:id>
+          <web:passphrase>string</web:passphrase>
+         </web:authentication>
+         <web:releaseNotification>
+          <web:cardInformation>
+           <web:cardType>string</web:cardType>
+           <web:cardNumber>string</web:cardNumber>
+           <web:cardSecurityValue>string</web:cardSecurityValue>
+           <web:cardExpiration>string</web:cardExpiration>
+           <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+           <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+           <web:loadFee><!-- mandatory -->3</web:loadFee>
+           <web:payeeName>string</web:payeeName>
+           <web:cardholderName>string</web:cardholderName>
+           <web:cardholderAddress>string</web:cardholderAddress>
+           <web:cardholderPostalCode>string</web:cardholderPostalCode>
+          </web:cardInformation>
+          <web:cardHolder>
+           <web:client>string</web:client>
+           <web:billingType>string</web:billingType>
+           <web:billingCode>string</web:billingCode>
+          </web:cardHolder>
+          <web:claim>
+           <web:userKey>string</web:userKey>
+           <web:userField1>string</web:userField1>
+           <web:userField2>string</web:userField2>
+           <web:userField3>string</web:userField3>
+           <web:currencyType>string</web:currencyType>
+           <web:amount>string</web:amount>
+           <web:claimDeductible>string</web:claimDeductible>
+           <web:claimDate>string</web:claimDate>
+           <web:claimOdometer>string</web:claimOdometer>
+           <web:claimDescription>string</web:claimDescription>
+           <web:requesterId>string</web:requesterId>
+           <web:requesterName>string</web:requesterName>
+           <web:repairOrderId>string</web:repairOrderId>
+           <web:claimNotes>string</web:claimNotes>
+          </web:claim>
+          <web:correspondence>
+           <web:sendFaxCode>string</web:sendFaxCode>
+           <web:attachmentLocation>string</web:attachmentLocation>
+          </web:correspondence>
+          <web:merchant>
+           <web:payeeCode>string</web:payeeCode>
+           <web:payeeName>string</web:payeeName>
+           <web:contactPerson>string</web:contactPerson>
+           <web:postalCode>string</web:postalCode>
+           <web:telephone>string</web:telephone>
+           <web:fax>string</web:fax>
+          </web:merchant>
+          <web:coveredItem>
+           <web:itemType>string</web:itemType>
+           <web:itemId>string</web:itemId>
+           <web:year>string</web:year>
+           <web:manufacturer>string</web:manufacturer>
+           <web:model>string</web:model>
+           <web:bookStateOrProvince>string</web:bookStateOrProvince>
+           <web:postalCode>string</web:postalCode>
+           <web:planCode>string</web:planCode>
+           <web:planDescription>string</web:planDescription>
+           <web:deductible>string</web:deductible>
+           <web:newUsed>string</web:newUsed>
+           <web:beginDate>string</web:beginDate>
+           <web:expireDate>string</web:expireDate>
+           <web:odometerType>string</web:odometerType>
+           <web:beginOdometer>string</web:beginOdometer>
+           <web:expireOdometer>string</web:expireOdometer>
+           <web:ownerLastName>string</web:ownerLastName>
+           <web:ownerFirstName>string</web:ownerFirstName>
+          </web:coveredItem>
+          <web:achDirections>
+           <web:payeeRoutingNumber>string</web:payeeRoutingNumber>
+           <web:payeeAccountNumber>string</web:payeeAccountNumber>
+          </web:achDirections>
+          <web:checkInformation>
+           <web:checkNumber>string</web:checkNumber>
+           <web:checkDate>string</web:checkDate>
+          </web:checkInformation>
+         </web:releaseNotification>
+        </web:CardNotificationRelease>
+       </soap:Body>
+      </soap:Envelope>
+  CardNotificationReleaseHeader:
+    type: object
+    properties:
+      Security:
+        $ref: '#/definitions/Security'
+  CardNotificationReleaseOutput:
+    type: object
+    properties:
+      Envelope:
+        xml:
+          prefix: soap
+          namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+        type: object
+        properties:
+          Body:
+            type: object
+            properties:
+              CardNotificationReleaseResponse:
+                $ref: '#/definitions/CardNotificationReleaseResponse_web'
+        required:
+          - Body
+    required:
+      - Envelope
+    example: |-
+
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+       <soap:Body>
+        <web:CardNotificationReleaseResponse xmlns:web="http://stoneeagle.com/webservices/">
+         <web:CardNotificationReleaseResult>
+          <web:transactionInformation>
+           <web:responseCode>string</web:responseCode>
+           <web:responseDescription>string</web:responseDescription>
+           <web:statusCode>string</web:statusCode>
+           <web:statusDescription>string</web:statusDescription>
+           <web:transactionId>string</web:transactionId>
+           <web:auditNumber>string</web:auditNumber>
+           <web:transactionTime>string</web:transactionTime>
+           <web:accountingCode>string</web:accountingCode>
+           <web:accountingDescription>string</web:accountingDescription>
+          </web:transactionInformation>
+          <web:cardHolder>
+           <web:client>string</web:client>
+           <web:billingType>string</web:billingType>
+           <web:billingCode>string</web:billingCode>
+          </web:cardHolder>
+          <web:cardInformation>
+           <web:cardType>string</web:cardType>
+           <web:cardNumber>string</web:cardNumber>
+           <web:cardSecurityValue>string</web:cardSecurityValue>
+           <web:cardExpiration>string</web:cardExpiration>
+           <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+           <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+           <web:loadFee><!-- mandatory -->3</web:loadFee>
+           <web:payeeName>string</web:payeeName>
+           <web:cardholderName>string</web:cardholderName>
+           <web:cardholderAddress>string</web:cardholderAddress>
+           <web:cardholderPostalCode>string</web:cardholderPostalCode>
+          </web:cardInformation>
+          <web:claim>
+           <web:userKey>string</web:userKey>
+           <web:userField1>string</web:userField1>
+           <web:userField2>string</web:userField2>
+           <web:userField3>string</web:userField3>
+           <web:currencyType>string</web:currencyType>
+           <web:amount>string</web:amount>
+           <web:claimDeductible>string</web:claimDeductible>
+           <web:claimDate>string</web:claimDate>
+           <web:claimOdometer>string</web:claimOdometer>
+           <web:claimDescription>string</web:claimDescription>
+           <web:requesterId>string</web:requesterId>
+           <web:requesterName>string</web:requesterName>
+           <web:repairOrderId>string</web:repairOrderId>
+           <web:claimNotes>string</web:claimNotes>
+          </web:claim>
+         </web:CardNotificationReleaseResult>
+        </web:CardNotificationReleaseResponse>
+       </soap:Body>
+      </soap:Envelope>
+  LoadCard_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    type: object
+    properties:
+      authentication:
+        $ref: '#/definitions/AuthenticationValues_web'
+      loadRequest:
+        $ref: '#/definitions/LoadRequest_web'
+    example: |-
+
+      <web:LoadCard xmlns:web="http://stoneeagle.com/webservices/">
+       <web:authentication>
+        <web:id>string</web:id>
+        <web:passphrase>string</web:passphrase>
+       </web:authentication>
+       <web:loadRequest>
+        <web:cardHolder>
+         <web:client>string</web:client>
+         <web:billingType>string</web:billingType>
+         <web:billingCode>string</web:billingCode>
+        </web:cardHolder>
+        <web:merchant>
+         <web:payeeCode>string</web:payeeCode>
+         <web:payeeName>string</web:payeeName>
+         <web:contactPerson>string</web:contactPerson>
+         <web:postalCode>string</web:postalCode>
+         <web:telephone>string</web:telephone>
+         <web:fax>string</web:fax>
+        </web:merchant>
+        <web:claim>
+         <web:userKey>string</web:userKey>
+         <web:userField1>string</web:userField1>
+         <web:userField2>string</web:userField2>
+         <web:userField3>string</web:userField3>
+         <web:currencyType>string</web:currencyType>
+         <web:amount>string</web:amount>
+         <web:claimDeductible>string</web:claimDeductible>
+         <web:claimDate>string</web:claimDate>
+         <web:claimOdometer>string</web:claimOdometer>
+         <web:claimDescription>string</web:claimDescription>
+         <web:requesterId>string</web:requesterId>
+         <web:requesterName>string</web:requesterName>
+         <web:repairOrderId>string</web:repairOrderId>
+         <web:claimNotes>string</web:claimNotes>
+        </web:claim>
+        <web:coveredItem>
+         <web:itemType>string</web:itemType>
+         <web:itemId>string</web:itemId>
+         <web:year>string</web:year>
+         <web:manufacturer>string</web:manufacturer>
+         <web:model>string</web:model>
+         <web:bookStateOrProvince>string</web:bookStateOrProvince>
+         <web:postalCode>string</web:postalCode>
+         <web:planCode>string</web:planCode>
+         <web:planDescription>string</web:planDescription>
+         <web:deductible>string</web:deductible>
+         <web:newUsed>string</web:newUsed>
+         <web:beginDate>string</web:beginDate>
+         <web:expireDate>string</web:expireDate>
+         <web:odometerType>string</web:odometerType>
+         <web:beginOdometer>string</web:beginOdometer>
+         <web:expireOdometer>string</web:expireOdometer>
+         <web:ownerLastName>string</web:ownerLastName>
+         <web:ownerFirstName>string</web:ownerFirstName>
+        </web:coveredItem>
+        <web:correspondence>
+         <web:sendFaxCode>string</web:sendFaxCode>
+         <web:attachmentLocation>string</web:attachmentLocation>
+        </web:correspondence>
+        <web:achDirections>
+         <web:payeeRoutingNumber>string</web:payeeRoutingNumber>
+         <web:payeeAccountNumber>string</web:payeeAccountNumber>
+        </web:achDirections>
+        <web:checkInformation>
+         <web:checkNumber>string</web:checkNumber>
+         <web:checkDate>string</web:checkDate>
+        </web:checkInformation>
+       </web:loadRequest>
+      </web:LoadCard>
+  LoadCardResponse_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+    type: object
+    properties:
+      LoadCardResult:
+        $ref: '#/definitions/LoadResult_web'
+    example: |-
+
+      <web:LoadCardResponse xmlns:web="http://stoneeagle.com/webservices/">
+       <web:LoadCardResult>
+        <web:transactionInformation>
+         <web:responseCode>string</web:responseCode>
+         <web:responseDescription>string</web:responseDescription>
+         <web:statusCode>string</web:statusCode>
+         <web:statusDescription>string</web:statusDescription>
+         <web:transactionId>string</web:transactionId>
+         <web:auditNumber>string</web:auditNumber>
+         <web:transactionTime>string</web:transactionTime>
+         <web:accountingCode>string</web:accountingCode>
+         <web:accountingDescription>string</web:accountingDescription>
+        </web:transactionInformation>
+        <web:cardInformation>
+         <web:cardType>string</web:cardType>
+         <web:cardNumber>string</web:cardNumber>
+         <web:cardSecurityValue>string</web:cardSecurityValue>
+         <web:cardExpiration>string</web:cardExpiration>
+         <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+         <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+         <web:loadFee><!-- mandatory -->3</web:loadFee>
+         <web:payeeName>string</web:payeeName>
+         <web:cardholderName>string</web:cardholderName>
+         <web:cardholderAddress>string</web:cardholderAddress>
+         <web:cardholderPostalCode>string</web:cardholderPostalCode>
+        </web:cardInformation>
+        <web:claim>
+         <web:userKey>string</web:userKey>
+         <web:userField1>string</web:userField1>
+         <web:userField2>string</web:userField2>
+         <web:userField3>string</web:userField3>
+         <web:currencyType>string</web:currencyType>
+         <web:amount>string</web:amount>
+         <web:claimDeductible>string</web:claimDeductible>
+         <web:claimDate>string</web:claimDate>
+         <web:claimOdometer>string</web:claimOdometer>
+         <web:claimDescription>string</web:claimDescription>
+         <web:requesterId>string</web:requesterId>
+         <web:requesterName>string</web:requesterName>
+         <web:repairOrderId>string</web:repairOrderId>
+         <web:claimNotes>string</web:claimNotes>
+        </web:claim>
+       </web:LoadCardResult>
+      </web:LoadCardResponse>
+  RetrieveCard_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+    type: object
+    properties:
+      authentication:
+        $ref: '#/definitions/AuthenticationValues_web'
+      retrieveRequest:
+        $ref: '#/definitions/RetrieveRequest_web'
+    example: |-
+
+      <web:RetrieveCard xmlns:web="http://stoneeagle.com/webservices/">
+       <web:authentication>
+        <web:id>string</web:id>
+        <web:passphrase>string</web:passphrase>
+       </web:authentication>
+       <web:retrieveRequest>
+        <web:cardInformation>
+         <web:cardType>string</web:cardType>
+         <web:cardNumber>string</web:cardNumber>
+         <web:cardSecurityValue>string</web:cardSecurityValue>
+         <web:cardExpiration>string</web:cardExpiration>
+         <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+         <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+         <web:loadFee><!-- mandatory -->3</web:loadFee>
+         <web:payeeName>string</web:payeeName>
+         <web:cardholderName>string</web:cardholderName>
+         <web:cardholderAddress>string</web:cardholderAddress>
+         <web:cardholderPostalCode>string</web:cardholderPostalCode>
+        </web:cardInformation>
+        <web:cardHolder>
+         <web:client>string</web:client>
+         <web:billingType>string</web:billingType>
+         <web:billingCode>string</web:billingCode>
+        </web:cardHolder>
+        <web:merchant>
+         <web:payeeCode>string</web:payeeCode>
+         <web:payeeName>string</web:payeeName>
+         <web:contactPerson>string</web:contactPerson>
+         <web:postalCode>string</web:postalCode>
+         <web:telephone>string</web:telephone>
+         <web:fax>string</web:fax>
+        </web:merchant>
+        <web:claim>
+         <web:userKey>string</web:userKey>
+         <web:userField1>string</web:userField1>
+         <web:userField2>string</web:userField2>
+         <web:userField3>string</web:userField3>
+         <web:currencyType>string</web:currencyType>
+         <web:amount>string</web:amount>
+         <web:claimDeductible>string</web:claimDeductible>
+         <web:claimDate>string</web:claimDate>
+         <web:claimOdometer>string</web:claimOdometer>
+         <web:claimDescription>string</web:claimDescription>
+         <web:requesterId>string</web:requesterId>
+         <web:requesterName>string</web:requesterName>
+         <web:repairOrderId>string</web:repairOrderId>
+         <web:claimNotes>string</web:claimNotes>
+        </web:claim>
+        <web:coveredItem>
+         <web:itemType>string</web:itemType>
+         <web:itemId>string</web:itemId>
+         <web:year>string</web:year>
+         <web:manufacturer>string</web:manufacturer>
+         <web:model>string</web:model>
+         <web:bookStateOrProvince>string</web:bookStateOrProvince>
+         <web:postalCode>string</web:postalCode>
+         <web:planCode>string</web:planCode>
+         <web:planDescription>string</web:planDescription>
+         <web:deductible>string</web:deductible>
+         <web:newUsed>string</web:newUsed>
+         <web:beginDate>string</web:beginDate>
+         <web:expireDate>string</web:expireDate>
+         <web:odometerType>string</web:odometerType>
+         <web:beginOdometer>string</web:beginOdometer>
+         <web:expireOdometer>string</web:expireOdometer>
+         <web:ownerLastName>string</web:ownerLastName>
+         <web:ownerFirstName>string</web:ownerFirstName>
+        </web:coveredItem>
+        <web:correspondence>
+         <web:sendFaxCode>string</web:sendFaxCode>
+         <web:attachmentLocation>string</web:attachmentLocation>
+        </web:correspondence>
+        <web:achDirections>
+         <web:payeeRoutingNumber>string</web:payeeRoutingNumber>
+         <web:payeeAccountNumber>string</web:payeeAccountNumber>
+        </web:achDirections>
+        <web:checkInformation>
+         <web:checkNumber>string</web:checkNumber>
+         <web:checkDate>string</web:checkDate>
+        </web:checkInformation>
+       </web:retrieveRequest>
+      </web:RetrieveCard>
+  RetrieveCardResponse_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+    type: object
+    properties:
+      RetrieveCardResult:
+        $ref: '#/definitions/RetrieveResult_web'
+    example: |-
+
+      <web:RetrieveCardResponse xmlns:web="http://stoneeagle.com/webservices/">
+       <web:RetrieveCardResult>
+        <web:transactionInformation>
+         <web:responseCode>string</web:responseCode>
+         <web:responseDescription>string</web:responseDescription>
+         <web:statusCode>string</web:statusCode>
+         <web:statusDescription>string</web:statusDescription>
+         <web:transactionId>string</web:transactionId>
+         <web:auditNumber>string</web:auditNumber>
+         <web:transactionTime>string</web:transactionTime>
+         <web:accountingCode>string</web:accountingCode>
+         <web:accountingDescription>string</web:accountingDescription>
+        </web:transactionInformation>
+        <web:cardHolder>
+         <web:client>string</web:client>
+         <web:billingType>string</web:billingType>
+         <web:billingCode>string</web:billingCode>
+        </web:cardHolder>
+        <web:cardInformation>
+         <web:cardType>string</web:cardType>
+         <web:cardNumber>string</web:cardNumber>
+         <web:cardSecurityValue>string</web:cardSecurityValue>
+         <web:cardExpiration>string</web:cardExpiration>
+         <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+         <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+         <web:loadFee><!-- mandatory -->3</web:loadFee>
+         <web:payeeName>string</web:payeeName>
+         <web:cardholderName>string</web:cardholderName>
+         <web:cardholderAddress>string</web:cardholderAddress>
+         <web:cardholderPostalCode>string</web:cardholderPostalCode>
+        </web:cardInformation>
+        <web:claim>
+         <web:userKey>string</web:userKey>
+         <web:userField1>string</web:userField1>
+         <web:userField2>string</web:userField2>
+         <web:userField3>string</web:userField3>
+         <web:currencyType>string</web:currencyType>
+         <web:amount>string</web:amount>
+         <web:claimDeductible>string</web:claimDeductible>
+         <web:claimDate>string</web:claimDate>
+         <web:claimOdometer>string</web:claimOdometer>
+         <web:claimDescription>string</web:claimDescription>
+         <web:requesterId>string</web:requesterId>
+         <web:requesterName>string</web:requesterName>
+         <web:repairOrderId>string</web:repairOrderId>
+         <web:claimNotes>string</web:claimNotes>
+        </web:claim>
+       </web:RetrieveCardResult>
+      </web:RetrieveCardResponse>
+  CardNotificationRelease_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    type: object
+    properties:
+      authentication:
+        $ref: '#/definitions/AuthenticationValues_web'
+      releaseNotification:
+        $ref: '#/definitions/ReleaseNotification_web'
+    example: >-
+
+      <web:CardNotificationRelease
+      xmlns:web="http://stoneeagle.com/webservices/">
+       <web:authentication>
+        <web:id>string</web:id>
+        <web:passphrase>string</web:passphrase>
+       </web:authentication>
+       <web:releaseNotification>
+        <web:cardInformation>
+         <web:cardType>string</web:cardType>
+         <web:cardNumber>string</web:cardNumber>
+         <web:cardSecurityValue>string</web:cardSecurityValue>
+         <web:cardExpiration>string</web:cardExpiration>
+         <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+         <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+         <web:loadFee><!-- mandatory -->3</web:loadFee>
+         <web:payeeName>string</web:payeeName>
+         <web:cardholderName>string</web:cardholderName>
+         <web:cardholderAddress>string</web:cardholderAddress>
+         <web:cardholderPostalCode>string</web:cardholderPostalCode>
+        </web:cardInformation>
+        <web:cardHolder>
+         <web:client>string</web:client>
+         <web:billingType>string</web:billingType>
+         <web:billingCode>string</web:billingCode>
+        </web:cardHolder>
+        <web:claim>
+         <web:userKey>string</web:userKey>
+         <web:userField1>string</web:userField1>
+         <web:userField2>string</web:userField2>
+         <web:userField3>string</web:userField3>
+         <web:currencyType>string</web:currencyType>
+         <web:amount>string</web:amount>
+         <web:claimDeductible>string</web:claimDeductible>
+         <web:claimDate>string</web:claimDate>
+         <web:claimOdometer>string</web:claimOdometer>
+         <web:claimDescription>string</web:claimDescription>
+         <web:requesterId>string</web:requesterId>
+         <web:requesterName>string</web:requesterName>
+         <web:repairOrderId>string</web:repairOrderId>
+         <web:claimNotes>string</web:claimNotes>
+        </web:claim>
+        <web:correspondence>
+         <web:sendFaxCode>string</web:sendFaxCode>
+         <web:attachmentLocation>string</web:attachmentLocation>
+        </web:correspondence>
+        <web:merchant>
+         <web:payeeCode>string</web:payeeCode>
+         <web:payeeName>string</web:payeeName>
+         <web:contactPerson>string</web:contactPerson>
+         <web:postalCode>string</web:postalCode>
+         <web:telephone>string</web:telephone>
+         <web:fax>string</web:fax>
+        </web:merchant>
+        <web:coveredItem>
+         <web:itemType>string</web:itemType>
+         <web:itemId>string</web:itemId>
+         <web:year>string</web:year>
+         <web:manufacturer>string</web:manufacturer>
+         <web:model>string</web:model>
+         <web:bookStateOrProvince>string</web:bookStateOrProvince>
+         <web:postalCode>string</web:postalCode>
+         <web:planCode>string</web:planCode>
+         <web:planDescription>string</web:planDescription>
+         <web:deductible>string</web:deductible>
+         <web:newUsed>string</web:newUsed>
+         <web:beginDate>string</web:beginDate>
+         <web:expireDate>string</web:expireDate>
+         <web:odometerType>string</web:odometerType>
+         <web:beginOdometer>string</web:beginOdometer>
+         <web:expireOdometer>string</web:expireOdometer>
+         <web:ownerLastName>string</web:ownerLastName>
+         <web:ownerFirstName>string</web:ownerFirstName>
+        </web:coveredItem>
+        <web:achDirections>
+         <web:payeeRoutingNumber>string</web:payeeRoutingNumber>
+         <web:payeeAccountNumber>string</web:payeeAccountNumber>
+        </web:achDirections>
+        <web:checkInformation>
+         <web:checkNumber>string</web:checkNumber>
+         <web:checkDate>string</web:checkDate>
+        </web:checkInformation>
+       </web:releaseNotification>
+      </web:CardNotificationRelease>
+  CardNotificationReleaseResponse_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+    type: object
+    properties:
+      CardNotificationReleaseResult:
+        $ref: '#/definitions/NotificationResult_web'
+    example: >-
+
+      <web:CardNotificationReleaseResponse
+      xmlns:web="http://stoneeagle.com/webservices/">
+       <web:CardNotificationReleaseResult>
+        <web:transactionInformation>
+         <web:responseCode>string</web:responseCode>
+         <web:responseDescription>string</web:responseDescription>
+         <web:statusCode>string</web:statusCode>
+         <web:statusDescription>string</web:statusDescription>
+         <web:transactionId>string</web:transactionId>
+         <web:auditNumber>string</web:auditNumber>
+         <web:transactionTime>string</web:transactionTime>
+         <web:accountingCode>string</web:accountingCode>
+         <web:accountingDescription>string</web:accountingDescription>
+        </web:transactionInformation>
+        <web:cardHolder>
+         <web:client>string</web:client>
+         <web:billingType>string</web:billingType>
+         <web:billingCode>string</web:billingCode>
+        </web:cardHolder>
+        <web:cardInformation>
+         <web:cardType>string</web:cardType>
+         <web:cardNumber>string</web:cardNumber>
+         <web:cardSecurityValue>string</web:cardSecurityValue>
+         <web:cardExpiration>string</web:cardExpiration>
+         <web:loadTransactionId><!-- mandatory -->3</web:loadTransactionId>
+         <web:loadAmount><!-- mandatory -->3</web:loadAmount>
+         <web:loadFee><!-- mandatory -->3</web:loadFee>
+         <web:payeeName>string</web:payeeName>
+         <web:cardholderName>string</web:cardholderName>
+         <web:cardholderAddress>string</web:cardholderAddress>
+         <web:cardholderPostalCode>string</web:cardholderPostalCode>
+        </web:cardInformation>
+        <web:claim>
+         <web:userKey>string</web:userKey>
+         <web:userField1>string</web:userField1>
+         <web:userField2>string</web:userField2>
+         <web:userField3>string</web:userField3>
+         <web:currencyType>string</web:currencyType>
+         <web:amount>string</web:amount>
+         <web:claimDeductible>string</web:claimDeductible>
+         <web:claimDate>string</web:claimDate>
+         <web:claimOdometer>string</web:claimOdometer>
+         <web:claimDescription>string</web:claimDescription>
+         <web:requesterId>string</web:requesterId>
+         <web:requesterName>string</web:requesterName>
+         <web:repairOrderId>string</web:repairOrderId>
+         <web:claimNotes>string</web:claimNotes>
+        </web:claim>
+       </web:CardNotificationReleaseResult>
+      </web:CardNotificationReleaseResponse>
+  AuthenticationValues_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    type: object
+    properties:
+      id:
+        type: string
+      passphrase:
+        type: string
+    x-xsi-type: AuthenticationValues
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: AuthenticationValues_web
+  LoadRequest_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    type: object
+    properties:
+      cardHolder:
+        $ref: '#/definitions/Cardholder_web'
+      merchant:
+        $ref: '#/definitions/Merchant_web'
+      claim:
+        $ref: '#/definitions/Claim_web'
+      coveredItem:
+        $ref: '#/definitions/CoveredItem_web'
+      correspondence:
+        $ref: '#/definitions/Correspondence_web'
+      achDirections:
+        $ref: '#/definitions/AchDirections_web'
+      checkInformation:
+        $ref: '#/definitions/CheckInformation_web'
+    x-xsi-type: LoadRequest
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: LoadRequest_web
+  LoadResult_web:
+    type: object
+    properties:
+      transactionInformation:
+        $ref: '#/definitions/TransactionInformation_web'
+      cardInformation:
+        $ref: '#/definitions/CardInformation_web'
+      claim:
+        $ref: '#/definitions/Claim_web'
+    x-xsi-type: LoadResult
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: LoadResult_web
+  RetrieveRequest_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    type: object
+    properties:
+      cardInformation:
+        $ref: '#/definitions/CardInformation_web'
+      cardHolder:
+        $ref: '#/definitions/Cardholder_web'
+      merchant:
+        $ref: '#/definitions/Merchant_web'
+      claim:
+        $ref: '#/definitions/Claim_web'
+      coveredItem:
+        $ref: '#/definitions/CoveredItem_web'
+      correspondence:
+        $ref: '#/definitions/Correspondence_web'
+      achDirections:
+        $ref: '#/definitions/AchDirections_web'
+      checkInformation:
+        $ref: '#/definitions/CheckInformation_web'
+    x-xsi-type: RetrieveRequest
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: RetrieveRequest_web
+  RetrieveResult_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+    type: object
+    properties:
+      transactionInformation:
+        $ref: '#/definitions/TransactionInformation_web'
+      cardHolder:
+        $ref: '#/definitions/Cardholder_web'
+      cardInformation:
+        $ref: '#/definitions/CardInformation_web'
+      claim:
+        $ref: '#/definitions/Claim_web'
+    x-xsi-type: RetrieveResult
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: RetrieveResult_web
+  ReleaseNotification_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    type: object
+    properties:
+      cardInformation:
+        $ref: '#/definitions/CardInformation_web'
+      cardHolder:
+        $ref: '#/definitions/Cardholder_web'
+      claim:
+        $ref: '#/definitions/Claim_web'
+      correspondence:
+        $ref: '#/definitions/Correspondence_web'
+      merchant:
+        $ref: '#/definitions/Merchant_web'
+      coveredItem:
+        $ref: '#/definitions/CoveredItem_web'
+      achDirections:
+        $ref: '#/definitions/AchDirections_web'
+      checkInformation:
+        $ref: '#/definitions/CheckInformation_web'
+    x-xsi-type: ReleaseNotification
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: ReleaseNotification_web
+  NotificationResult_web:
+    xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+    type: object
+    properties:
+      transactionInformation:
+        $ref: '#/definitions/TransactionInformation_web'
+      cardHolder:
+        $ref: '#/definitions/Cardholder_web'
+      cardInformation:
+        $ref: '#/definitions/CardInformation_web'
+      claim:
+        $ref: '#/definitions/Claim_web'
+    x-xsi-type: NotificationResult
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: NotificationResult_web
+  Cardholder_web:
+    type: object
+    properties:
+      client:
+        type: string
+      billingType:
+        type: string
+      billingCode:
+        type: string
+    x-xsi-type: Cardholder
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: Cardholder_web
+  Merchant_web:
+    type: object
+    properties:
+      payeeCode:
+        type: string
+      payeeName:
+        type: string
+      contactPerson:
+        type: string
+      postalCode:
+        type: string
+      telephone:
+        type: string
+      fax:
+        type: string
+    x-xsi-type: Merchant
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: Merchant_web
+  Claim_web:
+    type: object
+    properties:
+      userKey:
+        type: string
+      userField1:
+        type: string
+      userField2:
+        type: string
+      userField3:
+        type: string
+      currencyType:
+        type: string
+      amount:
+        type: string
+      claimDeductible:
+        type: string
+      claimDate:
+        type: string
+      claimOdometer:
+        type: string
+      claimDescription:
+        type: string
+      requesterId:
+        type: string
+      requesterName:
+        type: string
+      repairOrderId:
+        type: string
+      claimNotes:
+        type: string
+    x-xsi-type: Claim
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: Claim_web
+  CoveredItem_web:
+    type: object
+    properties:
+      itemType:
+        type: string
+      itemId:
+        type: string
+      year:
+        type: string
+      manufacturer:
+        type: string
+      model:
+        type: string
+      bookStateOrProvince:
+        type: string
+      postalCode:
+        type: string
+      planCode:
+        type: string
+      planDescription:
+        type: string
+      deductible:
+        type: string
+      newUsed:
+        type: string
+      beginDate:
+        type: string
+      expireDate:
+        type: string
+      odometerType:
+        type: string
+      beginOdometer:
+        type: string
+      expireOdometer:
+        type: string
+      ownerLastName:
+        type: string
+      ownerFirstName:
+        type: string
+    x-xsi-type: CoveredItem
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: CoveredItem_web
+  Correspondence_web:
+    type: object
+    properties:
+      sendFaxCode:
+        type: string
+      attachmentLocation:
+        type: string
+    x-xsi-type: Correspondence
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: Correspondence_web
+  AchDirections_web:
+    type: object
+    properties:
+      payeeRoutingNumber:
+        type: string
+      payeeAccountNumber:
+        type: string
+    x-xsi-type: AchDirections
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: AchDirections_web
+  CheckInformation_web:
+    type: object
+    properties:
+      checkNumber:
+        type: string
+      checkDate:
+        type: string
+    x-xsi-type: CheckInformation
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: CheckInformation_web
+  TransactionInformation_web:
+    type: object
+    properties:
+      responseCode:
+        type: string
+      responseDescription:
+        type: string
+      statusCode:
+        type: string
+      statusDescription:
+        type: string
+      transactionId:
+        type: string
+      auditNumber:
+        type: string
+      transactionTime:
+        type: string
+      accountingCode:
+        type: string
+      accountingDescription:
+        type: string
+    x-xsi-type: TransactionInformation
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: TransactionInformation_web
+  CardInformation_web:
+    type: object
+    properties:
+      cardType:
+        type: string
+      cardNumber:
+        type: string
+      cardSecurityValue:
+        type: string
+      cardExpiration:
+        type: string
+      loadTransactionId:
+        type: integer
+        format: int64
+      loadAmount:
+        type: number
+      loadFee:
+        type: number
+      payeeName:
+        type: string
+      cardholderName:
+        type: string
+      cardholderAddress:
+        type: string
+      cardholderPostalCode:
+        type: string
+    required:
+      - loadTransactionId
+      - loadAmount
+      - loadFee
+    x-xsi-type: CardInformation
+    x-xsi-type-xml:
+      namespace: 'http://stoneeagle.com/webservices/'
+      prefix: web
+    x-xsi-type-uniquename: CardInformation_web
