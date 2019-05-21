@@ -52,7 +52,8 @@ namespace VPay.Payment.Api
 
         public static IServiceCollection AddApiVersioningService(this IServiceCollection services)
         {
-            services.AddApiVersioning(o => {
+            services.AddApiVersioning(o =>
+            {
                 o.ReportApiVersions = true;
                 o.AssumeDefaultVersionWhenUnspecified = true;
                 o.DefaultApiVersion = new ApiVersion(1, 0);
