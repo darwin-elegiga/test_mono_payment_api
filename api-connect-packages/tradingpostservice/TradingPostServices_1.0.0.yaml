@@ -35,7 +35,7 @@ x-ibm-configuration:
       - gatewayscript:
           title: gatewayscript
           version: 1.0.0
-          source: "var body = apim.getvariable('message.body');\r\nvar op = apim.getvariable('api.operation.id');\r\n\r\nfunction flatten(data) {\r\n    function isEmpty(obj) {\r\n        for(var key in obj) {\r\n            if(obj.hasOwnProperty(key))\r\n                return false;\r\n        }\r\n        return true;\r\n    }\r\n\r\n    function recurse (cur, prop, last) {\r\n        if (Object(cur) === cur) {\r\n        \tif (!!cur[\"@xmlns\"]) {\r\n        \t\tdelete cur[\"@xmlns\"];\r\n          }\r\n          var split = prop.split(':');\r\n          if (split.length == 2) {\r\n          \tlast[split[1]] = last[prop];\r\n            delete last[prop];\r\n            prop = split[1];\r\n          }\r\n          if (!!cur['$']) {\r\n            last[prop] = cur['$'];\r\n          } else if (isEmpty(cur)){\r\n              last[prop] = '';\r\n          } else {\r\n            for (var p in cur) {\r\n              recurse(cur[p], p, cur);\r\n            }\r\n          }\r\n       }\r\n    }\r\n    recurse(data, \"\");\r\n    return data;\r\n}\r\nbody = flatten(body);\r\n\r\napim.setvariable('message.body', body);\r\napim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
+          source: "var body = apim.getvariable('message.body');\r\nvar op = apim.getvariable('api.operation.id');\r\n\r\nfunction flatten(data) {\r\n    var soapNamespace = \"\";\r\n    function isEmpty(obj) {\r\n        for(var key in obj) {\r\n            if(obj.hasOwnProperty(key))\r\n                return false;\r\n        }\r\n        return true;\r\n    }\r\n\r\n    function recurse (cur, prop, last) {\r\n        if (Object(cur) === cur) {\r\n          var xmlns = cur[\"@xmlns\"];\r\n          if (!!cur[\"@xmlns\"]) {\r\n        \tdelete cur[\"@xmlns\"];\r\n          }\r\n          var split = prop.split(':');\r\n          if (split.length == 2) {\r\n            if (split[1] === \"Envelope\") {\r\n                soapNamespace = xmlns[split[0]];\r\n            }\r\n          \tlast[split[1]] = last[prop];\r\n            delete last[prop];\r\n            prop = split[1];\r\n          }\r\n          if (!!cur['$']) {\r\n            last[prop] = cur['$'];\r\n          } else if (isEmpty(cur)){\r\n              last[prop] = '';\r\n          } else {\r\n            for (var p in cur) {\r\n              recurse(cur[p], p, cur);\r\n            }\r\n          }\r\n       }\r\n    }\r\n    recurse(data, \"\");\r\n    return { \"data\": data, \"soapNamespace\": soapNamespace };\r\n}\r\n\r\nvar soapInfo = flatten(body);\r\n\r\nbody = soapInfo.data;\r\n\r\napim.setvariable('saved.soapNamespace', soapInfo.soapNamespace);\r\napim.setvariable('message.body', body);\r\napim.setvariable('message.headers.accept', 'application/json');\r\napim.setvariable('message.headers.content-type', 'application/json');"
       - proxy:
           title: proxy
           target-url: $(api.properties.api-endpoint)/$(api.operation.id)
@@ -110,6 +110,23 @@ x-ibm-configuration:
                     version: 1.0.0
           otherwise: []
           version: 1.0.0
+      - xml-to-json:
+          title: xml-to-json
+          version: 1.0.0
+      - gatewayscript:
+          title: gatewayscript
+          version: 1.0.0
+          source: "var body = apim.getvariable('message.body');\nvar soapNamespace = apim.getvariable('saved.soapNamespace');\n\nbody[\"soap:Envelope\"][\"@xmlns\"][\"xsi\"] = \"http://www.w3.org/2001/XMLSchema-instance\";\n\nbody[\"soap:Envelope\"][\"@xmlns\"][\"xsd\"] = \"http://www.w3.org/2001/XMLSchema\";\n\n\nfunction fixNameSpace(data, soapNamespace) {\n    function recurse (cur, prop, last) {\n        if (Object(cur) === cur) {\n          var xmlns = cur[\"@xmlns\"];\n          if (!!cur[\"@xmlns\"]) {\n        \txmlns[\"soap\"] = soapNamespace\n          }\n            for (var p in cur) {\n              recurse(cur[p], p, cur);\n            }\n       }\n    }\n    recurse(data, \"\");\n    return data;\n}\n\nif (!!soapNamespace){\n    body = fixNameSpace(body, soapNamespace);\n}\n\napim.setvariable('message.headers.content-type', 'application/json')\napim.setvariable('message.body', body);"
+      - json-to-xml:
+          title: json-to-xml
+          root-element-name: json
+          always-output-root-element: false
+          unnamed-element-name: element
+          version: 1.0.0
+      - gatewayscript:
+          title: gatewayscript
+          version: 1.0.0
+          source: 'apim.setvariable(''message.headers.content-type'', ''text/xml'')'
   properties:
     api-endpoint:
       value: 'http://172.17.0.1:5013/api/TradingPost'
