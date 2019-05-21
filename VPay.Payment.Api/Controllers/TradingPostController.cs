@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -12,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using VPay.Data.Db2.Abstractions.TransactionWs;
+using VPay.Data.Db2.Abstractions.TradingPostWs;
 using VPay.Payment.Api.Dtos;
 using VPay.Payment.Common;
 
@@ -28,7 +27,11 @@ namespace VPay.Payment.Api.Controllers
 
         private readonly ILogger _logger;
 
-        public TradingPostController(ITradingPostService tradingPostService, IHostingEnvironment fileProvider, IHttpContextAccessor accessor, ILogger<LegacyController> logger)
+        public TradingPostController(
+            ITradingPostService tradingPostService,
+            IHostingEnvironment fileProvider,
+            IHttpContextAccessor accessor,
+            ILogger<LegacyController> logger)
         {
             _tradingPostService = tradingPostService;
             _fileProvider = fileProvider.WebRootFileProvider;
@@ -90,37 +93,54 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
-        [HttpGet("Load")]
+        [HttpPost("LoadCard")]
         public async Task<TradingPostData.LoadResult> LoadCard(TradingPostRequest request)
         {
-            TradingPostData.AuthenticationValuesAndIp auth = request.Envelope.Body.NotificationRequest.AuthenticationValues;
-            TradingPostData.LoadRequest loadRequest = request.Envelope.Body.LoadRequest.LoadRequest;
+            var body = request.Envelope.Body.LoadCard;
+
+            var auth = GetAuthenticationValues(body.AuthenticationValues);
+            var loadRequest = body.LoadRequest;
 
             var response = await _tradingPostService.LoadCard(auth, loadRequest);
 
             return response;
         }
 
-        [HttpGet("Retrieve")]
+        [HttpPost("RetrieveCard")]
         public async Task<TradingPostData.RetrieveResult> RetrieveCard(TradingPostRequest request)
         {
-            TradingPostData.AuthenticationValuesAndIp auth = request.Envelope.Body.NotificationRequest.AuthenticationValues;
-            TradingPostData.RetrieveRequest retrieveRequest = request.Envelope.Body.RetrieveRequest.RetrieveRequest;
+            var body = request.Envelope.Body.RetrieveCard;
+
+            var auth = GetAuthenticationValues(body.AuthenticationValues);
+            var retrieveRequest = body.RetrieveRequest;
 
             var response = await _tradingPostService.RetrieveCard(auth, retrieveRequest);
 
             return response;
         }
-        
-        [HttpGet("Notification")]
+
+        [HttpPost("CardNotificationRelease")]
         public async Task<TradingPostData.NotificationResult> CardNotificationRelease(TradingPostRequest request)
         {
-            TradingPostData.AuthenticationValuesAndIp auth = request.Envelope.Body.NotificationRequest.AuthenticationValues;
-            TradingPostData.ReleaseNotification releaseRequest = request.Envelope.Body.NotificationRequest.NotificationRequest;
+            var body = request.Envelope.Body.CardNotificationRelease;
+
+            var auth = GetAuthenticationValues(body.AuthenticationValues);
+            var releaseRequest = body.NotificationRequest;
 
             var response = await _tradingPostService.CardNotificationRelease(auth, releaseRequest);
 
             return response;
+        }
+
+        private TradingPostData.AuthenticationValuesAndIp GetAuthenticationValues(
+            AuthenticationValues entity)
+        {
+            return new TradingPostData.AuthenticationValuesAndIp
+            {
+                UserId = entity.Id,
+                Password = entity.PassPhrase,
+                IpAddress = "127.0.0.1"
+            };
         }
     }
 }
