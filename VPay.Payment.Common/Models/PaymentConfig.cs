@@ -5,5 +5,7 @@
         public bool ValidateIP { get; set; } = true;
 
         public bool UseCheckEmail { get; set; } = false;
+
+        public string TradingPostIp { get; set; }
     }
 }

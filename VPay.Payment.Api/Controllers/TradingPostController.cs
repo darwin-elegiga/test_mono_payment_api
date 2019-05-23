@@ -26,17 +26,21 @@ namespace VPay.Payment.Api.Controllers
         private readonly IHttpContextAccessor _accessor;
         private readonly IFileProvider _fileProvider;
 
+        private readonly PaymentConfig _config;
+
         private readonly ILogger _logger;
 
         public TradingPostController(
             ITradingPostService tradingPostService,
             IHostingEnvironment fileProvider,
             IHttpContextAccessor accessor,
+            PaymentConfig config,
             ILogger<LegacyController> logger)
         {
             _tradingPostService = tradingPostService;
             _fileProvider = fileProvider.WebRootFileProvider;
             _accessor = accessor;
+            _config = config;
             _logger = logger;
 
         }
@@ -164,7 +168,7 @@ namespace VPay.Payment.Api.Controllers
             {
                 UserId = entity.Id,
                 Password = entity.PassPhrase,
-                IpAddress = "127.0.0.1"
+                IpAddress = _config.TradingPostIp
             };
         }
     }
