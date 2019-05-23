@@ -71,7 +71,7 @@ x-ibm-configuration:
   cors:
     enabled: true
 host: $(catalog.host)
-basePath: /WSServiceDocs
+basePath: /tradingpostdocs
 schemes:
   - https
 consumes:
