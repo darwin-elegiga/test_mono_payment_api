@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using VPay.Data.Db2.Abstractions.TradingPostWs;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 
 namespace VPay.Payment.Common
@@ -1149,6 +1150,482 @@ namespace VPay.Payment.Common
             listValues.Add($"DmRecId={entity.DmRecId}");
 
             return listValues.Count == 0 ? "" : $"Correspondence [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+
+        public static string ToDisplayString(this TradingPostData.LoadRequest request)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(request.CardHolder.ToDisplayString());
+            sb.Append(request.Merchant.ToDisplayString());
+            sb.Append(request.Claim.ToDisplayString());
+            sb.Append(request.CoveredItem.ToDisplayString());
+            sb.Append(request.Correspondence.ToDisplayString());
+
+            return sb.ToString();
+        }
+
+        public static string ToDisplayString(this TradingPostData.LoadResult request)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(request.TransactionInformation.ToDisplayString());
+            sb.Append(request.CardInformation.ToDisplayString());
+            sb.Append(request.Claim.ToDisplayString());
+
+            return sb.ToString();
+        }
+
+        public static string ToDisplayString(this TradingPostData.RetrieveRequest request)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(request.CardInformation.ToDisplayString());
+            sb.Append(request.CardHolder.ToDisplayString());
+            sb.Append(request.Merchant.ToDisplayString());
+            sb.Append(request.Claim.ToDisplayString());
+            sb.Append(request.CoveredItem.ToDisplayString());
+            sb.Append(request.Correspondence.ToDisplayString());
+
+            return sb.ToString();
+        }
+
+        public static string ToDisplayString(this TradingPostData.RetrieveResult request)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(request.TransactionInformation.ToDisplayString());
+            sb.Append(request.CardHolder.ToDisplayString());
+            sb.Append(request.CardInformation.ToDisplayString());
+            sb.Append(request.Claim.ToDisplayString());
+
+            return sb.ToString();
+        }
+
+        public static string ToDisplayString(this TradingPostData.ReleaseNotification request)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(request.CardInformation.ToDisplayString());
+            sb.Append(request.CardHolder.ToDisplayString());
+            sb.Append(request.Claim.ToDisplayString());
+            sb.Append(request.Correspondence.ToDisplayString());
+            sb.Append(request.Merchant.ToDisplayString());
+            sb.Append(request.CoveredItem.ToDisplayString());
+
+            return sb.ToString();
+        }
+
+        public static string ToDisplayString(this TradingPostData.NotificationResult request)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(request.TransactionInformation.ToDisplayString());
+            sb.Append(request.CardHolder.ToDisplayString());
+            sb.Append(request.CardInformation.ToDisplayString());
+            sb.Append(request.Claim.ToDisplayString());
+
+            return sb.ToString();
+        }
+
+        public static string ToDisplayString(this TradingPostData.Cardholder entity)
+        {
+            if (entity == null)
+            {
+                return "";
+            }
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.Client))
+            {
+                listValues.Add($"Client={entity.Client.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.BillingCode))
+            {
+                listValues.Add($"BillingCode={entity.BillingCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.BillingType))
+            {
+                listValues.Add($"BillingType={entity.BillingType.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"Cardholder [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this TradingPostData.Merchant entity)
+        {
+            if (entity == null)
+            {
+                return "";
+            }
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.PayeeCode))
+            {
+                listValues.Add($"PayeeCode={entity.PayeeCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PayeeName))
+            {
+                listValues.Add($"PayeeName={entity.PayeeName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ContactPerson))
+            {
+                listValues.Add($"ContactPerson={entity.ContactPerson.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PostalCode))
+            {
+                listValues.Add($"PostalCode={entity.PostalCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Telephone))
+            {
+                listValues.Add($"Telephone={entity.Telephone.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Fax))
+            {
+                listValues.Add($"Fax={entity.Fax.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PostalCode))
+            {
+                listValues.Add($"PostalCode={entity.PostalCode.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"Merchant [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this TradingPostData.CoveredItem entity)
+        {
+            if (entity == null)
+            {
+                return "";
+            }
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.ItemType))
+            {
+                listValues.Add($"ItemType={entity.ItemType.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ItemId))
+            {
+                listValues.Add($"ItemId={entity.ItemId.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Year))
+            {
+                listValues.Add($"ItemYear={entity.Year.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Manufacturer))
+            {
+                listValues.Add($"Manufacturer={entity.Manufacturer.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Model))
+            {
+                listValues.Add($"Model={entity.Model.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.BookStateOrProvince))
+            {
+                listValues.Add($"BookStateOrProvince={entity.BookStateOrProvince.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PostalCode))
+            {
+                listValues.Add($"PostalCode={entity.PostalCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PlanCode))
+            {
+                listValues.Add($"PlanCode={entity.PlanCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PlanDescription))
+            {
+                listValues.Add($"PlanDescription={entity.PlanDescription.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Deductible))
+            {
+                listValues.Add($"Deductible={entity.Deductible.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.NewUsed))
+            {
+                listValues.Add($"NewUsed={entity.NewUsed.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.BeginDate))
+            {
+                listValues.Add($"BeginDate={entity.BeginDate.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ExpireDate))
+            {
+                listValues.Add($"ExpireDate={entity.ExpireDate.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.OdometerType))
+            {
+                listValues.Add($"OdometerType={entity.OdometerType.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.BeginOdometer))
+            {
+                listValues.Add($"BeginOdometer={entity.BeginOdometer.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ExpireOdometer))
+            {
+                listValues.Add($"ExpireOdometer={entity.ExpireOdometer.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.OwnerLastName))
+            {
+                listValues.Add($"OwnerLastName={entity.OwnerLastName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.OwnerFirstName))
+            {
+                listValues.Add($"OwnerFirstName={entity.OwnerFirstName.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"Covered Item [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this TradingPostData.Claim entity)
+        {
+            if (entity == null)
+            {
+                return "";
+            }
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.UserKey))
+            {
+                listValues.Add($"UserKey={entity.UserKey.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.UserField1))
+            {
+                listValues.Add($"UserField1={entity.UserField1.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.UserField2))
+            {
+                listValues.Add($"UserField2={entity.UserField2.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.UserField3))
+            {
+                listValues.Add($"UserField3={entity.UserField3.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CurrencyType))
+            {
+                listValues.Add($"CurrencyType={entity.CurrencyType.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.Amount))
+            {
+                listValues.Add($"Amount={entity.Amount.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ClaimDeductible))
+            {
+                listValues.Add($"ClaimDeductible={entity.ClaimDeductible.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ClaimOdometer))
+            {
+                listValues.Add($"ClaimOdometer={entity.ClaimOdometer.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ClaimDescription))
+            {
+                listValues.Add($"ClaimDescription={entity.ClaimDescription.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.RequesterId))
+            {
+                listValues.Add($"RequesterId={entity.RequesterId.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.RequesterName))
+            {
+                listValues.Add($"RequesterName={entity.RequesterName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.RepairOrderId))
+            {
+                listValues.Add($"RepairOrderId={entity.RepairOrderId.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ClaimNotes))
+            {
+                listValues.Add($"ClaimNotes={entity.ClaimNotes.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"Claim [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this TradingPostData.Correspondence entity)
+        {
+            if (entity == null)
+            {
+                return "";
+            }
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.SendFaxCode))
+            {
+                listValues.Add($"SendFaxCode={entity.SendFaxCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.AttachmentLocation))
+            {
+                listValues.Add($"AttachmentLocation={entity.AttachmentLocation.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"Correspondence [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this TradingPostData.TransactionInformation entity)
+        {
+            if (entity == null)
+            {
+                return "";
+            }
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.ResponseCode))
+            {
+                listValues.Add($"ResponseCode={entity.ResponseCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.ResponseDescription))
+            {
+                listValues.Add($"ResponseDescription={entity.ResponseDescription.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.StatusCode))
+            {
+                listValues.Add($"StatusCode={entity.StatusCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.StatusDescription))
+            {
+                listValues.Add($"StatusDescription={entity.StatusDescription.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.TransactionId))
+            {
+                listValues.Add($"TransactionId={entity.TransactionId.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.AuditNumber))
+            {
+                listValues.Add($"AuditNumber={entity.AuditNumber.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.TransactionTime))
+            {
+                listValues.Add($"TransactionTime={entity.TransactionTime.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.AccountingCode))
+            {
+                listValues.Add($"AccountingCode={entity.AccountingCode.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.AccountingDescription))
+            {
+                listValues.Add($"AccountingDescription={entity.AccountingDescription.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"TransactionInformation [ {string.Join(", ", listValues)} ]\r\n";
+        }
+
+        public static string ToDisplayString(this TradingPostData.CardInformation entity)
+        {
+            if (entity == null)
+            {
+                return "";
+            }
+            var listValues = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(entity.CardType))
+            {
+                listValues.Add($"CardType={entity.CardType.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardNumber))
+            {
+                if (entity.CardNumber.Length > 15)
+                {
+                    listValues.Add($"CardNumber={entity.CardNumber.Substring(0, 4)}*********{entity.CardNumber.Substring(14, 2)}");
+                }
+                else
+                {
+                    listValues.Add($"CardNumber=****");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardSecurityValue))
+            {
+                listValues.Add($"CardCvv2=***");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardExpiration))
+            {
+                listValues.Add($"CardExpiration={entity.CardExpiration.Trim()}");
+            }
+
+            if (entity.LoadTransactionId > 0)
+            {
+                listValues.Add($"LoadTransactionId={entity.LoadTransactionId}");
+            }
+
+            if (entity.LoadAmount > 0)
+            {
+                listValues.Add($"LoadAmount={entity.LoadAmount:C2}");
+            }
+
+            if (entity.LoadFee > 0)
+            {
+                listValues.Add($"LoadFee={entity.LoadFee:C2}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.PayeeName))
+            {
+                listValues.Add($"PayeeName={entity.PayeeName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardholderName))
+            {
+                listValues.Add($"CardholderName={entity.CardholderName.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardholderAddress))
+            {
+                listValues.Add($"CardholderAddress={entity.CardholderAddress.Trim()}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(entity.CardholderPostalCode))
+            {
+                listValues.Add($"CardholderPostalCode={entity.CardholderPostalCode.Trim()}");
+            }
+
+            return listValues.Count == 0 ? "" : $"CardInformation [ {string.Join(", ", listValues)} ]\r\n";
         }
 
     }
