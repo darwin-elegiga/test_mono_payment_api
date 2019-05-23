@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -99,11 +100,19 @@ namespace VPay.Payment.Api.Controllers
             var body = request.Envelope.Body.LoadCard;
 
             var auth = GetAuthenticationValues(body.AuthenticationValues);
-            var loadRequest = body.LoadRequest;
 
-            var response = await _tradingPostService.LoadCard(auth, loadRequest);
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["SourceIp"] = auth.IpAddress,
+                ["AuthId"] = auth.UserId
+            }))
+            {
+                var loadRequest = body.LoadRequest ?? new TradingPostData.LoadRequest();
 
-            return response;
+                var response = await _tradingPostService.LoadCard(auth, loadRequest);
+
+                return response;
+            }
         }
 
         [HttpPost("RetrieveCard")]
@@ -112,11 +121,19 @@ namespace VPay.Payment.Api.Controllers
             var body = request.Envelope.Body.RetrieveCard;
 
             var auth = GetAuthenticationValues(body.AuthenticationValues);
-            var retrieveRequest = body.RetrieveRequest;
 
-            var response = await _tradingPostService.RetrieveCard(auth, retrieveRequest);
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["SourceIp"] = auth.IpAddress,
+                ["AuthId"] = auth.UserId
+            }))
+            {
+                var retrieveRequest = body.RetrieveRequest ?? new TradingPostData.RetrieveRequest();
 
-            return response;
+                var response = await _tradingPostService.RetrieveCard(auth, retrieveRequest);
+
+                return response;
+            }
         }
 
         [HttpPost("CardNotificationRelease")]
@@ -125,11 +142,19 @@ namespace VPay.Payment.Api.Controllers
             var body = request.Envelope.Body.CardNotificationRelease;
 
             var auth = GetAuthenticationValues(body.AuthenticationValues);
-            var releaseRequest = body.NotificationRequest;
 
-            var response = await _tradingPostService.CardNotificationRelease(auth, releaseRequest);
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["SourceIp"] = auth.IpAddress,
+                ["AuthId"] = auth.UserId
+            }))
+            {
+                var releaseRequest = body.NotificationRequest ?? new TradingPostData.ReleaseNotification();
 
-            return response;
+                var response = await _tradingPostService.CardNotificationRelease(auth, releaseRequest);
+
+                return response;
+            }
         }
 
         private TradingPostData.AuthenticationValuesAndIp GetAuthenticationValues(
