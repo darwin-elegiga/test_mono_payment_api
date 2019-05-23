@@ -110,23 +110,37 @@ x-ibm-configuration:
                     version: 1.0.0
           otherwise: []
           version: 1.0.0
-      - xml-to-json:
-          title: xml-to-json
+      - xslt:
+          title: xslt
+          input: true
           version: 1.0.0
+          source: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<xsl:stylesheet \r\n    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\r\n    version=\"1.0\">\r\n    <xsl:output method=\"xml\" indent=\"yes\"/>\r\n\r\n    <xsl:template match=\"/*[local-name()='Envelope']\">\r\n        <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n            <xsl:copy-of select=\"node()|@*\"/>\r\n        </soap:Envelope>\r\n     </xsl:template>\r\n</xsl:stylesheet>\r\n"
+      - if:
+          title: if
+          condition: >-
+            apim.getvariable('saved.soapNamespace') ===
+            "http://www.w3.org/2003/05/soap-envelope"
+          execute:
+            - xslt:
+                title: xslt
+                input: true
+                version: 1.0.0
+                source: "<xsl:stylesheet version=\"1.0\" \r\nxmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n<xsl:output method=\"xml\" version=\"1.0\" encoding=\"UTF-8\" indent=\"yes\"/>\r\n<xsl:strip-space elements=\"*\"/>\r\n\r\n<xsl:param name=\"no-namespace\" select=\"true()\"/>\r\n\r\n<xsl:template match=\"*\">\r\n    <xsl:choose>\r\n        <xsl:when test=\"$no-namespace\">\r\n            <xsl:element name=\"{local-name()}\">\r\n                <xsl:copy-of select=\"namespace::*[.!='http://schemas.xmlsoap.org/soap/envelope/']\"/>\r\n                <xsl:copy-of select=\"@*\"/>\r\n                <xsl:apply-templates/>\r\n            </xsl:element>\r\n        </xsl:when>\r\n        <xsl:otherwise>\r\n            <xsl:copy>\r\n                <xsl:copy-of select=\"namespace::*[.!='http://schemas.xmlsoap.org/soap/envelope/']\"/>\r\n                <xsl:copy-of select=\"@*\"/>\r\n                <xsl:apply-templates/>\r\n            </xsl:copy>\r\n        </xsl:otherwise>\r\n    </xsl:choose>\r\n</xsl:template>\r\n\r\n</xsl:stylesheet>"
+            - xslt:
+                title: xslt
+                input: true
+                version: 1.0.0
+                source: "<xsl:stylesheet version=\"1.0\"\r\n xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\r\n xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\r\n <xsl:output omit-xml-declaration=\"yes\" indent=\"yes\"/>\r\n\r\n <xsl:template match=\"node()|@*\">\r\n  <xsl:copy>\r\n   <xsl:apply-templates select=\"node()|@*\"/>\r\n  </xsl:copy>\r\n </xsl:template>\r\n\r\n <xsl:template match=\"*[local-name()='Body']\">\r\n  <xsl:element name=\"soap:{name()}\" namespace=\"http://www.w3.org/2003/05/soap-envelope\">\r\n    <xsl:copy-of select=\"namespace::*\"/>\r\n    <xsl:apply-templates select=\"node()|@*\"/>\r\n  </xsl:element>\r\n </xsl:template>\r\n \r\n <xsl:template match=\"/*[local-name()='Envelope']\">\r\n  <xsl:element name=\"soap:{name()}\" namespace=\"http://www.w3.org/2003/05/soap-envelope\">\r\n    <xsl:copy-of select=\"namespace::*\"/>\r\n    <xsl:apply-templates select=\"node()|@*\"/>\r\n  </xsl:element>\r\n </xsl:template>\r\n</xsl:stylesheet>"
+          version: 1.0.0
+      - xslt:
+          title: xslt
+          input: true
+          version: 1.0.0
+          source: "<xsl:stylesheet version=\"1.0\"\r\n xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n <xsl:output omit-xml-declaration=\"yes\" indent=\"yes\"/>\r\n <xsl:strip-space elements=\"*\"/>\r\n\r\n<xsl:template match=\"@*|node()\">\r\n  <xsl:if  test=\". != '' or ./@* != ''\">\r\n    <xsl:copy>\r\n       <xsl:copy-of select = \"@*\"/>\r\n       <xsl:apply-templates/>\r\n    </xsl:copy>\r\n  </xsl:if>\r\n</xsl:template>\r\n\r\n</xsl:stylesheet>"
       - gatewayscript:
           title: gatewayscript
           version: 1.0.0
-          source: "var body = apim.getvariable('message.body');\nvar soapNamespace = apim.getvariable('saved.soapNamespace');\n\nbody[\"soap:Envelope\"][\"@xmlns\"][\"xsi\"] = \"http://www.w3.org/2001/XMLSchema-instance\";\n\nbody[\"soap:Envelope\"][\"@xmlns\"][\"xsd\"] = \"http://www.w3.org/2001/XMLSchema\";\n\n\nfunction fixNameSpace(data, soapNamespace) {\n    function recurse (cur, prop, last) {\n        if (Object(cur) === cur) {\n          var xmlns = cur[\"@xmlns\"];\n          if (!!cur[\"@xmlns\"]) {\n        \txmlns[\"soap\"] = soapNamespace\n          }\n            for (var p in cur) {\n              recurse(cur[p], p, cur);\n            }\n       }\n    }\n    recurse(data, \"\");\n    return data;\n}\n\nif (!!soapNamespace){\n    body = fixNameSpace(body, soapNamespace);\n}\n\napim.setvariable('message.headers.content-type', 'application/json')\napim.setvariable('message.body', body);"
-      - json-to-xml:
-          title: json-to-xml
-          root-element-name: json
-          always-output-root-element: false
-          unnamed-element-name: element
-          version: 1.0.0
-      - gatewayscript:
-          title: gatewayscript
-          version: 1.0.0
-          source: 'apim.setvariable(''message.headers.content-type'', ''text/xml'')'
+          source: "if (apim.getvariable('saved.soapNamespace') === \"http://www.w3.org/2003/05/soap-envelope\") {\napim.setvariable('message.headers.Content-Type', 'application/soap+xml; charset=utf-8');\n} else {\napim.setvariable('message.headers.Content-Type', 'text/xml; charset=utf-8');\n}\t"
   properties:
     api-endpoint:
       value: 'http://172.17.0.1:5013/api/TradingPost'
