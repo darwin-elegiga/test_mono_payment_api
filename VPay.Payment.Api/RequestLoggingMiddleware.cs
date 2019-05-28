@@ -86,6 +86,7 @@ namespace VPay.Payment.Api
         /// </summary>
         /// <param name="httpContext"></param>
         /// <param name="elapsedMs"></param>
+        /// <param name="userName"></param>
         /// <param name="ex"></param>
         /// <returns></returns>
         private bool LogException(HttpContext httpContext, double elapsedMs, string userName, Exception ex)
