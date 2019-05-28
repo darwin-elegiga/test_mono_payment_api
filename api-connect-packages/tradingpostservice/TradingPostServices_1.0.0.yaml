@@ -1651,9 +1651,9 @@ definitions:
         type: integer
         format: int64
       loadAmount:
-        type: number
+        type: string
       loadFee:
-        type: number
+        type: string
       payeeName:
         type: string
       cardholderName:
