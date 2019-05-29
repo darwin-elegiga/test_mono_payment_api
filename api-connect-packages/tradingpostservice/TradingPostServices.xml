@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://stoneeagle.com/webservices/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://stoneeagle.com/webservices/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://stoneeagle.com/webservices/">
+      <s:element name="LoadCard">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="authentication" type="tns:AuthenticationValues" />
+            <s:element minOccurs="0" maxOccurs="1" name="loadRequest" type="tns:LoadRequest" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AuthenticationValues">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="passphrase" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="LoadRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="cardHolder" type="tns:Cardholder" />
+          <s:element minOccurs="0" maxOccurs="1" name="merchant" type="tns:Merchant" />
+          <s:element minOccurs="0" maxOccurs="1" name="claim" type="tns:Claim" />
+          <s:element minOccurs="0" maxOccurs="1" name="coveredItem" type="tns:CoveredItem" />
+          <s:element minOccurs="0" maxOccurs="1" name="correspondence" type="tns:Correspondence" />
+          <s:element minOccurs="0" maxOccurs="1" name="achDirections" type="tns:AchDirections" />
+          <s:element minOccurs="0" maxOccurs="1" name="checkInformation" type="tns:CheckInformation" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Cardholder">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="client" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="billingType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="billingCode" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Merchant">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="payeeCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="payeeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="contactPerson" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="postalCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="telephone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="fax" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Claim">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="userKey" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="userField1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="userField2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="userField3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="currencyType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="amount" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="claimDeductible" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="claimDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="claimOdometer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="claimDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="requesterId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="requesterName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="repairOrderId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="claimNotes" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CoveredItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="itemType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="itemId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="year" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="manufacturer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="model" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="bookStateOrProvince" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="postalCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="planCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="planDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="deductible" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="newUsed" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="beginDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="expireDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="odometerType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="beginOdometer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="expireOdometer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ownerLastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ownerFirstName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Correspondence">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="sendFaxCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="attachmentLocation" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AchDirections">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="payeeRoutingNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="payeeAccountNumber" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CheckInformation">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="checkNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="checkDate" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LoadCardResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoadCardResult" type="tns:LoadResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="LoadResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="transactionInformation" type="tns:TransactionInformation" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardInformation" type="tns:CardInformation" />
+          <s:element minOccurs="0" maxOccurs="1" name="claim" type="tns:Claim" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="TransactionInformation">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="responseCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="responseDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="statusCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="statusDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="transactionId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="auditNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="transactionTime" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="accountingCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="accountingDescription" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CardInformation">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="cardType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardSecurityValue" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardExpiration" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="loadTransactionId" type="s:long" />
+          <s:element minOccurs="1" maxOccurs="1" name="loadAmount" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="loadFee" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="payeeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardholderName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardholderAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardholderPostalCode" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="RetrieveCard">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="authentication" type="tns:AuthenticationValues" />
+            <s:element minOccurs="0" maxOccurs="1" name="retrieveRequest" type="tns:RetrieveRequest" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RetrieveRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="cardInformation" type="tns:CardInformation" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardHolder" type="tns:Cardholder" />
+          <s:element minOccurs="0" maxOccurs="1" name="merchant" type="tns:Merchant" />
+          <s:element minOccurs="0" maxOccurs="1" name="claim" type="tns:Claim" />
+          <s:element minOccurs="0" maxOccurs="1" name="coveredItem" type="tns:CoveredItem" />
+          <s:element minOccurs="0" maxOccurs="1" name="correspondence" type="tns:Correspondence" />
+          <s:element minOccurs="0" maxOccurs="1" name="achDirections" type="tns:AchDirections" />
+          <s:element minOccurs="0" maxOccurs="1" name="checkInformation" type="tns:CheckInformation" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="RetrieveCardResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetrieveCardResult" type="tns:RetrieveResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RetrieveResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="transactionInformation" type="tns:TransactionInformation" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardHolder" type="tns:Cardholder" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardInformation" type="tns:CardInformation" />
+          <s:element minOccurs="0" maxOccurs="1" name="claim" type="tns:Claim" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CardNotificationRelease">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="authentication" type="tns:AuthenticationValues" />
+            <s:element minOccurs="0" maxOccurs="1" name="releaseNotification" type="tns:ReleaseNotification" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ReleaseNotification">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="cardInformation" type="tns:CardInformation" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardHolder" type="tns:Cardholder" />
+          <s:element minOccurs="0" maxOccurs="1" name="claim" type="tns:Claim" />
+          <s:element minOccurs="0" maxOccurs="1" name="correspondence" type="tns:Correspondence" />
+          <s:element minOccurs="0" maxOccurs="1" name="merchant" type="tns:Merchant" />
+          <s:element minOccurs="0" maxOccurs="1" name="coveredItem" type="tns:CoveredItem" />
+          <s:element minOccurs="0" maxOccurs="1" name="achDirections" type="tns:AchDirections" />
+          <s:element minOccurs="0" maxOccurs="1" name="checkInformation" type="tns:CheckInformation" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CardNotificationReleaseResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CardNotificationReleaseResult" type="tns:NotificationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="NotificationResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="transactionInformation" type="tns:TransactionInformation" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardHolder" type="tns:Cardholder" />
+          <s:element minOccurs="0" maxOccurs="1" name="cardInformation" type="tns:CardInformation" />
+          <s:element minOccurs="0" maxOccurs="1" name="claim" type="tns:Claim" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="LoadCardSoapIn">
+    <wsdl:part name="parameters" element="tns:LoadCard" />
+  </wsdl:message>
+  <wsdl:message name="LoadCardSoapOut">
+    <wsdl:part name="parameters" element="tns:LoadCardResponse" />
+  </wsdl:message>
+  <wsdl:message name="RetrieveCardSoapIn">
+    <wsdl:part name="parameters" element="tns:RetrieveCard" />
+  </wsdl:message>
+  <wsdl:message name="RetrieveCardSoapOut">
+    <wsdl:part name="parameters" element="tns:RetrieveCardResponse" />
+  </wsdl:message>
+  <wsdl:message name="CardNotificationReleaseSoapIn">
+    <wsdl:part name="parameters" element="tns:CardNotificationRelease" />
+  </wsdl:message>
+  <wsdl:message name="CardNotificationReleaseSoapOut">
+    <wsdl:part name="parameters" element="tns:CardNotificationReleaseResponse" />
+  </wsdl:message>
+  <wsdl:portType name="SEcureCardServicesSoap">
+    <wsdl:operation name="LoadCard">
+      <wsdl:input message="tns:LoadCardSoapIn" />
+      <wsdl:output message="tns:LoadCardSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RetrieveCard">
+      <wsdl:input message="tns:RetrieveCardSoapIn" />
+      <wsdl:output message="tns:RetrieveCardSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CardNotificationRelease">
+      <wsdl:input message="tns:CardNotificationReleaseSoapIn" />
+      <wsdl:output message="tns:CardNotificationReleaseSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SEcureCardServicesSoap" type="tns:SEcureCardServicesSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="LoadCard">
+      <soap:operation soapAction="http://stoneeagle.com/webservices/LoadCard" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetrieveCard">
+      <soap:operation soapAction="http://stoneeagle.com/webservices/RetrieveCard" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CardNotificationRelease">
+      <soap:operation soapAction="http://stoneeagle.com/webservices/CardNotificationRelease" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SEcureCardServicesSoap12" type="tns:SEcureCardServicesSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="LoadCard">
+      <soap12:operation soapAction="http://stoneeagle.com/webservices/LoadCard" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetrieveCard">
+      <soap12:operation soapAction="http://stoneeagle.com/webservices/RetrieveCard" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CardNotificationRelease">
+      <soap12:operation soapAction="http://stoneeagle.com/webservices/CardNotificationRelease" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SEcureCardServices">
+    <wsdl:port name="SEcureCardServicesSoap" binding="tns:SEcureCardServicesSoap">
+      <soap:address location="http://tradingpost.vpayusa.com/SEcureCardServices/SEcureCardServices.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SEcureCardServicesSoap12" binding="tns:SEcureCardServicesSoap12">
+      <soap12:address location="http://tradingpost.vpayusa.com/SEcureCardServices/SEcureCardServices.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
