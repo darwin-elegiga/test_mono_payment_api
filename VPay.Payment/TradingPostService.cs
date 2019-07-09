@@ -84,11 +84,11 @@ namespace VPay.Payment
             {
                 ["ResponseCode"] = response.TransactionInformation.ResponseCode,
                 ["ResponseDesc"] = response.TransactionInformation.ResponseDescription,
-                ["StatusCode"] = response.TransactionInformation.StatusCode,
-                ["StatusDesc"] = response.TransactionInformation.StatusDescription,
+                ["ResultStatusCode"] = response.TransactionInformation.StatusCode,
+                ["ResultStatusDesc"] = response.TransactionInformation.StatusDescription,
             }))
             {
-                var level = response.TransactionInformation.StatusCode == "00000" ? LogLevel.Information : LogLevel.Warning;
+                var level = response.TransactionInformation.ResponseCode == "00000" ? LogLevel.Information : LogLevel.Warning;
                 _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
                     nameof(LoadCard), "Response");
             }
@@ -161,11 +161,11 @@ namespace VPay.Payment
             {
                 ["ResponseCode"] = response.TransactionInformation.ResponseCode,
                 ["ResponseDesc"] = response.TransactionInformation.ResponseDescription,
-                ["StatusCode"] = response.TransactionInformation.StatusCode,
-                ["StatusDesc"] = response.TransactionInformation.StatusDescription,
+                ["ResultStatusCode"] = response.TransactionInformation.StatusCode,
+                ["ResultStatusDesc"] = response.TransactionInformation.StatusDescription,
             }))
             {
-                var level = response.TransactionInformation.StatusCode == "00000" ? LogLevel.Information : LogLevel.Warning;
+                var level = response.TransactionInformation.ResponseCode == "00000" ? LogLevel.Information : LogLevel.Warning;
                 _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
                     nameof(RetrieveCard), "Response");
             }
@@ -241,11 +241,11 @@ namespace VPay.Payment
             {
                 ["ResponseCode"] = response.TransactionInformation.ResponseCode,
                 ["ResponseDesc"] = response.TransactionInformation.ResponseDescription,
-                ["StatusCode"] = response.TransactionInformation.StatusCode,
-                ["StatusDesc"] = response.TransactionInformation.StatusDescription,
+                ["ResultStatusCode"] = response.TransactionInformation.StatusCode,
+                ["ResultStatusDesc"] = response.TransactionInformation.StatusDescription,
             }))
             {
-                var level = response.TransactionInformation.StatusCode == "00000" ? LogLevel.Information : LogLevel.Warning;
+                var level = response.TransactionInformation.ResponseCode == "00000" ? LogLevel.Information : LogLevel.Warning;
                 _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
                     nameof(CardNotificationRelease), "Response");
             }
