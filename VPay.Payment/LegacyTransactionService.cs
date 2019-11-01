@@ -37,8 +37,8 @@ namespace VPay.Payment
                 }
             };
 
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(GetReasonCodes), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetReasonCodes), "Validating", standardRequest.ToDisplayString());
 
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
@@ -50,8 +50,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(GetReasonCodes), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(GetReasonCodes), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new ReasonCodeResponse()
@@ -83,8 +83,8 @@ namespace VPay.Payment
                 }
             };
 
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(GetTransactionDetails), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetTransactionDetails), "Validating", standardRequest.ToDisplayString());
 
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
@@ -96,8 +96,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(GetTransactionDetails), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(GetTransactionDetails), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new TransactionDetailResponse()
@@ -118,8 +118,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(GetPanNumber), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetPanNumber), "Validating", standardRequest.ToDisplayString());
 
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
@@ -131,8 +131,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(GetPanNumber), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(GetPanNumber), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -153,8 +153,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(OpenPreAuth), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(OpenPreAuth), "Validating", standardRequest.ToDisplayString());
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
@@ -165,8 +165,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(OpenPreAuth), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(OpenPreAuth), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -187,13 +187,13 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> LoadPan(StandardRequest standardRequest, string clientData, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nCustomData: {clientData}",
-                nameof(LoadPan), "TruncatingData");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nCustomData: {clientData}",
+                nameof(LoadPan), "TruncatingData", standardRequest.ToDisplayString(), clientData);
 
             TruncateFieldsForLoadPan(standardRequest);
 
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nCustomData: {clientData}",
-                nameof(LoadPan), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nCustomData: {clientData}",
+                nameof(LoadPan), "Validating", standardRequest.ToDisplayString(), clientData);
 
             var validation = await _validationService.ValidateLoadPanStandardRequest(standardRequest, clientData, cancellationToken);
 
@@ -205,8 +205,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(LoadPan), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(LoadPan), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -228,8 +228,8 @@ namespace VPay.Payment
         public async Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(GetBalanceRequest), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetBalanceRequest), "Validating", standardRequest.ToDisplayString());
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
@@ -240,8 +240,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(GetBalanceRequest), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(GetBalanceRequest), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -262,8 +262,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> UnloadPan(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(UnloadPan), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(UnloadPan), "Validating", standardRequest.ToDisplayString());
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
@@ -274,8 +274,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(UnloadPan), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(UnloadPan), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -296,8 +296,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> StopPay(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(StopPay), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(StopPay), "Validating", standardRequest.ToDisplayString());
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
@@ -308,8 +308,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(StopPay), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(StopPay), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -330,8 +330,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> CancelFax(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(CancelFax), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(CancelFax), "Validating", standardRequest.ToDisplayString());
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
             if (validation != null && validation.Code != "0000")
@@ -342,8 +342,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(CancelFax), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(CancelFax), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -384,8 +384,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(ChangeFaxNumber), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(ChangeFaxNumber), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -410,8 +410,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> HoldFax(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(HoldFax), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(HoldFax), "Validating", standardRequest.ToDisplayString());
 
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
@@ -423,8 +423,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(HoldFax), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(HoldFax), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -449,8 +449,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> ReleaseFax(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(ReleaseFax), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(ReleaseFax), "Validating", standardRequest.ToDisplayString());
 
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
@@ -462,8 +462,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(ReleaseFax), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(ReleaseFax), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()
@@ -488,8 +488,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> ResendFax(StandardRequest standardRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _logger.LogDebug($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(ResendFax), "Validating");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(ResendFax), "Validating", standardRequest.ToDisplayString());
 
             var originalPhone = standardRequest.CorrespondenceData.PhoneNumber;
             standardRequest.CorrespondenceData.PhoneNumber = originalPhone.CleanFaxNumber();
@@ -504,8 +504,8 @@ namespace VPay.Payment
                     ["SuccessDesc"] = validation.Message,
                 }))
                 {
-                    _logger.LogWarning($"{{ServiceName}} - {{ValidationStatus}} - Original Message: {standardRequest.ToDisplayString()}",
-                        nameof(ResendFax), "ValidationError");
+                    _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
+                        nameof(ResendFax), "ValidationError", standardRequest.ToDisplayString());
                 }
 
                 return new StandardResponse()

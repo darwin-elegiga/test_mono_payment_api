@@ -154,7 +154,7 @@ namespace VPay.Payment.Api.Auth
                                 TransNumber = body.GetTransactionDetails.Request.TransNumber
                             }
                         };
-                        Logger.LogWarning($"Login Failed [{{UserName}}]: \n{result.ToDisplayString()}", userName);
+                        Logger.LogWarning("Login Failed [{UserName}]: \n{UserRequestBody}", userName, result.ToDisplayString());
                     }
                     else if (body.GetReasonCodes?.Request != null)
                     {
@@ -184,7 +184,7 @@ namespace VPay.Payment.Api.Auth
 
                     if (result != null)
                     {
-                        Logger.LogWarning($"Login Failed [{{UserName}}]: \n{result.ToDisplayString()}", userName);
+                        Logger.LogWarning("Login Failed [{UserName}]: \n{UserRequestBody}", userName, result.ToDisplayString());
                     }
 
                 }

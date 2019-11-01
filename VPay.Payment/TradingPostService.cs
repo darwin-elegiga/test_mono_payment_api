@@ -26,8 +26,8 @@ namespace VPay.Payment
                 auth = new TradingPostData.AuthenticationValuesAndIp();
             }
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{request.ToDisplayString()}",
-                nameof(LoadCard), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(LoadCard), "Starting", request.ToDisplayString());
 
 
             var validation = ValidateAuth(auth);
@@ -89,8 +89,8 @@ namespace VPay.Payment
             }))
             {
                 var level = response.TransactionInformation.ResponseCode == "00000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
-                    nameof(LoadCard), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserRequestBody}",
+                    nameof(LoadCard), "Response", response.ToDisplayString());
             }
 
             return response;
@@ -103,8 +103,8 @@ namespace VPay.Payment
                 auth = new TradingPostData.AuthenticationValuesAndIp();
             }
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{request.ToDisplayString()}",
-                nameof(RetrieveCard), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(RetrieveCard), "Starting", request.ToDisplayString());
 
             var validation = ValidateAuth(auth);
             validation = ValidateRetrieveCard(request) ?? validation;
@@ -166,8 +166,8 @@ namespace VPay.Payment
             }))
             {
                 var level = response.TransactionInformation.ResponseCode == "00000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
-                    nameof(RetrieveCard), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserRequestBody}",
+                    nameof(RetrieveCard), "Response", response.ToDisplayString());
             }
 
             return response;
@@ -180,8 +180,8 @@ namespace VPay.Payment
                 auth = new TradingPostData.AuthenticationValuesAndIp();
             }
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{request.ToDisplayString()}",
-                nameof(CardNotificationRelease), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(CardNotificationRelease), "Starting", request.ToDisplayString());
 
             var validation = ValidateAuth(auth);
             validation = ValidateNotifyCard(request) ?? validation;
@@ -246,8 +246,8 @@ namespace VPay.Payment
             }))
             {
                 var level = response.TransactionInformation.ResponseCode == "00000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
-                    nameof(CardNotificationRelease), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserRequestBody}",
+                    nameof(CardNotificationRelease), "Response", response.ToDisplayString());
             }
 
             return response;
