@@ -42,7 +42,7 @@ namespace VPay.Payment.Api.Tests
 
             hostingEnv.Setup(_ => _.WebRootFileProvider).Returns(_fileProvider.Object);
 
-            _sut = new LegacyController(hostingEnv.Object, mockHttpContextAccessor.Object, _transactionService.Object, new AboutInfo(), _logger);
+            _sut = new LegacyController(hostingEnv.Object, mockHttpContextAccessor.Object, _transactionService.Object, _logger);
         }
 
         [Fact]

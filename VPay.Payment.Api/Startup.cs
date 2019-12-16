@@ -58,7 +58,6 @@ namespace VPay.Payment.Api
             services.AddTransient<ITradingPostService, TradingPostService>();
             services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
             services.AddTransient<ILegacyValidationService, LegacyValidationService>();
-            services.AddSingleton<AboutInfo, AboutInfo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

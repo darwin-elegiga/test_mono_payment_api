@@ -5,5 +5,5 @@ set -e
 
 docker run --rm \
     --workdir /dotnet/VPay.Payment.Tests \
-    payment-api/payment-web-api-sdk:${GIT_COMMIT_SHORT_HASH:-docker} \
+    payment-api/build-sdk:${GIT_COMMIT_SHORT_HASH:-docker} \
     dotnet test -c Debug

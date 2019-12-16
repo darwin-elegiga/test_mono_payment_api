@@ -1,4 +1,4 @@
-version: "3.4"
+version: "3.5"
 
 services:
   api:
@@ -11,5 +11,3 @@ services:
     container_name: payment-web-api-push
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "5000:5000"
