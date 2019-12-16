@@ -72,7 +72,7 @@ namespace VPay.Payment.Api.Tests
             result.CommonData.SuccessCode.Should().Be("9997");
             result.CommonData.SuccessDesc.Should().Be("Unexpected Error with GetTransactionDetails");
         }
-        
+
         [Fact]
         public async Task GetPanNumber_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
@@ -490,7 +490,7 @@ namespace VPay.Payment.Api.Controllers
             }
         }
 
-        /// <summary> 
+        /// <summary>
         /// This will place the specified Fax job in HOLD status. You cannot put a CANCELLED Fax job on Hold.
         /// </summary>
         /// <param name="request"></param>

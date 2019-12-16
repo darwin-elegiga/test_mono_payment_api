@@ -1,4 +1,6 @@
-FROM microsoft/dotnet:2.1.1-aspnetcore-runtime AS base
+ARG REGISTRY=plinfharbor.vpayusa.net
+
+FROM ${REGISTRY}/base-images/dotnet/core/aspnet:2.1-bionic AS base
 RUN apt-get update && apt-get install -y unixodbc unixodbc-dev
 COPY /docker-packages .
 COPY /odbc-setup /etc
@@ -6,8 +8,9 @@ RUN apt-get install -y ./ibm-iaccess-1.1.0.2-1.0.amd64.deb \
 	&& rm ibm-iaccess-1.1.0.2-1.0.amd64.deb 
 EXPOSE 80
 
-FROM microsoft/dotnet:2.1.1-sdk AS build
+FROM ${REGISTRY}/base-images/dotnet/core/sdk:2.1-bionic AS build
 WORKDIR /src
+COPY NuGet.config NuGet.config
 COPY VPay.Payment.Api/VPay.Payment.Api.csproj VPay.Payment.Api/
 RUN dotnet restore VPay.Payment.Api/VPay.Payment.Api.csproj
 COPY . .
