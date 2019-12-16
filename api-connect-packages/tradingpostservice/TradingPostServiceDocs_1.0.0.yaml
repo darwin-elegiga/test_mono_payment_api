@@ -1,14 +1,14 @@
 swagger: '2.0'
 info:
-  version: 1.0.1
-  title: VPay WS Service Docs
-  x-ibm-name: VPayWSServiceDocs
+  version: 1.0.0
+  title: Trading Post Service Docs
+  x-ibm-name: TradingPostServiceDocs
 paths:
   /wsdl:
     get:
       tags:
-        - Legacy
-      operationId: ApiLegacyWsdlGet
+        - TradingPost
+      operationId: ApiTradingPostWsdlGet
       consumes: []
       parameters:
         - name: url
@@ -23,15 +23,6 @@ paths:
             type: string
         '404':
           description: Not Found
-      produces:
-        - text/xml
-  /xsd:
-    get:
-      responses:
-        '200':
-          description: 200 OK
-          schema:
-            type: string
       produces:
         - text/xml
 x-ibm-configuration:
@@ -58,29 +49,29 @@ x-ibm-configuration:
   gateway: datapower-gateway
   properties:
     api-endpoint:
-      value: 'http://172.17.0.1:5013/api/Legacy'
+      value: 'http://172.17.0.1:5013/api/TradingPost'
       description: ''
       encoded: false
   catalogs:
-    Sandbox:
+    Internal Sandbox:
       properties:
-        api-endpoint: 'http://hqdevlds01.vpayusa.net:5003/api/Legacy'
+        api-endpoint: 'http://hqdevlds01.vpayusa.net:5003/api/TradingPost'
     Internal Stage:
       properties:
-        api-endpoint: 'https://stg-payapi.vpayusa.net/api/Legacy'
+        api-endpoint: 'https://stg-payapi.vpayusa.net/api/TradingPost'
     Internal Prod:
       properties:
-        api-endpoint: 'https://payapi.vpayusa.net/api/Legacy'
+        api-endpoint: 'https://payapi.vpayusa.net/api/TradingPost'
     Stage:
       properties:
-        api-endpoint: 'https://stg-payapi.vpayusa.net/api/Legacy'
+        api-endpoint: 'https://stg-payapi.vpayusa.net/api/TradingPost'
   enforced: true
   testable: true
   phase: realized
   cors:
     enabled: true
 host: $(catalog.host)
-basePath: /WSServiceDocs
+basePath: /tradingpostdocs
 schemes:
   - https
 consumes:

@@ -28,6 +28,7 @@ namespace VPay.Payment.Api
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    options.SerializerSettings.Converters.Add(new DecimalJsonConverter());
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
                 });
@@ -52,7 +53,8 @@ namespace VPay.Payment.Api
 
         public static IServiceCollection AddApiVersioningService(this IServiceCollection services)
         {
-            services.AddApiVersioning(o => {
+            services.AddApiVersioning(o =>
+            {
                 o.ReportApiVersions = true;
                 o.AssumeDefaultVersionWhenUnspecified = true;
                 o.DefaultApiVersion = new ApiVersion(1, 0);

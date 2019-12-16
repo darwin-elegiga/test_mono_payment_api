@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -6,8 +8,12 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using VPay.Data.Db2.Abstractions.TransactionWs;
+using VPay.Payment.Api.Dtos;
 using VPay.Payment.Common;
 
 namespace VPay.Payment.Api.Auth
@@ -76,20 +82,118 @@ namespace VPay.Payment.Api.Auth
                 UserId = parts[2],
                 Password = parts[3]
             };
-            
-            var user = await _authenticationService.Login(av);
 
-            if (user == null)
+            using (Logger.BeginScope(new Dictionary<string, object>
             {
-                return AuthenticateResult.Fail("Invalid username or password");
-            }
+                ["SourceIp"] = av.IpAddress,
+                ["UserName"] = av.UserId,
+                ["AuthId"] = av.Id
+            }))
+            {
+                var user = await _authenticationService.Login(av);
 
-            var claims = new[] { new Claim(ClaimTypes.Name, user.UserName), new Claim(ClaimTypes.NameIdentifier, user.Token), new Claim(ClaimTypes.System, user.Source.ToString()) };
-            var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, Scheme.Name);
-            return AuthenticateResult.Success(ticket);
+                if (user == null)
+                {
+                    if (Request.Path.StartsWithSegments("/api/legacy", StringComparison.OrdinalIgnoreCase) &&
+                        Request.Method == "POST")
+                    {
+                        try
+                        {
+                            Request.EnableRewind();
+
+                            using (var reader = new MemoryStream())
+                            {
+                                await Request.Body.CopyToAsync(reader);
+                                var bodyAsText = Encoding.UTF8.GetString(reader.ToArray());
+
+                                TryToLogFailureBody(av.UserId, bodyAsText);
+                            }
+                        }
+                        finally
+                        {
+                            // Workaround so MVC action will be able to read body as well
+                            Request.Body.Seek(0, SeekOrigin.Begin);
+                        }
+                    }
+
+                    return AuthenticateResult.Fail("Invalid username or password");
+                }
+
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.NameIdentifier, user.Token),
+                    new Claim(ClaimTypes.System, user.Source.ToString())
+                };
+                var identity = new ClaimsIdentity(claims, Scheme.Name);
+                var principal = new ClaimsPrincipal(identity);
+                var ticket = new AuthenticationTicket(principal, Scheme.Name);
+                return AuthenticateResult.Success(ticket);
+            }
         }
-        
+
+
+
+        private void TryToLogFailureBody(string userName, string bodyAsText)
+        {
+            try
+            {
+                var bodyObj = JsonConvert.DeserializeObject<LegacyRequest>(bodyAsText);
+                var body = bodyObj?.Envelope?.Body;
+                if (body != null)
+                {
+                    StandardRequest result;
+
+                    if (body.GetTransactionDetails?.Request != null)
+                    {
+                        result = new StandardRequest()
+                        {
+                            CommonData = new CommonData()
+                            {
+                                User = body.GetTransactionDetails.Request.User,
+                                TransNumber = body.GetTransactionDetails.Request.TransNumber
+                            }
+                        };
+                        Logger.LogWarning("Login Failed [{UserName}]: \n{UserRequestBody}", userName, result.ToDisplayString());
+                    }
+                    else if (body.GetReasonCodes?.Request != null)
+                    {
+                        result = new StandardRequest()
+                        {
+                            CommonData = new CommonData()
+                            {
+                                User = body.GetReasonCodes.Request.User,
+                                TransNumber = body.GetReasonCodes.Request.TransNumber
+                            }
+                        };
+                    }
+                    else
+                    {
+                        result = body.LoadPan?.Request ??
+                                 body.BalanceRequest?.Request ??
+                                 body.GetPanNumber?.Request ??
+                                 body.OpenPreAuth?.Request ??
+                                 body.UnloadPan?.Request ??
+                                 body.StopPay?.Request ??
+                                 body.CancelFax?.Request ??
+                                 body.ChangeFaxNumber?.Request ??
+                                 body.HoldFax?.Request ??
+                                 body.ReleaseFax?.Request ??
+                                 body.ResendFax?.Request;
+                    }
+
+                    if (result != null)
+                    {
+                        Logger.LogWarning("Login Failed [{UserName}]: \n{UserRequestBody}", userName, result.ToDisplayString());
+                    }
+
+                }
+            }
+            catch
+            {
+                //do nothing because we just are trying to log if bad values
+            }
+        }
     }
+
 }

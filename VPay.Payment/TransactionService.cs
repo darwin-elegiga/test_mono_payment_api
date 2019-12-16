@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
-using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Data.Db2.Abstractions.Helpers;
+using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
 
 namespace VPay.Payment
@@ -27,8 +27,8 @@ namespace VPay.Payment
 
         public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{request.ToDisplayString()}",
-                nameof(GetReasonCodes), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetReasonCodes), "Starting", request.ToDisplayString());
 
             var panRequestParam = new TransactionWsRequest()
             {
@@ -45,9 +45,6 @@ namespace VPay.Payment
                     }
                 }
             };
-
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{request.ToDisplayString()}",
-                nameof(GetReasonCodes), "Testing Security");
 
             var panRequest = await _db2Context.TransactionWs.GetPan(panRequestParam);
 
@@ -82,8 +79,8 @@ namespace VPay.Payment
             }))
             {
                 var level = reasonCodeResponse.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{reasonCodeResponse.ToDisplayString()}",
-                    nameof(GetPanNumber), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                    nameof(GetPanNumber), "Response", reasonCodeResponse.ToDisplayString());
             }
 
             reasonCodeResponse.CommonData.ReasonDesc = "";
@@ -104,8 +101,8 @@ namespace VPay.Payment
                 }
             };
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(GetTransactionDetails), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetTransactionDetails), "Starting", standardRequest.ToDisplayString());
 
 
             TransactionDetailResponse response;
@@ -203,8 +200,8 @@ namespace VPay.Payment
             }))
             {
                 var level = response.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{response.ToDisplayString()}",
-                    nameof(GetTransactionDetails), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                    nameof(GetTransactionDetails), "Response", response.ToDisplayString());
             }
 
             response.CommonData.ReasonDesc = "";
@@ -215,8 +212,8 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}",
-                nameof(GetPanNumber), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetPanNumber), "Starting", standardRequest.ToDisplayString());
 
             var request = new TransactionWsRequest()
             {
@@ -239,8 +236,8 @@ namespace VPay.Payment
             }))
             {
                 var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
-                    nameof(GetPanNumber), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                    nameof(GetPanNumber), "Response", result.ToDisplayString());
             }
 
             ClearCommonData(result);
@@ -250,7 +247,7 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}", nameof(OpenPreAuth), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(OpenPreAuth), "Starting", standardRequest.ToDisplayString());
 
             var request = new TransactionWsRequest()
             {
@@ -273,7 +270,7 @@ namespace VPay.Payment
             }))
             {
                 var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}", nameof(OpenPreAuth), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}", nameof(OpenPreAuth), "Response", result.ToDisplayString());
             }
 
             ClearCommonData(result);
@@ -283,7 +280,7 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> LoadPan(StandardRequest standardRequest, string clientData)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nclientData: {clientData}", nameof(LoadPan), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "Starting", standardRequest.ToDisplayString(), clientData);
 
             SetupDefaultValuesForLoadPan(standardRequest);
 
@@ -295,7 +292,7 @@ namespace VPay.Payment
             standardRequest.CommonData.ResponseCode = checkDeclineMessages.code;
             standardRequest.CommonData.ResponseDesc = checkDeclineMessages.message;
 
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage");
+            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage", standardRequest.ToDisplayString(), clientData);
 
             var request = new TransactionWsRequest()
             {
@@ -318,8 +315,8 @@ namespace VPay.Payment
             }))
             {
                 var level = result.CommonData.SuccessCode == "0000" && checkDeclineMessages.code == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}\nclientData: {clientData}",
-                    nameof(LoadPan), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}\nclientData: {clientData}",
+                    nameof(LoadPan), "Response", result.ToDisplayString(), clientData);
             }
 
             // Set the Success Code and Description to the Declined Message if the Declined Message is an error code
@@ -336,7 +333,7 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}", nameof(GetBalanceRequest), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(GetBalanceRequest), "Starting", standardRequest.ToDisplayString());
 
             var request = new TransactionWsRequest()
             {
@@ -359,8 +356,8 @@ namespace VPay.Payment
             }))
             {
                 var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
-                    nameof(GetBalanceRequest), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                    nameof(GetBalanceRequest), "Response", result.ToDisplayString());
             }
 
             ClearCommonData(result);
@@ -370,7 +367,7 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> UnloadPan(StandardRequest standardRequest)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}", nameof(UnloadPan), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(UnloadPan), "Starting", standardRequest.ToDisplayString());
 
             var request = new TransactionWsRequest()
             {
@@ -393,8 +390,8 @@ namespace VPay.Payment
             }))
             {
                 var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
-                    nameof(UnloadPan), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                    nameof(UnloadPan), "Response", result.ToDisplayString());
             }
 
             ClearCommonData(result);
@@ -404,7 +401,7 @@ namespace VPay.Payment
 
         public async Task<StandardResponse> StopPay(StandardRequest standardRequest)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \n{standardRequest.ToDisplayString()}", nameof(StopPay), "Starting");
+            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(StopPay), "Starting", standardRequest.ToDisplayString());
 
             var request = new TransactionWsRequest()
             {
@@ -427,8 +424,8 @@ namespace VPay.Payment
             }))
             {
                 var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{result.ToDisplayString()}",
-                    nameof(StopPay), "Response");
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                    nameof(StopPay), "Response", result.ToDisplayString());
             }
 
             ClearCommonData(result);
@@ -453,8 +450,8 @@ namespace VPay.Payment
             }))
             {
                 var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}",
-                    nameof(CancelFax), "Response", faxCode);
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}\nFaxCode={FaxCode}",
+                    nameof(CancelFax), "Response", sResp.ToDisplayString(), faxCode);
             }
 
             return sResp;
@@ -477,8 +474,8 @@ namespace VPay.Payment
             }))
             {
                 var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}",
-                    nameof(ChangeFaxNumber), "Response", faxCode);
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}\nFaxCode={FaxCode}",
+                    nameof(ChangeFaxNumber), "Response", sResp.ToDisplayString(), faxCode);
             }
 
             return sResp;
@@ -501,8 +498,8 @@ namespace VPay.Payment
             }))
             {
                 var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(HoldFax),
-                    "Response", faxCode);
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}\nFaxCode={FaxCode}", nameof(HoldFax),
+                    "Response", sResp.ToDisplayString(), faxCode);
             }
 
             return sResp;
@@ -525,8 +522,8 @@ namespace VPay.Payment
             }))
             {
                 var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}",
-                    nameof(ReleaseFax), "Response", faxCode);
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}\nFaxCode={FaxCode}",
+                    nameof(ReleaseFax), "Response", sResp.ToDisplayString(), faxCode);
             }
             return sResp;
         }
@@ -549,12 +546,12 @@ namespace VPay.Payment
             }))
             {
                 var level = sResp.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, $"{{ServiceName}} - {{Step}} with: \n{sResp.ToDisplayString()}", nameof(ResendFax), "Response", faxCode);
+                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}\nFaxCode={FaxCode}", nameof(ResendFax), "Response", sResp.ToDisplayString(), faxCode);
             }
 
             return sResp;
         }
-        
+
 
         private async Task<List<CorespDtl>> GetCorrespondenceList(long transactionId)
         {
@@ -790,7 +787,7 @@ namespace VPay.Payment
             {
                 result = (code: "0935", message: $"{notEqualMsg} claimDate {request.Claim.ClaimDate}");
             }
-            
+
             if (!int.TryParse(request.CoveredItem.BeginDate, out _))
             {
                 result = (code: "0948", message: $"{notEqualMsg} beginDate {request.CoveredItem.BeginDate}");

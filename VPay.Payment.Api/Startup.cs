@@ -55,6 +55,7 @@ namespace VPay.Payment.Api
 
             services.AddTransient<IHealthCheckService, HealthCheckService>();
             services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<ITradingPostService, TradingPostService>();
             services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
             services.AddTransient<ILegacyValidationService, LegacyValidationService>();
             services.AddSingleton<AboutInfo, AboutInfo>();
@@ -63,20 +64,20 @@ namespace VPay.Payment.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
-            app.UseExceptionHandler("/error").WithConventions(x => {
+            app.UseExceptionHandler("/error").WithConventions(x =>
+            {
                 ConfigureExceptionHandler(x, env.IsDevelopment());
             });
 
             app.Map("/error", x => x.Run(y => throw new Exception()));
 
-            app.UseStaticFiles();
-
-            app.UseAuthentication();
-            app.UseMiddleware<AttachUserToLoggingMiddleware>();
-
-            app.UseMvc()
+            app
+                .UseStaticFiles()
+                .UseMiddleware<RequestLoggingMiddleware>()
+                .UseAuthentication()
+                .UseMiddleware<AttachUserToLoggingMiddleware>()
+                .UseMvc()
                 .UseSwagger();
-
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>

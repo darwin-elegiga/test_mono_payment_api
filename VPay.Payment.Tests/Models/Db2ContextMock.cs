@@ -18,6 +18,7 @@ namespace VPay.Payment.Tests.Models
         public IFax Fax => FaxMock.Object;
         public ISecurity Security => SecurityMock.Object;
         public ITransactionWs TransactionWs => TransactionWsMock.Object;
+        public ITradingPostWs TradingPostWs => TradingPostWsMock.Object;
         public IPreferencing Preferencing => PreferencingMock.Object;
         public ICorrespondenceRepo Correspondence => CorrespondenceMock.Object;
 
@@ -26,6 +27,7 @@ namespace VPay.Payment.Tests.Models
         public Mock<IFax> FaxMock { get; } = new Mock<IFax>();
         public Mock<ISecurity> SecurityMock { get; } = new Mock<ISecurity>();
         public Mock<ITransactionWs> TransactionWsMock { get; } = new Mock<ITransactionWs>();
+        public Mock<ITradingPostWs> TradingPostWsMock { get; } = new Mock<ITradingPostWs>();
         public Mock<IPreferencing> PreferencingMock { get; } = new Mock<IPreferencing>();
         public Mock<ICorrespondenceRepo> CorrespondenceMock { get; } = new Mock<ICorrespondenceRepo>();
 

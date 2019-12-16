@@ -1,0 +1,20 @@
+product: 1.0.0
+info:
+  name: tradingpostservice-product
+  title: TradingPostService Product
+  version: 1.0.0
+visibility:
+  view:
+    type: public
+  subscribe:
+    type: authenticated
+plans:
+  default:
+    title: Default Plan
+    description: Default Plan
+    approval: false
+apis:
+  TradingPostServiceDocs:
+    $ref: TradingPostServiceDocs_1.0.0.yaml
+  tradingpostservices:
+    $ref: TradingPostServices_1.0.0.yaml
