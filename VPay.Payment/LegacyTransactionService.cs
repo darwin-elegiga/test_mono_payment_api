@@ -190,6 +190,8 @@ namespace VPay.Payment
             _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nCustomData: {clientData}",
                 nameof(LoadPan), "TruncatingData", standardRequest.ToDisplayString(), clientData);
 
+            CleanFields(standardRequest);
+
             TruncateFieldsForLoadPan(standardRequest);
 
             _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nCustomData: {clientData}",
@@ -528,8 +530,19 @@ namespace VPay.Payment
             return await _transactionService.ResendFax(faxCode, standardRequest.CorrespondenceData.PhoneNumber);
         }
 
-
         #region Private fields
+
+        private void CleanFields(StandardRequest standardRequest)
+        {
+            standardRequest.Merchant.PayeeName = standardRequest.Merchant.PayeeName.CleanWordValues();
+            standardRequest.Merchant.ContactPerson = standardRequest.Merchant.ContactPerson.CleanWordValues();
+
+            standardRequest.CoveredItem.OwnerFirstName = standardRequest.CoveredItem.OwnerFirstName.CleanWordValues();
+            standardRequest.CoveredItem.OwnerLastName = standardRequest.CoveredItem.OwnerLastName.CleanWordValues();
+
+            standardRequest.Claim.ClaimDescription = standardRequest.Claim.ClaimDescription.CleanWordValues();
+            standardRequest.Claim.ClaimNotes = standardRequest.Claim.ClaimNotes.CleanWordValues();
+        }
 
         /// <summary>
         /// Sets up and calls truncation for fields and entities to truncate to the Maximum allowed length for that field.
@@ -576,8 +589,8 @@ namespace VPay.Payment
                     prop.SetValue(entity, value.Substring(0, attr.Length));
                 }
             }
-
         }
-        #endregion
+
+        #endregion Private fields
     }
 }
