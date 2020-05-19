@@ -29,7 +29,6 @@ namespace VPay.Payment
             _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
                 nameof(LoadCard), "Starting", request.ToDisplayString());
 
-
             var validation = ValidateAuth(auth);
             validation = ValidateLoadCard(request) ?? validation;
 
@@ -38,6 +37,8 @@ namespace VPay.Payment
                 auth.InitialErrorCode = validation.Code;
                 auth.InitialErrorMessage = validation.Message;
             }
+
+            CleanFields(request);
 
             TradingPostData.LoadResult response;
             try
@@ -192,11 +193,9 @@ namespace VPay.Payment
                 auth.InitialErrorMessage = validation.Message;
             }
 
-
             TradingPostData.NotificationResult response;
             try
             {
-
                 response = await _tradingPostWs.CardNotificationRelease(auth, request);
 
                 if (response == null)
@@ -220,7 +219,6 @@ namespace VPay.Payment
                     response.Claim.ClaimNotes = null;
                     response.CardHolder = null;
                 }
-
             }
             catch (Exception ex)
             {
@@ -253,6 +251,17 @@ namespace VPay.Payment
             return response;
         }
 
+        private void CleanFields(TradingPostData.LoadRequest request)
+        {
+            request.Merchant.PayeeName = request.Merchant.PayeeName.CleanWordValues();
+            request.Merchant.ContactPerson = request.Merchant.ContactPerson.CleanWordValues();
+
+            request.CoveredItem.OwnerFirstName = request.CoveredItem.OwnerFirstName.CleanWordValues();
+            request.CoveredItem.OwnerLastName = request.CoveredItem.OwnerLastName.CleanWordValues();
+
+            request.Claim.ClaimDescription = request.Claim.ClaimDescription.CleanWordValues();
+            request.Claim.ClaimNotes = request.Claim.ClaimNotes.CleanWordValues();
+        }
 
         private ValidationMessage ValidateAuth(TradingPostData.AuthenticationValuesAndIp auth)
         {
