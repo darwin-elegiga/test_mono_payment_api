@@ -1,0 +1,51 @@
+include:
+  - project: devops/cicd/templates
+    ref: v0.0.5
+    file: docker.gitlab-ci.yml
+  - project: devops/cicd/templates
+    ref: v0.0.5
+    file: dotnet.gitlab-ci.yml
+  - project: devops/cicd/templates
+    ref: v0.0.5
+    file: disable-detached.gitlab-ci.yml
+
+variables:
+  PROJECT: payment-api
+  IMAGE_NAME: payment-api
+  CHART_DIR: charts/${CI_PROJECT_NAME}
+  IS_MULTI_APP: 'false'
+
+stages:
+  - init
+  - build_and_test
+
+app:test:generate-config:
+  stage: init
+  extends: .dotnet_generate_test_config
+  variables:
+    TEST_BASE_IMAGE: plinfharbor.vpayusa.net/base-images/dotnet/core/sdk:2.1-bionic
+    ALLOW_FAILURE: 'true'
+    TRIGGER_WHEN: manual
+
+app:test:
+  stage: build_and_test
+  needs:
+    - app:test:generate-config
+  trigger:
+    include:
+      - artifact: app-test-config.yml
+        job: app:test:generate-config
+
+api:build:
+  stage: build_and_test
+  extends: .docker_build
+  needs: []
+  variables:
+    PREBUILD_COMMAND: scripts/generate_tar.sh
+    DOCKERFILE: Dockerfile
+    PROJECT_TAR: projectfiles.tar
+    PROJECT_DIR: Vpay.Payment.Api
+    PROJECT_NAME: Vpay.Payment.Api
+    DOTNET_VERSION: '2.1'
+    DOTNET_RUNTIME_VARIANT: bionic-db2
+    BUILD_ARGS: "PROJECT_TAR PROJECT_DIR PROJECT_NAME DOTNET_VERSION DOTNET_RUNTIME_VARIANT"

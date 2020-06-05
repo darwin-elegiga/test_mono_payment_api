@@ -1,0 +1,55 @@
+include:
+  - project: devops/cicd/templates
+    ref: v0.0.5
+    file: helm.gitlab-ci.yml
+
+stages:
+  - deploy-dev
+  - deploy-qa
+  - deploy-stg
+  - deploy-prod
+
+variables:
+  IS_MULTI_APP: 'true'
+
+dev:
+  stage: deploy-dev
+  extends: .helm_deploy_dev
+  environment:
+    kubernetes:
+      namespace: payment-api-dev
+
+qa:
+  stage: deploy-qa
+  extends: .helm_deploy_qa
+  environment:
+    kubernetes:
+      namespace: payment-api-qa
+
+austin-stg:
+  stage: deploy-stg
+  extends: .helm_deploy_asstg
+  environment:
+    kubernetes:
+      namespace: payment-api-stage
+
+plano-stg:
+  stage: deploy-stg
+  extends: .helm_deploy_plstg
+  environment:
+    kubernetes:
+      namespace: payment-api-stage
+
+austin-prod:
+  stage: deploy-prod
+  extends: .helm_deploy_asprod
+  environment:
+    kubernetes:
+      namespace: payment-api-prod
+
+plano-prod:
+  stage: deploy-prod
+  extends: .helm_deploy_plprod
+  environment:
+    kubernetes:
+      namespace: payment-api-prod
