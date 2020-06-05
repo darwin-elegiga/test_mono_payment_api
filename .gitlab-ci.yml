@@ -44,8 +44,8 @@ api:build:
     PREBUILD_COMMAND: scripts/generate_tar.sh
     DOCKERFILE: Dockerfile
     PROJECT_TAR: projectfiles.tar
-    PROJECT_DIR: Vpay.Payment.Api
-    PROJECT_NAME: Vpay.Payment.Api
+    PROJECT_DIR: VPay.Payment.Api
+    PROJECT_NAME: VPay.Payment.Api
     DOTNET_VERSION: '2.1'
     DOTNET_RUNTIME_VARIANT: bionic-db2
     BUILD_ARGS: "PROJECT_TAR PROJECT_DIR PROJECT_NAME DOTNET_VERSION DOTNET_RUNTIME_VARIANT"
