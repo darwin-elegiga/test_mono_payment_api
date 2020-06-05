@@ -11,7 +11,7 @@ include:
 
 variables:
   PROJECT: payment-api
-  IMAGE_NAME: payment-api
+  IMAGE_NAME: payment-web-api
   CHART_DIR: charts/${CI_PROJECT_NAME}
   IS_MULTI_APP: 'false'
 
