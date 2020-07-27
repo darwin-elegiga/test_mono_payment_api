@@ -1,11 +1,12 @@
 include:
   - project: devops/cicd/templates
-    ref: v0.0.5
+    ref: v0.2.0
     file: helm.gitlab-ci.yml
 
 stages:
   - test
-  - dryrun
+  # Dryrun jobs skipped temporarily to work around GitLab issue - https://gitlab.com/gitlab-org/gitlab/-/issues/207226
+  # - dryrun
 
 variables:
   IS_MULTI_APP: 'true'
@@ -18,23 +19,17 @@ helm:lint:
   stage: test
   extends: .helm_lint
 
-helm:lint-dev:
+helm:lint-dev-pl:
   stage: test
   extends: .helm_lint
   variables:
-    VALUE_FILES: values-dev.yaml
+    VALUE_FILES: values-dev-plano.yaml
 
-helm:lint-qa:
+helm:lint-dev-stl:
   stage: test
   extends: .helm_lint
   variables:
-    VALUE_FILES: values-qa.yaml
-
-helm:lint-stg-as:
-  stage: test
-  extends: .helm_lint
-  variables:
-    VALUE_FILES: values-stage-austin.yaml
+    VALUE_FILES: values-dev-stl.yaml
 
 helm:lint-stg-pl:
   stage: test
@@ -42,11 +37,11 @@ helm:lint-stg-pl:
   variables:
     VALUE_FILES: values-stage-plano.yaml
 
-helm:lint-prod-as:
+helm:lint-stg-stl:
   stage: test
   extends: .helm_lint
   variables:
-    VALUE_FILES: values-prod-austin.yaml
+    VALUE_FILES: values-stage-stl.yaml
 
 helm:lint-prod-pl:
   stage: test
@@ -54,36 +49,44 @@ helm:lint-prod-pl:
   variables:
     VALUE_FILES: values-prod-plano.yaml
 
-dryrun:dev:
-  extends: .helm_dryrun_dev
-  needs:
-    - helm:lint-dev
-  environment:
-    kubernetes:
-      namespace: payment-api-dev
+helm:lint-prod-stl:
+  stage: test
+  extends: .helm_lint
+  variables:
+    VALUE_FILES: values-prod-stl.yaml
 
-dryrun:qa:
-  extends: .helm_dryrun_qa
-  needs:
-    - helm:lint-qa
-  environment:
-    kubernetes:
-      namespace: payment-api-qa
+# Dryrun jobs skipped temporarily to work around GitLab issue - https://gitlab.com/gitlab-org/gitlab/-/issues/207226
 
-dryrun:stg-as:
-  extends: .helm_dryrun_asstg
-  needs:
-    - helm:lint-stg-as
-  environment:
-    kubernetes:
-      namespace: payment-api-stage
+# dryrun:dev-pl:
+#   extends: .helm_dryrun_pldev
+#   needs:
+#     - helm:lint-dev
+#   environment:
+#     kubernetes:
+#       namespace: payment-api-dev
 
-dryrun:stg-pl:
-  extends: .helm_dryrun_plstg
-  needs:
-    - helm:lint-stg-pl
-  environment:
-    kubernetes:
-      namespace: payment-api-stage
+# dryrun:dev-stl:
+#   extends: .helm_dryrun_stldev
+#   needs:
+#     - helm:lint-dev
+#   environment:
+#     kubernetes:
+#       namespace: payment-api-dev
+
+# dryrun:stg-pl:
+#   extends: .helm_dryrun_plstg
+#   needs:
+#     - helm:lint-stg-pl
+#   environment:
+#     kubernetes:
+#       namespace: payment-api-stage
+
+# dryrun:stg-stl:
+#   extends: .helm_dryrun_asstg
+#   needs:
+#     - helm:lint-stg-stl
+#   environment:
+#     kubernetes:
+#       namespace: payment-api-stage
 
 # Deliberately excluding prod from dryrun

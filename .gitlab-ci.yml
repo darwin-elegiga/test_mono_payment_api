@@ -1,13 +1,15 @@
 include:
   - project: devops/cicd/templates
-    ref: v0.0.5
+    ref: v0.2.0
     file: docker.gitlab-ci.yml
   - project: devops/cicd/templates
-    ref: v0.0.5
+    ref: v0.2.0
     file: dotnet.gitlab-ci.yml
   - project: devops/cicd/templates
-    ref: v0.0.5
+    ref: v0.2.0
     file: disable-detached.gitlab-ci.yml
+  # # Deployment steps ran in parent pipeline instead of child pipeline to work around GitLab issue - https://gitlab.com/gitlab-org/gitlab/-/issues/207226
+  # - local: /.gitlab-ci/deploy.gitlab-ci.yml
 
 variables:
   PROJECT: payment-api
@@ -18,6 +20,13 @@ variables:
 stages:
   - init
   - build_and_test
+  # - publish
+  # # - deploy
+  # # Deployment steps ran in parent pipeline instead of child pipeline to work around GitLab issue - https://gitlab.com/gitlab-org/gitlab/-/issues/207226
+  # - deploy-dev
+  # - deploy-stg
+  # - security-gate
+  # - deploy-prod
 
 app:test:generate-config:
   stage: init
@@ -36,7 +45,15 @@ app:test:
       - artifact: app-test-config.yml
         job: app:test:generate-config
 
-api:build:
+# helm:lint:
+#   stage: build_and_test
+#   needs: []
+#   trigger:
+#     include:
+#       - local: /.gitlab-ci/helm-lint.gitlab-ci.yml
+#     strategy: depend
+
+build:api:
   stage: build_and_test
   extends: .docker_build
   needs: []
@@ -49,3 +66,17 @@ api:build:
     DOTNET_VERSION: '2.1'
     DOTNET_RUNTIME_VARIANT: bionic-db2
     BUILD_ARGS: "PROJECT_TAR PROJECT_DIR PROJECT_NAME DOTNET_VERSION DOTNET_RUNTIME_VARIANT"
+
+# publish:api:
+#   stage: publish
+#   extends: .docker_publish
+
+# Deployment steps ran in parent pipeline instead of child pipeline to work around GitLab issue - https://gitlab.com/gitlab-org/gitlab/-/issues/207226
+# deploy:
+#   stage: deploy
+#   trigger:
+#     include:
+#       - local: /.gitlab-ci/deploy.gitlab-ci.yml
+#   rules:
+#     - if: $CHART_DIR && $CI_COMMIT_TAG
+#       when: on_success

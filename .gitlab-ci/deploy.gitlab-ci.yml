@@ -1,37 +1,31 @@
 include:
   - project: devops/cicd/templates
-    ref: v0.0.5
+    ref: v0.2.0
     file: helm.gitlab-ci.yml
 
-stages:
-  - deploy-dev
-  - deploy-qa
-  - deploy-stg
-  - deploy-prod
+# Deployment steps ran in parent pipeline instead of child pipeline to work around GitLab issue
+# stages:
+#   - deploy-dev
+#   - deploy-stg
+#   - security-gate
+#   - deploy-prod
 
 variables:
   IS_MULTI_APP: 'true'
 
-dev:
+plano-dev:
   stage: deploy-dev
-  extends: .helm_deploy_dev
+  extends: .helm_deploy_pldev
   environment:
     kubernetes:
       namespace: payment-api-dev
 
-qa:
-  stage: deploy-qa
-  extends: .helm_deploy_qa
+stl-dev:
+  stage: deploy-dev
+  extends: .helm_deploy_stldev
   environment:
     kubernetes:
-      namespace: payment-api-qa
-
-austin-stg:
-  stage: deploy-stg
-  extends: .helm_deploy_asstg
-  environment:
-    kubernetes:
-      namespace: payment-api-stage
+      namespace: payment-api-dev
 
 plano-stg:
   stage: deploy-stg
@@ -40,16 +34,29 @@ plano-stg:
     kubernetes:
       namespace: payment-api-stage
 
-austin-prod:
-  stage: deploy-prod
-  extends: .helm_deploy_asprod
+stl-stg:
+  stage: deploy-stg
+  extends: .helm_deploy_stlstg
   environment:
     kubernetes:
-      namespace: payment-api-prod
+      namespace: payment-api-stage
+
+labdog:create-deployment:
+  stage: security-gate
+  extends: .labdog_create_deployment
+  variables:
+    PROD_DEPLOY_STAGE_NAME: deploy-prod
 
 plano-prod:
   stage: deploy-prod
   extends: .helm_deploy_plprod
+  environment:
+    kubernetes:
+      namespace: payment-api-prod
+
+stl-prod:
+  stage: deploy-prod
+  extends: .helm_deploy_stlprod
   environment:
     kubernetes:
       namespace: payment-api-prod
