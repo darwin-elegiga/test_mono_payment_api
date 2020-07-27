@@ -33,8 +33,6 @@ app:test:generate-config:
   extends: .dotnet_generate_test_config
   variables:
     TEST_BASE_IMAGE: plinfharbor.vpayusa.net/base-images/dotnet/core/sdk:2.1-bionic
-    ALLOW_FAILURE: 'true'
-    TRIGGER_WHEN: manual
 
 app:test:
   stage: build_and_test
@@ -44,6 +42,7 @@ app:test:
     include:
       - artifact: app-test-config.yml
         job: app:test:generate-config
+    strategy: depend
 
 # helm:lint:
 #   stage: build_and_test
