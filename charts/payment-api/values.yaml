@@ -1,0 +1,43 @@
+chart:
+  virtual:
+    shared:
+      image:
+        registry: plinfharbor.vpayusa.net
+        tag: latest
+        pullPolicy: Always
+      env:
+        ASPNETCORE_ENVIRONMENT: '{{ .Values.global.environment.name }}'
+        DOTNET_ENVIRONMENT: '{{ .Values.global.environment.name }}'
+        DOTNET_Logging__GELF__AdditionalFields__environment: '{{ .Values.global.environment.name }}'
+        DOTNET_Logging__GELF__AdditionalFields__namespace: '{{ .Release.Namespace }}'
+      generate:
+        deployment: true
+        service: true
+        ingress: true
+        secret: true
+    charts:
+      - api
+
+global:
+  parent: 'payment'
+  environment:
+    name: Development
+    ingress:
+      subdomain: dev.pks.vpayusa.net
+
+api:
+  enabled: true
+  environment: {}
+  listeningPort: 80
+  contentRoot: /app
+  probes:
+    readiness:
+      healthEndpoint: /api/about
+    liveness:
+      healthEndpoint: /api/about
+  image:
+    name: payment-api/payment-web-api
+  secrets:
+    appsettings.secure.json:
+      mount: true
+      data: {}

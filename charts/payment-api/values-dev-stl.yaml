@@ -1,0 +1,13 @@
+chart:
+  virtual:
+    shared:
+      image:
+        registry: stlinfharbor.vpayusa.net
+
+global:
+  environment:
+    name: Development
+    ingress:
+      subdomain: dev.pks.vpayusa.net
+      altSubdomains:
+        - stlpksdev.vpayusa.net

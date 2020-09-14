@@ -1,0 +1,16 @@
+chart:
+  virtual:
+    shared:
+      image:
+        registry: stlinfharbor.vpayusa.net
+
+global:
+  environment:
+    name: Production
+    ingress:
+      subdomain: prod.pks.vpayusa.net
+      altSubdomains:
+        - stlpksprod.vpayusa.net
+
+api:
+  replicas: 3
