@@ -1,14 +1,13 @@
 include:
   - project: devops/cicd/templates
-    ref: v0.2.0
+    ref: v0.2.2
     file: helm.gitlab-ci.yml
 
-# Deployment steps ran in parent pipeline instead of child pipeline to work around GitLab issue
-# stages:
-#   - deploy-dev
-#   - deploy-stg
-#   - security-gate
-#   - deploy-prod
+stages:
+  - deploy-dev
+  - deploy-stg
+  - security-gate
+  - deploy-prod
 
 variables:
   IS_MULTI_APP: 'true'
@@ -18,28 +17,28 @@ plano-dev:
   extends: .helm_deploy_pldev
   environment:
     kubernetes:
-      namespace: payment-api-dev
+      namespace: client-payments-dev
 
 stl-dev:
   stage: deploy-dev
   extends: .helm_deploy_stldev
   environment:
     kubernetes:
-      namespace: payment-api-dev
+      namespace: client-payments-dev
 
 plano-stg:
   stage: deploy-stg
   extends: .helm_deploy_plstg
   environment:
     kubernetes:
-      namespace: payment-api-stage
+      namespace: client-payments-stage
 
 stl-stg:
   stage: deploy-stg
   extends: .helm_deploy_stlstg
   environment:
     kubernetes:
-      namespace: payment-api-stage
+      namespace: client-payments-stage
 
 labdog:create-deployment:
   stage: security-gate
@@ -52,11 +51,11 @@ plano-prod:
   extends: .helm_deploy_plprod
   environment:
     kubernetes:
-      namespace: payment-api-prod
+      namespace: client-payments-prod
 
 stl-prod:
   stage: deploy-prod
   extends: .helm_deploy_stlprod
   environment:
     kubernetes:
-      namespace: payment-api-prod
+      namespace: client-payments-prod

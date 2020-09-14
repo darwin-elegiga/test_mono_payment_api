@@ -1,32 +1,24 @@
 include:
   - project: devops/cicd/templates
-    ref: v0.2.0
+    ref: v0.2.2
     file: docker.gitlab-ci.yml
   - project: devops/cicd/templates
-    ref: v0.2.0
+    ref: v0.2.2
     file: dotnet.gitlab-ci.yml
   - project: devops/cicd/templates
-    ref: v0.2.0
+    ref: v0.2.2
     file: disable-detached.gitlab-ci.yml
-  # # Deployment steps ran in parent pipeline instead of child pipeline to work around GitLab issue - https://gitlab.com/gitlab-org/gitlab/-/issues/207226
-  # - local: /.gitlab-ci/deploy.gitlab-ci.yml
 
 variables:
   PROJECT: payment-api
-  IMAGE_NAME: payment-web-api
-  CHART_DIR: charts/${CI_PROJECT_NAME}
-  IS_MULTI_APP: 'false'
+  CHART_DIR: charts/payment-api
+  IS_MULTI_APP: 'true'
 
 stages:
   - init
   - build_and_test
-  # - publish
-  # # - deploy
-  # # Deployment steps ran in parent pipeline instead of child pipeline to work around GitLab issue - https://gitlab.com/gitlab-org/gitlab/-/issues/207226
-  # - deploy-dev
-  # - deploy-stg
-  # - security-gate
-  # - deploy-prod
+  - publish
+  - deploy
 
 app:test:generate-config:
   stage: init
@@ -44,13 +36,13 @@ app:test:
         job: app:test:generate-config
     strategy: depend
 
-# helm:lint:
-#   stage: build_and_test
-#   needs: []
-#   trigger:
-#     include:
-#       - local: /.gitlab-ci/helm-lint.gitlab-ci.yml
-#     strategy: depend
+helm:lint:
+  stage: build_and_test
+  needs: []
+  trigger:
+    include:
+      - local: /.gitlab-ci/helm-lint.gitlab-ci.yml
+    strategy: depend
 
 build:api:
   stage: build_and_test
@@ -58,6 +50,7 @@ build:api:
   needs: []
   variables:
     PREBUILD_COMMAND: scripts/generate_tar.sh
+    IMAGE_NAME: payment-web-api
     DOCKERFILE: Dockerfile
     PROJECT_TAR: projectfiles.tar
     PROJECT_DIR: VPay.Payment.Api
@@ -66,16 +59,17 @@ build:api:
     DOTNET_RUNTIME_VARIANT: bionic-db2
     BUILD_ARGS: "PROJECT_TAR PROJECT_DIR PROJECT_NAME DOTNET_VERSION DOTNET_RUNTIME_VARIANT"
 
-# publish:api:
-#   stage: publish
-#   extends: .docker_publish
+publish:api:
+  stage: publish
+  extends: .docker_publish
+  variables:
+    IMAGE_NAME: payment-web-api
 
-# Deployment steps ran in parent pipeline instead of child pipeline to work around GitLab issue - https://gitlab.com/gitlab-org/gitlab/-/issues/207226
-# deploy:
-#   stage: deploy
-#   trigger:
-#     include:
-#       - local: /.gitlab-ci/deploy.gitlab-ci.yml
-#   rules:
-#     - if: $CHART_DIR && $CI_COMMIT_TAG
-#       when: on_success
+deploy:
+  stage: deploy
+  trigger:
+    include:
+      - local: /.gitlab-ci/deploy.gitlab-ci.yml
+  rules:
+    - if: $CHART_DIR && $CI_COMMIT_TAG
+      when: on_success

@@ -20,6 +20,7 @@ RUN dotnet build "$PROJECT_NAME.csproj" -c Release -o /app
 RUN dotnet publish "$PROJECT_NAME.csproj" -c Release -o /app
 
 FROM $REGISTRY/base-images/$BASE_RUNTIME_IMAGE:$DOTNET_VERSION-$DOTNET_RUNTIME_VARIANT AS final
+RUN apt-get update && apt-get install -y tzdata && ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
 
 ARG PROJECT_NAME
 ENV PROJECT_NAME=$PROJECT_NAME

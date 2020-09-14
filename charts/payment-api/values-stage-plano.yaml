@@ -1,0 +1,8 @@
+global:
+  environment:
+    name: Staging
+    ingress:
+      subdomain: stg.pks.vpayusa.net
+      altSubdomains:
+        - plpksstg.vpayusa.net
+        - plstg.pks.vpayusa.net
