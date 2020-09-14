@@ -1,0 +1,7 @@
+global:
+  environment:
+    name: Development
+    ingress:
+      subdomain: dev.pks.vpayusa.net
+      altSubdomains:
+        - plpksdev.vpayusa.net
