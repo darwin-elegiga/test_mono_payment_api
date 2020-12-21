@@ -19,7 +19,7 @@ namespace VPay.Payment.Api
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((builderContext, configurationBuilder) =>
                 {
-                    IHostingEnvironment hostingEnvironment = builderContext.HostingEnvironment;
+                    IWebHostEnvironment hostingEnvironment = builderContext.HostingEnvironment;
 
                     configurationBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)

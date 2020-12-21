@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using VPay.Data.Db2.Odbc;
@@ -22,19 +23,21 @@ namespace VPay.Payment.Api
     public static class ServiceCollectionExtensions
     {
 
-        public static IMvcBuilder AddJsonSettings(this IMvcBuilder mvcBuilder)
-        {
-            mvcBuilder
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-                    options.SerializerSettings.Converters.Add(new DecimalJsonConverter());
-                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                    options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-                });
+        //public static IMvcBuilder AddJsonSettings(this IMvcBuilder mvcBuilder)
+        //{
+        //    mvcBuilder
+        //        .AddJsonOptions(options =>
+        //        {
+        //            options.JsonSerializerOptions.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        //            options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        //            options.SerializerSettings.Converters.Add(new DecimalJsonConverter());
+        //            options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+        //            options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+        //        });
+  
 
-            return mvcBuilder;
-        }
+        //    return mvcBuilder;
+        //}
 
         public static IMvcBuilder AddFluentValidationSettings(this IMvcBuilder mvcBuilder)
         {
@@ -71,11 +74,17 @@ namespace VPay.Payment.Api
             services.AddSwaggerGen(c =>
             {
                 //Names used here are used in URL for SwaggerUI
-                c.SwaggerDoc("v1.0", new Info { Title = "Payment API", Version = "v1.0" });
+                c.SwaggerDoc("v1.0", new OpenApiInfo { Title = "Payment API", Version = "v1.0" });
 
-                c.AddSecurityDefinition("VPay", new BasicAuthScheme()
+                c.AddSecurityDefinition("VPay", new OpenApiSecurityScheme()
                 {
-                    Description = "Basic HTTP Auth"
+                    //Description = "Basic HTTP Auth"
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    In = ParameterLocation.Header,
+                    Description = "Basic Authorization header using the Bearer scheme."
+
                 });
 
                 c.OperationFilter<BasicAuthFilter>(); ;
@@ -95,6 +104,20 @@ namespace VPay.Payment.Api
                         return actionApiVersionModel.DeclaredApiVersions.Any(v => $"v{v.ToString()}" == docName);
                     }
                     return actionApiVersionModel.ImplementedApiVersions.Any(v => $"v{v.ToString()}" == docName);
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "basic"
+                                }
+                            },
+                            new string[] {}
+                    }
                 });
 
                 c.AddFluentValidationRules();

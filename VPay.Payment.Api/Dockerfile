@@ -1,9 +1,9 @@
 ARG REGISTRY=plinfharbor.vpayusa.net
 
-FROM ${REGISTRY}/base-images/dotnet/core/aspnet:2.1-bionic-db2 AS base
+FROM ${REGISTRY}/base-images/dotnet/core/aspnet:3.1-bionic-db2 AS base
 EXPOSE 80
 
-FROM ${REGISTRY}/base-images/dotnet/core/sdk:2.1-bionic-db2 AS build
+FROM ${REGISTRY}/base-images/dotnet/core/sdk:3.1-bionic-db2 AS build
 WORKDIR /src
 COPY NuGet.config NuGet.config
 COPY VPay.Payment.Api/VPay.Payment.Api.csproj VPay.Payment.Api/

@@ -19,7 +19,7 @@ namespace VPay.Payment.Api.Auth
         }
 
         public Task<AuthorizationPolicy> GetDefaultPolicyAsync() => FallbackPolicyProvider.GetDefaultPolicyAsync();
-
+        public Task<AuthorizationPolicy> GetFallbackPolicyAsync() => FallbackPolicyProvider.GetDefaultPolicyAsync();
 
         /// <inheritdoc />
         public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)

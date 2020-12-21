@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -12,45 +15,57 @@ namespace VPay.Payment.Api.Auth
     /// </summary>
     public class BasicAuthFilter : IOperationFilter
     {
-        public void Apply(Operation operation, OperationFilterContext context)
+        private readonly string _securitySchemaName;
+
+        public BasicAuthFilter(string securitySchemaName = "jwt")
         {
-
-            var classAuthorized = context.MethodInfo
-                .DeclaringType
-                .GetCustomAttributes(true)
-                .OfType<AuthorizeAttribute>().Any();
-
-            bool hasAuthorize;
-
-            if (classAuthorized)
-            {
-                // If the class has the Authorize Attribute then need to test if the method overrides the authorize attribute to anonymous.
-                hasAuthorize = !context.MethodInfo
-                    .GetCustomAttributes(true)
-                    .OfType<AllowAnonymousAttribute>().Any();
-            }
-            else
-            {
-                // If the class does not have the Authorize Attribute then test to see if the method itself has authorize attribute.
-                hasAuthorize = context.MethodInfo
-                    .GetCustomAttributes(true)
-                    .OfType<AuthorizeAttribute>().Any();
-            }
-
-            if (hasAuthorize)
-            {
-                operation.Responses.Add("401", new Response { Description = "Unauthorized" });
-                operation.Responses.Add("403", new Response { Description = "Forbidden" });
-
-                operation.Security = new List<IDictionary<string, IEnumerable<string>>>
-                {
-                    new Dictionary<string, IEnumerable<string>>
-                    {
-                        {"VPay", new string[] { }}
-                    }
-                };
-            }
+            _securitySchemaName = securitySchemaName;
         }
+
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        {
+            if (GetControllerAndActionAttributes<AllowAnonymousAttribute>(context).Any())
+            {
+                return;
+            }
+
+            var actionAttributes = GetControllerAndActionAttributes<AuthorizeAttribute>(context);
+
+            if (!actionAttributes.Any())
+            {
+                return;
+            }
+
+            if (!operation.Responses.ContainsKey("401"))
+            {
+                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
+            }
+
+            if (!operation.Responses.ContainsKey("403"))
+            {
+                operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
+            }
+
+            var policies = actionAttributes
+                    .Where(a => !string.IsNullOrEmpty(a.Policy))
+                    .Select(a => a.Policy);
+
+            operation.Security.Add(new OpenApiSecurityRequirement
+            {
+                { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = _securitySchemaName } }, policies.ToList() }
+            });
+        }
+
+        public static IEnumerable<T> GetControllerAndActionAttributes<T>(OperationFilterContext context) where T : Attribute
+        {
+            var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes<T>();
+            var actionAttributes = context.MethodInfo.GetCustomAttributes<T>();
+
+            var result = new List<T>(controllerAttributes);
+            result.AddRange(actionAttributes);
+            return result;
+        }
+
 
     }
 }

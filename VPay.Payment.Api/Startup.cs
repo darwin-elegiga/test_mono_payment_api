@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -29,12 +30,19 @@ namespace VPay.Payment.Api
             services
                 .AddMvc(opt =>
                 {
+                    opt.EnableEndpointRouting = false;
                     opt.Filters.Add(typeof(ValidatorActionFilter));
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonSettings()
+                })            
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson()
                 .AddFluentValidationSettings();
 
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = actionContext =>
@@ -44,7 +52,6 @@ namespace VPay.Payment.Api
             });
 
             services
-                .AddApiVersioningService()
                 .AddOptions()
                 .AddSwaggerGenService()
                 .SetupAuth()
@@ -61,7 +68,7 @@ namespace VPay.Payment.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHostApplicationLifetime appLifetime)
         {
             app.UseExceptionHandler("/error").WithConventions(x =>
             {
@@ -70,8 +77,7 @@ namespace VPay.Payment.Api
 
             app.Map("/error", x => x.Run(y => throw new Exception()));
 
-            app
-                .UseStaticFiles()
+            app.UseStaticFiles()
                 .UseMiddleware<RequestLoggingMiddleware>()
                 .UseAuthentication()
                 .UseMiddleware<AttachUserToLoggingMiddleware>()
