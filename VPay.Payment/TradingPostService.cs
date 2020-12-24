@@ -112,6 +112,19 @@ namespace VPay.Payment
 
             if (validation != null)
             {
+                if (validation.Code != "0000")
+                {
+                    using (_logger.BeginScope(new Dictionary<string, object>
+                    {
+                        ["SuccessCode"] = validation.Code,
+                        ["SuccessDesc"] = validation.Message,
+                    }))
+                    {
+                        _logger.LogWarning("{ServiceName} - {ValidationStatus} - Message: {SuccessCode} - {SuccessDesc} \nRequest Data: {UserRequestBody}",
+                            nameof(RetrieveCard), "ValidationError", validation.Code, validation.Message, request.ToDisplayString());
+                    }
+                }
+
                 auth.InitialErrorCode = validation.Code;
                 auth.InitialErrorMessage = validation.Message;
             }
@@ -367,6 +380,16 @@ namespace VPay.Payment
                 {
                     Code = "400",
                     Message = "client defaulted to ' '"
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(request.CardHolder.BillingCode))
+            {
+                request.CardHolder.BillingCode = " ";
+                result = new ValidationMessage()
+                {
+                    Code = "907",
+                    Message = "billing code is not valid"
                 };
             }
 

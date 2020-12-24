@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -14,14 +15,17 @@ namespace VPay.Payment
         private readonly ITransactionService _transactionService;
         private readonly ILegacyValidationService _validationService;
         private readonly ILogger _logger;
+        private readonly IUserInfo _user;
 
         public LegacyTransactionService(ITransactionService transactionService,
             ILegacyValidationService validationService,
-            ILogger<LegacyTransactionService> logger)
+            ILogger<LegacyTransactionService> logger,
+            IUserInfo user)
         {
             _transactionService = transactionService;
             _validationService = validationService;
             _logger = logger;
+            _user = user;
         }
 
         public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request,
@@ -35,6 +39,7 @@ namespace VPay.Payment
                     Token = request.Token,
                     TransNumber = request.TransNumber
                 }
+                , Source = Convert.ToChar(_user.Source)
             };
 
             _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
@@ -81,6 +86,7 @@ namespace VPay.Payment
                     Token = request.Token,
                     TransNumber = request.TransNumber
                 }
+                , Source = Convert.ToChar(_user.Source)
             };
 
             _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
