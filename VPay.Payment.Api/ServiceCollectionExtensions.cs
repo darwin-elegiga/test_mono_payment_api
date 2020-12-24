@@ -22,23 +22,6 @@ namespace VPay.Payment.Api
 {
     public static class ServiceCollectionExtensions
     {
-
-        //public static IMvcBuilder AddJsonSettings(this IMvcBuilder mvcBuilder)
-        //{
-        //    mvcBuilder
-        //        .AddJsonOptions(options =>
-        //        {
-        //            options.JsonSerializerOptions.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-        //            options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-        //            options.SerializerSettings.Converters.Add(new DecimalJsonConverter());
-        //            options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-        //            options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-        //        });
-  
-
-        //    return mvcBuilder;
-        //}
-
         public static IMvcBuilder AddFluentValidationSettings(this IMvcBuilder mvcBuilder)
         {
             return mvcBuilder.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
@@ -74,20 +57,31 @@ namespace VPay.Payment.Api
             services.AddSwaggerGen(c =>
             {
                 //Names used here are used in URL for SwaggerUI
-                c.SwaggerDoc("v1.0", new OpenApiInfo { Title = "Payment API", Version = "v1.0" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Payment API", Version = "v1.0" });
 
-                c.AddSecurityDefinition("VPay", new OpenApiSecurityScheme()
+                c.AddSecurityDefinition("basic", new OpenApiSecurityScheme()
                 {
-                    //Description = "Basic HTTP Auth"
+                    Description = "Basic HTTP Auth",
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
                     Scheme = "basic",
                     In = ParameterLocation.Header,
-                    Description = "Basic Authorization header using the Bearer scheme."
-
                 });
 
-                c.OperationFilter<BasicAuthFilter>(); ;
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "basic"
+                                }
+                            },
+                            new string[] {}
+                    }
+                });
 
                 //Determine which set of documentation an API should belong to
                 c.DocInclusionPredicate((docName, apiDesc) =>
@@ -105,24 +99,8 @@ namespace VPay.Payment.Api
                     }
                     return actionApiVersionModel.ImplementedApiVersions.Any(v => $"v{v.ToString()}" == docName);
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                          new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "basic"
-                                }
-                            },
-                            new string[] {}
-                    }
-                });
 
                 c.AddFluentValidationRules();
-
-
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

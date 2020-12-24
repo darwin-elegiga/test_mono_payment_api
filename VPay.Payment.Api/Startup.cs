@@ -8,9 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Reflection;
+using FluentValidation.AspNetCore;
+using System.IO;
+using VPay.Payment.Api.Auth;
 
 namespace VPay.Payment.Api
 {
@@ -32,7 +38,7 @@ namespace VPay.Payment.Api
                 {
                     opt.EnableEndpointRouting = false;
                     opt.Filters.Add(typeof(ValidatorActionFilter));
-                })            
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddNewtonsoftJson()
                 .AddFluentValidationSettings();
@@ -52,8 +58,9 @@ namespace VPay.Payment.Api
             });
 
             services
-                .AddOptions()
                 .AddSwaggerGenService()
+                .AddSwaggerGenNewtonsoftSupport()
+                .AddOptions()
                 .SetupAuth()
                 .SetupDb2(Configuration);
 
@@ -88,11 +95,17 @@ namespace VPay.Payment.Api
             app.UseSwaggerUI(c =>
             {
                 //The version after /swagger/ in the URL must match the "name" established when defining the API documentation in calls to SwaggerDoc
-                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Payment v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payment-Api");
             });
 
             _logger = loggerFactory.CreateLogger<Startup>();
-
+            app.UseRouting();
+            //app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             appLifetime.ApplicationStarted.Register(OnStartup);
             appLifetime.ApplicationStopping.Register(OnShutdown);

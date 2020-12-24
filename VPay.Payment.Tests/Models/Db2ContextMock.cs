@@ -15,12 +15,20 @@ namespace VPay.Payment.Tests.Models
             return Task.FromResult(CanConnectMock);
         }
 
+        public T GetRepository<T>() where T : IDb2BaseRepository
+        {
+            var abc = new Mock<IDb2BaseRepository>();
+            return (T)abc.Object;
+        }
+
         public IFax Fax => FaxMock.Object;
         public ISecurity Security => SecurityMock.Object;
         public ITransactionWs TransactionWs => TransactionWsMock.Object;
         public ITradingPostWs TradingPostWs => TradingPostWsMock.Object;
         public IPreferencing Preferencing => PreferencingMock.Object;
         public ICorrespondenceRepo Correspondence => CorrespondenceMock.Object;
+
+       
 
         public IProviderRepository ProviderRepository => ProviderMock.Object;
 
@@ -32,5 +40,6 @@ namespace VPay.Payment.Tests.Models
         public Mock<ICorrespondenceRepo> CorrespondenceMock { get; } = new Mock<ICorrespondenceRepo>();
 
         public Mock<IProviderRepository> ProviderMock { get; } = new Mock<IProviderRepository>();
+
     }
 }

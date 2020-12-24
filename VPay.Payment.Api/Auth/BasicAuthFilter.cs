@@ -17,7 +17,7 @@ namespace VPay.Payment.Api.Auth
     {
         private readonly string _securitySchemaName;
 
-        public BasicAuthFilter(string securitySchemaName = "jwt")
+        public BasicAuthFilter(string securitySchemaName = "basic")
         {
             _securitySchemaName = securitySchemaName;
         }
