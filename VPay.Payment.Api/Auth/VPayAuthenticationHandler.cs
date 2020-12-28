@@ -24,7 +24,6 @@ namespace VPay.Payment.Api.Auth
         private const string BasicSchemeName = "Basic";
         private readonly IAuthService _authenticationService;
         private readonly IHttpContextAccessor _accessor;
-        private readonly IUserInfo _user;
 
 
         public VPayAuthenticationHandler(
@@ -33,13 +32,11 @@ namespace VPay.Payment.Api.Auth
             UrlEncoder encoder,
             ISystemClock clock,
             IHttpContextAccessor accessor,
-            IAuthService authenticationService,
-            IUserInfo user)
+            IAuthService authenticationService)
             : base(options, logger, encoder, clock)
         {
             _accessor = accessor;
             _authenticationService = authenticationService;
-            _user = user;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -168,7 +165,6 @@ namespace VPay.Payment.Api.Auth
                                 User = body.GetReasonCodes.Request.User,
                                 TransNumber = body.GetReasonCodes.Request.TransNumber
                             }
-                            , Source = Convert.ToChar(_user.Source)
                         };
                     }
                     else
