@@ -26,26 +26,52 @@ namespace VPay.Payment
                 auth = new TradingPostData.AuthenticationValuesAndIp();
             }
 
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["UserRequestBody"] = request.ToDisplayString()
+            }))
+            {
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
                 nameof(LoadCard), "Starting", request.ToDisplayString());
 
-            var validation = ValidateAuth(auth);
-            validation = ValidateLoadCard(request) ?? validation;
+                var validation = ValidateAuth(auth);
+                validation = ValidateLoadCard(request) ?? validation;
 
-            if (validation != null)
-            {
-                auth.InitialErrorCode = validation.Code;
-                auth.InitialErrorMessage = validation.Message;
-            }
+                if (validation != null)
+                {
+                    auth.InitialErrorCode = validation.Code;
+                    auth.InitialErrorMessage = validation.Message;
+                }
 
-            CleanFields(request);
+                CleanFields(request);
 
-            TradingPostData.LoadResult response;
-            try
-            {
-                response = await _tradingPostWs.LoadCard(auth, request);
+                TradingPostData.LoadResult response;
+                try
+                {
+                    response = await _tradingPostWs.LoadCard(auth, request);
 
-                if (response == null)
+                    if (response == null)
+                    {
+                        response = new TradingPostData.LoadResult()
+                        {
+                            CardInformation = new TradingPostData.CardInformation(),
+                            Claim = new TradingPostData.Claim(),
+                            TransactionInformation = new TradingPostData.TransactionInformation()
+                            {
+                                ResponseCode = "454",
+                                ResponseDescription = "Output length from procedure is 0."
+                            }
+                        };
+                    }
+                    else
+                    {
+                        // duplicating this from the original code (not sure if this was deliberate or accidental)
+                        response.Claim.ClaimDate = response.Claim.ClaimDeductible;
+                        response.Claim.ClaimDescription = response.Claim.ClaimDeductible;
+                        response.Claim.ClaimNotes = null;
+                    }
+                }
+                catch (Exception ex)
                 {
                     response = new TradingPostData.LoadResult()
                     {
@@ -53,48 +79,28 @@ namespace VPay.Payment
                         Claim = new TradingPostData.Claim(),
                         TransactionInformation = new TradingPostData.TransactionInformation()
                         {
-                            ResponseCode = "454",
-                            ResponseDescription = "Output length from procedure is 0."
+                            ResponseCode = "450",
+                            ResponseDescription = "Internal Error: Connection to stored procedure has failed.  This is an internal communication error."
                         }
                     };
+                    _logger.LogError(ex, "Error running {ServiceName}", nameof(LoadCard));
                 }
-                else
+
+                using (_logger.BeginScope(new Dictionary<string, object>
                 {
-                    // duplicating this from the original code (not sure if this was deliberate or accidental)
-                    response.Claim.ClaimDate = response.Claim.ClaimDeductible;
-                    response.Claim.ClaimDescription = response.Claim.ClaimDeductible;
-                    response.Claim.ClaimNotes = null;
+                    ["ResponseCode"] = response.TransactionInformation.ResponseCode,
+                    ["ResponseDesc"] = response.TransactionInformation.ResponseDescription,
+                    ["ResultStatusCode"] = response.TransactionInformation.StatusCode,
+                    ["ResultStatusDesc"] = response.TransactionInformation.StatusDescription,
+                }))
+                {
+                    var level = response.TransactionInformation.ResponseCode == "00000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                        nameof(LoadCard), "Response", response.ToDisplayString());
                 }
-            }
-            catch (Exception ex)
-            {
-                response = new TradingPostData.LoadResult()
-                {
-                    CardInformation = new TradingPostData.CardInformation(),
-                    Claim = new TradingPostData.Claim(),
-                    TransactionInformation = new TradingPostData.TransactionInformation()
-                    {
-                        ResponseCode = "450",
-                        ResponseDescription = "Internal Error: Connection to stored procedure has failed.  This is an internal communication error."
-                    }
-                };
-                _logger.LogError(ex, "Error running {ServiceName}", nameof(LoadCard));
-            }
 
-            using (_logger.BeginScope(new Dictionary<string, object>
-            {
-                ["ResponseCode"] = response.TransactionInformation.ResponseCode,
-                ["ResponseDesc"] = response.TransactionInformation.ResponseDescription,
-                ["ResultStatusCode"] = response.TransactionInformation.StatusCode,
-                ["ResultStatusDesc"] = response.TransactionInformation.StatusDescription,
-            }))
-            {
-                var level = response.TransactionInformation.ResponseCode == "00000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserRequestBody}",
-                    nameof(LoadCard), "Response", response.ToDisplayString());
+                return response;
             }
-
-            return response;
         }
 
         public async Task<TradingPostData.RetrieveResult> RetrieveCard(TradingPostData.AuthenticationValuesAndIp auth, TradingPostData.RetrieveRequest request)
