@@ -120,8 +120,7 @@ namespace VPay.Payment
                         ["SuccessDesc"] = validation.Message,
                     }))
                     {
-                        _logger.LogWarning("{ServiceName} - {ValidationStatus} - Message: {SuccessCode} - {SuccessDesc} \nRequest Data: {UserRequestBody}",
-                            nameof(RetrieveCard), "ValidationError", validation.Code, validation.Message, request.ToDisplayString());
+                        _logger.LogWarning("{ServiceName} - {ValidationStatus} - Message: {SuccessCode} - {SuccessDesc} \nRequest Data: {UserRequestBody}", nameof(RetrieveCard), "ValidationError", validation.Code, validation.Message, request.ToDisplayString());
                     }
                 }
 
