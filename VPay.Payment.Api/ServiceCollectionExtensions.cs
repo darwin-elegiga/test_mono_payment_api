@@ -1,18 +1,14 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using VPay.Data.Db2.Odbc;
 using VPay.Payment.Api.Auth;
@@ -33,20 +29,6 @@ namespace VPay.Payment.Api
             services.AddDb2OdbcConnection();
 
             services.AddScoped<IHealthCheck, Db2HealthCheckService>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddApiVersioningService(this IServiceCollection services)
-        {
-            services.AddApiVersioning(o =>
-            {
-                o.ReportApiVersions = true;
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.DefaultApiVersion = new ApiVersion(1, 0);
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.ApiVersionReader = new HeaderApiVersionReader();
-            });
 
             return services;
         }
@@ -83,30 +65,12 @@ namespace VPay.Payment.Api
                     }
                 });
 
-                //Determine which set of documentation an API should belong to
-                c.DocInclusionPredicate((docName, apiDesc) =>
-                {
-                    var actionApiVersionModel = apiDesc.ActionDescriptor?.GetApiVersion();
-
-                    // if no version is specified or API is marked version neutral add to all swagger documents
-                    if (actionApiVersionModel == null || actionApiVersionModel.IsApiVersionNeutral)
-                    {
-                        return true;
-                    }
-                    if (actionApiVersionModel.DeclaredApiVersions.Any())
-                    {
-                        return actionApiVersionModel.DeclaredApiVersions.Any(v => $"v{v.ToString()}" == docName);
-                    }
-                    return actionApiVersionModel.ImplementedApiVersions.Any(v => $"v{v.ToString()}" == docName);
-                });
-
                 c.AddFluentValidationRules();
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-
 
             return services;
         }
@@ -132,6 +96,5 @@ namespace VPay.Payment.Api
 
             return services;
         }
-
     }
 }

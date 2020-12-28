@@ -24,7 +24,6 @@ namespace VPay.Payment.Api.Auth
         private readonly IAuthService _authenticationService;
         private readonly IHttpContextAccessor _accessor;
 
-
         public VPayAuthenticationHandler(
             IOptionsMonitor<VPayAuthenticationOptions> options,
             ILoggerFactory logger,
@@ -131,8 +130,6 @@ namespace VPay.Payment.Api.Auth
             }
         }
 
-
-
         private void TryToLogFailureBody(string userName, string bodyAsText)
         {
             try
@@ -185,7 +182,6 @@ namespace VPay.Payment.Api.Auth
                     {
                         Logger.LogWarning("Login Failed [{UserName}]: \n{UserRequestBody}", userName, result.ToDisplayString());
                     }
-
                 }
             }
             catch
@@ -194,5 +190,4 @@ namespace VPay.Payment.Api.Auth
             }
         }
     }
-
 }

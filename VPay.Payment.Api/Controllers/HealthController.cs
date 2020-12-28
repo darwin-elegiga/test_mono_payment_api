@@ -7,7 +7,6 @@ using VPay.Payment.Common;
 
 namespace VPay.Payment.Api.Controllers
 {
-    [ApiVersionNeutral]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -19,7 +18,6 @@ namespace VPay.Payment.Api.Controllers
         {
             _healthCheckService = healthCheckService;
         }
-
 
         /// <summary>
         /// Checks to see if the application can connect to all the required services
@@ -48,6 +46,5 @@ namespace VPay.Payment.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
         }
-
     }
 }
