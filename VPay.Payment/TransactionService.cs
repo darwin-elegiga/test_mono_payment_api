@@ -13,11 +13,9 @@ namespace VPay.Payment
 {
     public class TransactionService : ITransactionService
     {
-
         private readonly IDb2Context _db2Context;
         private readonly IUserInfo _user;
         private readonly ILogger _logger;
-
 
         public TransactionService(IDb2Context db2Context, IUserInfo user, ILogger<TransactionService> logger)
         {
@@ -28,67 +26,74 @@ namespace VPay.Payment
 
         public async Task<ReasonCodeResponse> GetReasonCodes(ReasonCodeRequest request)
         {
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
-                nameof(GetReasonCodes), "Starting", request.ToDisplayString());
-
-            var panRequestParam = new TransactionWsRequest()
-            {
-                UserId = "WSQATEST",
-                Password = "QATEST01WS18",
-                IpAddress = "10.120.202.129",
-                Request = new StandardRequest()
-                {
-                    CommonData = new CommonData()
-                    {
-                        TransNumber = request.TransNumber,
-                        User = request.User,
-                        Token = request.Token
-                    }
-                    ,Source = Convert.ToChar(_user.Source)
-                }
-            };
-
-            var panRequest = await _db2Context.TransactionWs.GetPan(panRequestParam);
-
-            var reasonCodeResponse = new ReasonCodeResponse();
-
-            if (panRequest.CommonData.SuccessCode == "0002")
-            {
-                reasonCodeResponse = new ReasonCodeResponse(panRequest.CommonData);
-            }
-            else
-            {
-                var reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(request.Token, request.User, request.TransNumber);
-
-                reasonCodeResponse.ReasonCodeList = reasonCodes;
-                reasonCodeResponse.CommonData = new CommonData
-                {
-                    SuccessCode = "0000",
-                    SuccessDesc = "Successful Completion",
-                    User = request.User,
-                    TransNumber = request.TransNumber
-                };
-            }
-
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = reasonCodeResponse.CommonData.ReasonCode,
-                ["ReasonDesc"] = reasonCodeResponse.CommonData.ReasonDesc,
-                ["ResponseCode"] = reasonCodeResponse.CommonData.ResponseCode,
-                ["ResponseDesc"] = reasonCodeResponse.CommonData.ResponseDesc,
-                ["SuccessCode"] = reasonCodeResponse.CommonData.SuccessCode,
-                ["SuccessDesc"] = reasonCodeResponse.CommonData.SuccessDesc,
+                ["UserRequestBody"] = request.ToDisplayString()
             }))
             {
-                var level = reasonCodeResponse.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
-                    nameof(GetPanNumber), "Response", reasonCodeResponse.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetReasonCodes), "Starting", request.ToDisplayString());
+
+                var panRequestParam = new TransactionWsRequest()
+                {
+                    UserId = "WSQATEST",
+                    Password = "QATEST01WS18",
+                    IpAddress = "10.120.202.129",
+                    Request = new StandardRequest()
+                    {
+                        CommonData = new CommonData()
+                        {
+                            TransNumber = request.TransNumber,
+                            User = request.User,
+                            Token = request.Token
+                        }
+                        ,
+                        Source = Convert.ToChar(_user.Source)
+                    }
+                };
+
+                var panRequest = await _db2Context.TransactionWs.GetPan(panRequestParam);
+
+                var reasonCodeResponse = new ReasonCodeResponse();
+
+                if (panRequest.CommonData.SuccessCode == "0002")
+                {
+                    reasonCodeResponse = new ReasonCodeResponse(panRequest.CommonData);
+                }
+                else
+                {
+                    var reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(request.Token, request.User, request.TransNumber);
+
+                    reasonCodeResponse.ReasonCodeList = reasonCodes;
+                    reasonCodeResponse.CommonData = new CommonData
+                    {
+                        SuccessCode = "0000",
+                        SuccessDesc = "Successful Completion",
+                        User = request.User,
+                        TransNumber = request.TransNumber
+                    };
+                }
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["ReasonCode"] = reasonCodeResponse.CommonData.ReasonCode,
+                    ["ReasonDesc"] = reasonCodeResponse.CommonData.ReasonDesc,
+                    ["ResponseCode"] = reasonCodeResponse.CommonData.ResponseCode,
+                    ["ResponseDesc"] = reasonCodeResponse.CommonData.ResponseDesc,
+                    ["SuccessCode"] = reasonCodeResponse.CommonData.SuccessCode,
+                    ["SuccessDesc"] = reasonCodeResponse.CommonData.SuccessDesc,
+                }))
+                {
+                    var level = reasonCodeResponse.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                        nameof(GetPanNumber), "Response", reasonCodeResponse.ToDisplayString());
+                }
+
+                reasonCodeResponse.CommonData.ReasonDesc = "";
+                reasonCodeResponse.CommonData.ReasonCode = "";
+
+                return reasonCodeResponse;
             }
-
-            reasonCodeResponse.CommonData.ReasonDesc = "";
-            reasonCodeResponse.CommonData.ReasonCode = "";
-
-            return reasonCodeResponse;
         }
 
         public async Task<TransactionDetailResponse> GetTransactionDetails(TransactionDetailRequest request)
@@ -100,339 +105,380 @@ namespace VPay.Payment
                     TransNumber = request.TransNumber,
                     User = request.User,
                     Token = request.Token
-                }
+                },
+                Source = Convert.ToChar(_user.Source)
             };
-
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
-                nameof(GetTransactionDetails), "Starting", standardRequest.ToDisplayString());
-
-
-            TransactionDetailResponse response;
-
-            var panNumResponse = await GetPanNumber(standardRequest);
-
-            if (panNumResponse.CommonData.SuccessCode == "0002")
-            {
-                response = new TransactionDetailResponse()
-                {
-                    CommonData = panNumResponse.CommonData
-                };
-            }
-            else
-            {
-                var headerData = (await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber)).FirstOrDefault();
-                if (headerData != null)
-                {
-                    var convHeaderData = headerData.ToHeaderData();
-
-                    string client = convHeaderData.Client;
-                    string billCode = convHeaderData.BillCode;
-
-                    StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
-                    convHeaderData.SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
-                    convHeaderData.SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
-
-                    PayTypeDetail payTypeDetail = new PayTypeDetail();
-                    payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
-                    payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
-                    payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
-                    payTypeDetail.Association = panNumResponse.CardData.CardType;
-                    payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
-                    payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
-                    payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
-                    payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
-                    payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
-
-                    var detailList = (await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber)).ToDetail().ToList();
-                    var correspList = await GetCorrespondenceList(long.Parse(request.TransNumber));
-
-                    // when nothing goes wrong
-                    string finalSuccessCode = "0000";
-                    string finalSuccessDesc = "Successful Query";
-
-                    if (detailList.Count == 0)
-                    {
-                        finalSuccessCode = "0101";
-                        finalSuccessDesc = "Details Not Found for: " + request.TransNumber + "," + client + "," + billCode;
-                    }
-                    else if (correspList.Count == 0)
-                    {
-                        finalSuccessDesc = "No Correspondence Data For : " + request.TransNumber;
-                    }
-
-                    response = new TransactionDetailResponse()
-                    {
-                        DetailList = detailList,
-                        HeaderData = convHeaderData,
-                        CorrespondenceList = correspList,
-                        PayTypeDetail = payTypeDetail,
-                        CommonData = new CommonData()
-                        {
-                            User = request.User.ToUpper(),
-                            TransNumber = request.TransNumber,
-                            SuccessCode = finalSuccessCode,
-                            SuccessDesc = finalSuccessDesc
-                        }
-                    };
-                }
-                else // if no header data exists
-                {
-                    response = new TransactionDetailResponse()
-                    {
-                        CommonData = new CommonData()
-                        {
-                            User = request.User.ToUpper(),
-                            TransNumber = request.TransNumber,
-                            SuccessCode = "0103",
-                            SuccessDesc = "No Header for: " + request.TransNumber
-                        }
-                    };
-                }
-            }
-
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = response.CommonData.ReasonCode,
-                ["ReasonDesc"] = response.CommonData.ReasonDesc,
-                ["ResponseCode"] = response.CommonData.ResponseCode,
-                ["ResponseDesc"] = response.CommonData.ResponseDesc,
-                ["SuccessCode"] = response.CommonData.SuccessCode,
-                ["SuccessDesc"] = response.CommonData.SuccessDesc,
+                ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                var level = response.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
-                    nameof(GetTransactionDetails), "Response", response.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetTransactionDetails), "Starting", standardRequest.ToDisplayString());
+
+                TransactionDetailResponse response;
+
+                var panNumResponse = await GetPanNumber(standardRequest);
+
+                if (panNumResponse.CommonData.SuccessCode == "0002")
+                {
+                    response = new TransactionDetailResponse()
+                    {
+                        CommonData = panNumResponse.CommonData
+                    };
+                }
+                else
+                {
+                    var headerData = (await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber)).FirstOrDefault();
+                    if (headerData != null)
+                    {
+                        var convHeaderData = headerData.ToHeaderData();
+
+                        string client = convHeaderData.Client;
+                        string billCode = convHeaderData.BillCode;
+
+                        StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
+                        convHeaderData.SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
+                        convHeaderData.SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
+
+                        PayTypeDetail payTypeDetail = new PayTypeDetail();
+                        payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
+                        payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
+                        payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
+                        payTypeDetail.Association = panNumResponse.CardData.CardType;
+                        payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
+                        payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
+                        payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
+                        payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
+                        payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
+
+                        var detailList = (await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber)).ToDetail().ToList();
+                        var correspList = await GetCorrespondenceList(long.Parse(request.TransNumber));
+
+                        // when nothing goes wrong
+                        string finalSuccessCode = "0000";
+                        string finalSuccessDesc = "Successful Query";
+
+                        if (detailList.Count == 0)
+                        {
+                            finalSuccessCode = "0101";
+                            finalSuccessDesc = "Details Not Found for: " + request.TransNumber + "," + client + "," + billCode;
+                        }
+                        else if (correspList.Count == 0)
+                        {
+                            finalSuccessDesc = "No Correspondence Data For : " + request.TransNumber;
+                        }
+
+                        response = new TransactionDetailResponse()
+                        {
+                            DetailList = detailList,
+                            HeaderData = convHeaderData,
+                            CorrespondenceList = correspList,
+                            PayTypeDetail = payTypeDetail,
+                            CommonData = new CommonData()
+                            {
+                                User = request.User.ToUpper(),
+                                TransNumber = request.TransNumber,
+                                SuccessCode = finalSuccessCode,
+                                SuccessDesc = finalSuccessDesc
+                            }
+                        };
+                    }
+                    else // if no header data exists
+                    {
+                        response = new TransactionDetailResponse()
+                        {
+                            CommonData = new CommonData()
+                            {
+                                User = request.User.ToUpper(),
+                                TransNumber = request.TransNumber,
+                                SuccessCode = "0103",
+                                SuccessDesc = "No Header for: " + request.TransNumber
+                            }
+                        };
+                    }
+                }
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["ReasonCode"] = response.CommonData.ReasonCode,
+                    ["ReasonDesc"] = response.CommonData.ReasonDesc,
+                    ["ResponseCode"] = response.CommonData.ResponseCode,
+                    ["ResponseDesc"] = response.CommonData.ResponseDesc,
+                    ["SuccessCode"] = response.CommonData.SuccessCode,
+                    ["SuccessDesc"] = response.CommonData.SuccessDesc,
+                }))
+                {
+                    var level = response.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                        nameof(GetTransactionDetails), "Response", response.ToDisplayString());
+                }
+
+                response.CommonData.ReasonDesc = "";
+                response.CommonData.ReasonCode = "";
+
+                return response;
             }
-
-            response.CommonData.ReasonDesc = "";
-            response.CommonData.ReasonCode = "";
-
-            return response;
         }
 
         public async Task<StandardResponse> GetPanNumber(StandardRequest standardRequest)
         {
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
-                nameof(GetPanNumber), "Starting", standardRequest.ToDisplayString());
-
-            var request = new TransactionWsRequest()
-            {
-                UserId = "WSQATEST",
-                Password = "QATEST01WS18",
-                IpAddress = "10.120.202.129",
-                Request = standardRequest
-            };
-
-            var result = await _db2Context.TransactionWs.GetPan(request);
-
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = result.CommonData.ReasonCode,
-                ["ReasonDesc"] = result.CommonData.ReasonDesc,
-                ["ResponseCode"] = result.CommonData.ResponseCode,
-                ["ResponseDesc"] = result.CommonData.ResponseDesc,
-                ["SuccessCode"] = result.CommonData.SuccessCode,
-                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
-                    nameof(GetPanNumber), "Response", result.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
+                nameof(GetPanNumber), "Starting", standardRequest.ToDisplayString());
+
+                var request = new TransactionWsRequest()
+                {
+                    UserId = "WSQATEST",
+                    Password = "QATEST01WS18",
+                    IpAddress = "10.120.202.129",
+                    Request = standardRequest
+                };
+
+                var result = await _db2Context.TransactionWs.GetPan(request);
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["ReasonCode"] = result.CommonData.ReasonCode,
+                    ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                    ["ResponseCode"] = result.CommonData.ResponseCode,
+                    ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                    ["SuccessCode"] = result.CommonData.SuccessCode,
+                    ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                }))
+                {
+                    var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                        nameof(GetPanNumber), "Response", result.ToDisplayString());
+                }
+
+                ClearCommonData(result);
+
+                return result;
             }
-
-            ClearCommonData(result);
-
-            return result;
         }
 
         public async Task<StandardResponse> OpenPreAuth(StandardRequest standardRequest)
         {
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(OpenPreAuth), "Starting", standardRequest.ToDisplayString());
-
-            var request = new TransactionWsRequest()
-            {
-                UserId = "WSQATEST",
-                Password = "QATEST01WS18",
-                IpAddress = "10.120.202.129",
-                Request = standardRequest
-            };
-
-            var result = await _db2Context.TransactionWs.OpenPreAuth(request);
-
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = result.CommonData.ReasonCode,
-                ["ReasonDesc"] = result.CommonData.ReasonDesc,
-                ["ResponseCode"] = result.CommonData.ResponseCode,
-                ["ResponseDesc"] = result.CommonData.ResponseDesc,
-                ["SuccessCode"] = result.CommonData.SuccessCode,
-                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}", nameof(OpenPreAuth), "Response", result.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(OpenPreAuth), "Starting", standardRequest.ToDisplayString());
+
+                var request = new TransactionWsRequest()
+                {
+                    UserId = "WSQATEST",
+                    Password = "QATEST01WS18",
+                    IpAddress = "10.120.202.129",
+                    Request = standardRequest
+                };
+
+                var result = await _db2Context.TransactionWs.OpenPreAuth(request);
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["ReasonCode"] = result.CommonData.ReasonCode,
+                    ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                    ["ResponseCode"] = result.CommonData.ResponseCode,
+                    ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                    ["SuccessCode"] = result.CommonData.SuccessCode,
+                    ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                }))
+                {
+                    var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}", nameof(OpenPreAuth), "Response", result.ToDisplayString());
+                }
+
+                ClearCommonData(result);
+
+                return result;
             }
-
-            ClearCommonData(result);
-
-            return result;
         }
 
         public async Task<StandardResponse> LoadPan(StandardRequest standardRequest, string clientData)
         {
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "Starting", standardRequest.ToDisplayString(), clientData);
-
-            SetupDefaultValuesForLoadPan(standardRequest);
-
-            var checkDeclineMessages = CheckLoadPanForDeclineErrorMessages(standardRequest);
-
-            // Setting these response codes and description. If these are set to non-success code of 0000
-            // then the LoadPan db2 call will record an declined message with these responses
-            // WE MUST STILL CALL THE STORED PROC, even if there is an error in these responses.
-            standardRequest.CommonData.ResponseCode = checkDeclineMessages.code;
-            standardRequest.CommonData.ResponseDesc = checkDeclineMessages.message;
-
-            _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage", standardRequest.ToDisplayString(), clientData);
-
-            var request = new TransactionWsRequest()
-            {
-                UserId = "WSQATEST",
-                Password = "QATEST01WS18",
-                IpAddress = "10.120.202.129",
-                Request = standardRequest
-            };
-
-            var result = await _db2Context.TransactionWs.LoadPan(request, clientData);
-
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = result.CommonData.ReasonCode,
-                ["ReasonDesc"] = result.CommonData.ReasonDesc,
-                ["ResponseCode"] = result.CommonData.ResponseCode,
-                ["ResponseDesc"] = result.CommonData.ResponseDesc,
-                ["SuccessCode"] = result.CommonData.SuccessCode,
-                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                var level = result.CommonData.SuccessCode == "0000" && checkDeclineMessages.code == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}\nclientData: {clientData}",
-                    nameof(LoadPan), "Response", result.ToDisplayString(), clientData);
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "Starting", standardRequest.ToDisplayString(), clientData);
+
+                SetupDefaultValuesForLoadPan(standardRequest);
+
+                var checkDeclineMessages = CheckLoadPanForDeclineErrorMessages(standardRequest);
+
+                // Setting these response codes and description. If these are set to non-success code of 0000
+                // then the LoadPan db2 call will record an declined message with these responses
+                // WE MUST STILL CALL THE STORED PROC, even if there is an error in these responses.
+                standardRequest.CommonData.ResponseCode = checkDeclineMessages.code;
+                standardRequest.CommonData.ResponseDesc = checkDeclineMessages.message;
+
+                _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage", standardRequest.ToDisplayString(), clientData);
+
+                var request = new TransactionWsRequest()
+                {
+                    UserId = "WSQATEST",
+                    Password = "QATEST01WS18",
+                    IpAddress = "10.120.202.129",
+                    Request = standardRequest
+                };
+
+                var result = await _db2Context.TransactionWs.LoadPan(request, clientData);
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["ReasonCode"] = result.CommonData.ReasonCode,
+                    ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                    ["ResponseCode"] = result.CommonData.ResponseCode,
+                    ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                    ["SuccessCode"] = result.CommonData.SuccessCode,
+                    ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                }))
+                {
+                    var level = result.CommonData.SuccessCode == "0000" && checkDeclineMessages.code == "0000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}\nclientData: {clientData}",
+                        nameof(LoadPan), "Response", result.ToDisplayString(), clientData);
+                }
+
+                // Set the Success Code and Description to the Declined Message if the Declined Message is an error code
+                if (checkDeclineMessages.code != "0000")
+                {
+                    result.CommonData.SuccessCode = checkDeclineMessages.code;
+                    result.CommonData.SuccessDesc = checkDeclineMessages.message;
+                }
+
+                ClearCommonData(result);
+
+                return result;
             }
-
-            // Set the Success Code and Description to the Declined Message if the Declined Message is an error code
-            if (checkDeclineMessages.code != "0000")
-            {
-                result.CommonData.SuccessCode = checkDeclineMessages.code;
-                result.CommonData.SuccessDesc = checkDeclineMessages.message;
-            }
-
-            ClearCommonData(result);
-
-            return result;
         }
 
         public async Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest)
         {
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(GetBalanceRequest), "Starting", standardRequest.ToDisplayString());
-
-            var request = new TransactionWsRequest()
-            {
-                UserId = "WSQATEST",
-                Password = "QATEST01WS18",
-                IpAddress = "10.120.202.129",
-                Request = standardRequest
-            };
-
-            var result = await _db2Context.TransactionWs.BalanceRequest(request);
-
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = result.CommonData.ReasonCode,
-                ["ReasonDesc"] = result.CommonData.ReasonDesc,
-                ["ResponseCode"] = result.CommonData.ResponseCode,
-                ["ResponseDesc"] = result.CommonData.ResponseDesc,
-                ["SuccessCode"] = result.CommonData.SuccessCode,
-                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
-                    nameof(GetBalanceRequest), "Response", result.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(GetBalanceRequest), "Starting", standardRequest.ToDisplayString());
+
+                var request = new TransactionWsRequest()
+                {
+                    UserId = "WSQATEST",
+                    Password = "QATEST01WS18",
+                    IpAddress = "10.120.202.129",
+                    Request = standardRequest
+                };
+
+                var result = await _db2Context.TransactionWs.BalanceRequest(request);
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["ReasonCode"] = result.CommonData.ReasonCode,
+                    ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                    ["ResponseCode"] = result.CommonData.ResponseCode,
+                    ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                    ["SuccessCode"] = result.CommonData.SuccessCode,
+                    ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                }))
+                {
+                    var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                        nameof(GetBalanceRequest), "Response", result.ToDisplayString());
+                }
+
+                ClearCommonData(result);
+
+                return result;
             }
-
-            ClearCommonData(result);
-
-            return result;
         }
 
         public async Task<StandardResponse> UnloadPan(StandardRequest standardRequest)
         {
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(UnloadPan), "Starting", standardRequest.ToDisplayString());
-
-            var request = new TransactionWsRequest()
-            {
-                UserId = "WSQATEST",
-                Password = "QATEST01WS18",
-                IpAddress = "10.120.202.129",
-                Request = standardRequest
-            };
-
-            var result = await _db2Context.TransactionWs.UnloadPan(request);
-
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = result.CommonData.ReasonCode,
-                ["ReasonDesc"] = result.CommonData.ReasonDesc,
-                ["ResponseCode"] = result.CommonData.ResponseCode,
-                ["ResponseDesc"] = result.CommonData.ResponseDesc,
-                ["SuccessCode"] = result.CommonData.SuccessCode,
-                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
-                    nameof(UnloadPan), "Response", result.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(UnloadPan), "Starting", standardRequest.ToDisplayString());
+
+                var request = new TransactionWsRequest()
+                {
+                    UserId = "WSQATEST",
+                    Password = "QATEST01WS18",
+                    IpAddress = "10.120.202.129",
+                    Request = standardRequest
+                };
+
+                var result = await _db2Context.TransactionWs.UnloadPan(request);
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["ReasonCode"] = result.CommonData.ReasonCode,
+                    ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                    ["ResponseCode"] = result.CommonData.ResponseCode,
+                    ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                    ["SuccessCode"] = result.CommonData.SuccessCode,
+                    ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                }))
+                {
+                    var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                        nameof(UnloadPan), "Response", result.ToDisplayString());
+                }
+
+                ClearCommonData(result);
+
+                return result;
             }
-
-            ClearCommonData(result);
-
-            return result;
         }
 
         public async Task<StandardResponse> StopPay(StandardRequest standardRequest)
         {
-            _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(StopPay), "Starting", standardRequest.ToDisplayString());
-
-            var request = new TransactionWsRequest()
-            {
-                UserId = "WSQATEST",
-                Password = "QATEST01WS18",
-                IpAddress = "10.120.202.129",
-                Request = standardRequest
-            };
-
-            var result = await _db2Context.TransactionWs.StopPay(request);
-
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["ReasonCode"] = result.CommonData.ReasonCode,
-                ["ReasonDesc"] = result.CommonData.ReasonDesc,
-                ["ResponseCode"] = result.CommonData.ResponseCode,
-                ["ResponseDesc"] = result.CommonData.ResponseDesc,
-                ["SuccessCode"] = result.CommonData.SuccessCode,
-                ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
-                _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
-                    nameof(StopPay), "Response", result.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(StopPay), "Starting", standardRequest.ToDisplayString());
+
+                var request = new TransactionWsRequest()
+                {
+                    UserId = "WSQATEST",
+                    Password = "QATEST01WS18",
+                    IpAddress = "10.120.202.129",
+                    Request = standardRequest
+                };
+
+                var result = await _db2Context.TransactionWs.StopPay(request);
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["ReasonCode"] = result.CommonData.ReasonCode,
+                    ["ReasonDesc"] = result.CommonData.ReasonDesc,
+                    ["ResponseCode"] = result.CommonData.ResponseCode,
+                    ["ResponseDesc"] = result.CommonData.ResponseDesc,
+                    ["SuccessCode"] = result.CommonData.SuccessCode,
+                    ["SuccessDesc"] = result.CommonData.SuccessDesc,
+                }))
+                {
+                    var level = result.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
+                    _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
+                        nameof(StopPay), "Response", result.ToDisplayString());
+                }
+
+                ClearCommonData(result);
+
+                return result;
             }
-
-            ClearCommonData(result);
-
-            return result;
         }
 
         public async Task<StandardResponse> CancelFax(int faxCode)
@@ -554,10 +600,8 @@ namespace VPay.Payment
             return sResp;
         }
 
-
         private async Task<List<CorespDtl>> GetCorrespondenceList(long transactionId)
         {
-
             var result = (await _db2Context.Correspondence.GetByTransactionId(transactionId)).ToCorespDtl().ToList();
             if (result.Count > 0)
             {
@@ -591,6 +635,7 @@ namespace VPay.Payment
                                         }
 
                                         break;
+
                                     case "001":
                                         if (7 < lastStatRank)
                                         {
@@ -599,6 +644,7 @@ namespace VPay.Payment
                                         }
 
                                         break;
+
                                     case "004":
                                         if (6 < lastStatRank)
                                         {
@@ -607,6 +653,7 @@ namespace VPay.Payment
                                         }
 
                                         break;
+
                                     case "003":
                                         if (5 < lastStatRank)
                                         {
@@ -615,6 +662,7 @@ namespace VPay.Payment
                                         }
 
                                         break;
+
                                     case "002":
                                         if (4 < lastStatRank)
                                         {
@@ -623,6 +671,7 @@ namespace VPay.Payment
                                         }
 
                                         break;
+
                                     case "006":
                                         if (3 < lastStatRank)
                                         {
@@ -631,6 +680,7 @@ namespace VPay.Payment
                                         }
 
                                         break;
+
                                     case "005":
                                         if (2 < lastStatRank)
                                         {
@@ -639,6 +689,7 @@ namespace VPay.Payment
                                         }
 
                                         break;
+
                                     case "999":
                                         if (1 < lastStatRank)
                                         {
@@ -647,6 +698,7 @@ namespace VPay.Payment
                                         }
 
                                         break;
+
                                     default:
                                         if (0 < lastStatRank)
                                         {
@@ -659,9 +711,7 @@ namespace VPay.Payment
                             }
                         }
                     }
-
                 }
-
             }
 
             return result;
@@ -721,12 +771,11 @@ namespace VPay.Payment
                     sr.CoveredItem.BeginDate = "10000101";
                 }
             }
-
         }
 
         /// <summary>
         /// This will Validate the data in the objects for the load pan and create response error codes.
-        /// The order of this is setup based on the java code. 
+        /// The order of this is setup based on the java code.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -871,7 +920,6 @@ namespace VPay.Payment
             }
 
             return result;
-
         }
 
         private void ClearCommonData(StandardResponse response)
