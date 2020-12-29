@@ -100,7 +100,6 @@ namespace VPay.Payment.Api
 
             _logger = loggerFactory.CreateLogger<Startup>();
             app.UseRouting();
-            //app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
