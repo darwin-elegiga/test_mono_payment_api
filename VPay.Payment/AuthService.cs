@@ -93,7 +93,7 @@ namespace VPay.Payment
                 return null;
             }
 
-     var remoteLogin = await _db.Security.RemoteLoginAsync(new RemoteLoginParam()
+     var remoteLogin = await _db.GetRepository<ISecurity>().RemoteLoginAsync(new RemoteLoginParam()
             {
                 UserId = name,
                 Password = password,
