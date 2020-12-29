@@ -46,8 +46,10 @@ namespace VPay.Payment.Api
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                options.SerializerSettings.Converters.Add(new DecimalJsonConverter());
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+
             });
             services.Configure<ApiBehaviorOptions>(options =>
             {
