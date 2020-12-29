@@ -30,7 +30,7 @@ namespace VPay.Payment.Api.Controllers
 
         private readonly ILogger _logger;
 
-        public LegacyController(IHostingEnvironment fileProvider, IHttpContextAccessor accessor, ILegacyTransactionService transactionService, ILogger<LegacyController> logger)
+        public LegacyController(IWebHostEnvironment fileProvider, IHttpContextAccessor accessor, ILegacyTransactionService transactionService, ILogger<LegacyController> logger)
         {
             _fileProvider = fileProvider.WebRootFileProvider;
             _accessor = accessor;
