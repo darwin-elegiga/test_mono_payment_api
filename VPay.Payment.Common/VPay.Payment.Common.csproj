@@ -6,6 +6,5 @@
 
   <ItemGroup>
     <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.3.0.91" />
-    <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.3.0.91" />
   </ItemGroup>
 </Project>

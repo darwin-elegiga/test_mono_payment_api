@@ -8,15 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
-using Swashbuckle.AspNetCore.Swagger;
-using System.Reflection;
-using FluentValidation.AspNetCore;
-using System.IO;
-using VPay.Payment.Api.Auth;
 
 namespace VPay.Payment.Api
 {
@@ -40,17 +34,15 @@ namespace VPay.Payment.Api
                     opt.Filters.Add(typeof(ValidatorActionFilter));
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                .AddNewtonsoftJson()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    options.SerializerSettings.Converters.Add(new DecimalJsonConverter());
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                })
                 .AddFluentValidationSettings();
 
-            services.AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-                options.SerializerSettings.Converters.Add(new DecimalJsonConverter());
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-
-            });
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = actionContext =>
@@ -113,7 +105,6 @@ namespace VPay.Payment.Api
             appLifetime.ApplicationStopped.Register(OnShutdownComplete);
         }
 
-
         private void OnStartup()
         {
             _logger.LogInformation("Startup occurred for VPay.Payment.Api");
@@ -128,7 +119,6 @@ namespace VPay.Payment.Api
         {
             _logger.LogInformation("Shutdown completed for VPay.Payment.Api");
         }
-
 
         private void ConfigureExceptionHandler(ExceptionHandlerConfiguration config, bool isDevelopment)
         {
