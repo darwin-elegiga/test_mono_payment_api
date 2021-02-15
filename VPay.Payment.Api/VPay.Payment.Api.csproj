@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition=" '$(Configuration)' == 'Debug' ">
-    <Exec Command="dotnet tool restore" />
+    <Exec ContinueOnError="True" Command="dotnet tool restore" />
     <Copy SourceFiles="@(_CopyGitHooks)" DestinationFolder="../.git/hooks" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
   </Target>
 </Project>
