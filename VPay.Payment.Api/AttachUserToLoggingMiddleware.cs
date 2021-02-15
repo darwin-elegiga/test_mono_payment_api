@@ -30,7 +30,7 @@ namespace VPay.Payment.Api
             }
             else
             {
-                using (_logger.BeginScope(new Dictionary<string, object> {["UserName"] = userName}))
+                using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
                 {
                     await _next(httpContext);
                 }

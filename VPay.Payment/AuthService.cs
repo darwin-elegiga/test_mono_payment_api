@@ -99,7 +99,7 @@ namespace VPay.Payment
                 Password = password,
                 Source = source
             });
-            
+
             if (!string.Equals(remoteLogin.ReturnCode, "OK"))
             {
                 _logger.LogWarning("Error Response from login [{ErrorMessage}] - Name: {UserName}", remoteLogin.ErrorMessage, name);

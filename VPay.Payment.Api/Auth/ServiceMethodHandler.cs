@@ -18,7 +18,7 @@ namespace VPay.Payment.Api.Auth
         {
             _authService = authService;
         }
-        
+
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ServiceMethodRequirement requirement)
         {
             // If the user does not have a name then we can not validate this requirement

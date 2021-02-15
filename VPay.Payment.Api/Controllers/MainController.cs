@@ -17,7 +17,7 @@ namespace VPay.Payment.Api.Controllers
         private readonly IHttpContextAccessor _accessor;
         private readonly ITransactionService _transactionService;
         private readonly IUserInfo _user;
-        
+
         public MainController(IHttpContextAccessor accessor, ITransactionService transactionService, IUserInfo user)
         {
             _accessor = accessor;
@@ -170,7 +170,8 @@ namespace VPay.Payment.Api.Controllers
                     User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
                     Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
                 }
-                , Source = Convert.ToChar(_user.Source)
+                ,
+                Source = Convert.ToChar(_user.Source)
             };
 
             return defaultStandardRequest;
@@ -191,7 +192,8 @@ namespace VPay.Payment.Api.Controllers
                     UnloadCode = "4602",
                     UnloadDesc = "No Reason"
                 }
-                , Source = Convert.ToChar(_user.Source) 
+                ,
+                Source = Convert.ToChar(_user.Source)
             };
 
             return defaultStandardRequest;

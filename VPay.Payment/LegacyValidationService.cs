@@ -10,7 +10,7 @@ using VPay.Payment.Common;
 
 namespace VPay.Payment
 {
-    public class LegacyValidationService: ILegacyValidationService
+    public class LegacyValidationService : ILegacyValidationService
     {
 
         public Task<ValidationMessage> ValidateStandardRequest(StandardRequest standardRequest,
@@ -143,7 +143,7 @@ namespace VPay.Payment
             {
                 return null;
             }
-            
+
             var invalidProperties = new List<string>();
 
             foreach (var (prop, attr) in ModelTools.GetTypePropertyAttributes<FixedLengthAttribute>(typeof(T)))
