@@ -12,6 +12,9 @@
 ###############################################################################
 #*.cs     diff=csharp
 
+*.sh text eol=lf
+**/git_hooks/** text eol=lf
+
 ###############################################################################
 # Set the merge driver for project and solution files
 #
