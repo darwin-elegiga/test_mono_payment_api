@@ -169,8 +169,7 @@ namespace VPay.Payment.Api.Controllers
                     TransNumber = transNumber,
                     User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
                     Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
-                }
-                ,
+                },
                 Source = Convert.ToChar(_user.Source)
             };
 
@@ -191,8 +190,7 @@ namespace VPay.Payment.Api.Controllers
                 {
                     UnloadCode = "4602",
                     UnloadDesc = "No Reason"
-                }
-                ,
+                },
                 Source = Convert.ToChar(_user.Source)
             };
 
@@ -222,6 +220,5 @@ namespace VPay.Payment.Api.Controllers
 
             return transactionDetailRequest;
         }
-
     }
 }

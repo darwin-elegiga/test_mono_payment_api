@@ -46,8 +46,7 @@ namespace VPay.Payment
                             TransNumber = request.TransNumber,
                             User = request.User,
                             Token = request.Token
-                        }
-                        ,
+                        },
                         Source = Convert.ToChar(_user.Source)
                     }
                 };

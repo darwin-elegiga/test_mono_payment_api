@@ -38,8 +38,7 @@ namespace VPay.Payment
                     User = request.User,
                     Token = request.Token,
                     TransNumber = request.TransNumber
-                }
-                ,
+                },
                 Source = Convert.ToChar(_user.Source)
             };
 
@@ -86,8 +85,7 @@ namespace VPay.Payment
                     User = request.User,
                     Token = request.Token,
                     TransNumber = request.TransNumber
-                }
-                ,
+                },
                 Source = Convert.ToChar(_user.Source)
             };
 
