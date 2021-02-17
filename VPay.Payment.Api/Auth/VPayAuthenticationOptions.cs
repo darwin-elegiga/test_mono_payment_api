@@ -4,6 +4,6 @@ namespace VPay.Payment.Api.Auth
 {
     public class VPayAuthenticationOptions : AuthenticationSchemeOptions
     {
-        
+
     }
 }

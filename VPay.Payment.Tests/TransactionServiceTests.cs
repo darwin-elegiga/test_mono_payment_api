@@ -45,7 +45,7 @@ namespace VPay.Payment.Tests
             request.Claim.ClaimDate.Should().Be("10000101");
             request.Claim.CurrencyType.Should().Be("USD");
             request.Claim.UserField1.Should().Be("THIS IS A TEST");
-            
+
             request.CoveredItem.Year.Should().Be("1000");
             request.CoveredItem.Deductible.Should().Be("0.00");
             request.CoveredItem.BeginOdometer.Should().Be("000000");

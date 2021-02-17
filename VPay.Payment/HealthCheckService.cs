@@ -8,7 +8,7 @@ namespace VPay.Payment
     public class HealthCheckService : IHealthCheckService
     {
         private readonly IEnumerable<IHealthCheck> _healthChecks;
-        
+
         public HealthCheckService(IEnumerable<IHealthCheck> healthChecks)
         {
             _healthChecks = healthChecks;
@@ -31,7 +31,7 @@ namespace VPay.Payment
             return new ServiceComponentStatus
             {
                 Component = healthCheck.Component,
-                Status = health ? "OK": "FAILURE"
+                Status = health ? "OK" : "FAILURE"
             };
         }
     }

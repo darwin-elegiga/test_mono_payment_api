@@ -38,8 +38,8 @@ namespace VPay.Payment
                     User = request.User,
                     Token = request.Token,
                     TransNumber = request.TransNumber
-                }
-                , Source = Convert.ToChar(_user.Source)
+                },
+                Source = Convert.ToChar(_user.Source)
             };
 
             _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
@@ -85,8 +85,8 @@ namespace VPay.Payment
                     User = request.User,
                     Token = request.Token,
                     TransNumber = request.TransNumber
-                }
-                , Source = Convert.ToChar(_user.Source)
+                },
+                Source = Convert.ToChar(_user.Source)
             };
 
             _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",

@@ -27,4 +27,13 @@
     <ProjectReference Include="..\VPay.Payment.Common\VPay.Payment.Common.csproj" />
     <ProjectReference Include="..\VPay.Payment\VPay.Payment.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <_CopyGitHooks Include="../scripts/git_hooks/*.*" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition=" '$(Configuration)' == 'Debug' ">
+    <Exec ContinueOnError="True" Command="dotnet tool restore" />
+    <Copy SourceFiles="@(_CopyGitHooks)" DestinationFolder="../.git/hooks" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+  </Target>
 </Project>

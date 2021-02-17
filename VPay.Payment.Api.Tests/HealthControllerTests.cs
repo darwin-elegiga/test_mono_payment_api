@@ -11,7 +11,7 @@ namespace VPay.Payment.Api.Tests
 {
     public class HealthControllerTests
     {
-        
+
         [Fact]
         public async Task CheckHealth_WithAllServicesOK_ReturnsOkResult()
         {

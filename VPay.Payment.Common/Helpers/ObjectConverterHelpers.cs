@@ -68,10 +68,10 @@ namespace VPay.Payment.Common
                 FaxNumber = entity.FaxNumber,
                 ReserveName = entity.ReserveName,
                 ReleaseAble = entity.CanRelease ? "TRUE" : "FALSE",
-                HoldAble = entity.CanHold ? "TRUE": "FALSE",
-                CancelAble = entity.CanCancel ? "TRUE": "FALSE",
-                DropToMailAble = entity.CanDropToMail ? "TRUE": "FALSE",
-                EditAble = entity.CanEdit ? "TRUE": "FALSE"
+                HoldAble = entity.CanHold ? "TRUE" : "FALSE",
+                CancelAble = entity.CanCancel ? "TRUE" : "FALSE",
+                DropToMailAble = entity.CanDropToMail ? "TRUE" : "FALSE",
+                EditAble = entity.CanEdit ? "TRUE" : "FALSE"
             };
         }
 

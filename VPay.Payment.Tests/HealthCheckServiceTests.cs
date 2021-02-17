@@ -10,7 +10,7 @@ namespace VPay.Payment.Tests
 {
     public class HealthCheckServiceTests
     {
-        
+
         [Fact]
         public async Task CheckHealth_WithSingleComponentThatReturnsTrue_WillReturnOkForThatComponent()
         {

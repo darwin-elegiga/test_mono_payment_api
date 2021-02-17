@@ -19,6 +19,6 @@ namespace VPay.Payment.Api.Auth
             get => Enum.TryParse<ServicePermission>(Policy.Substring(PolicyPrefix.Length), out var permission) ? permission : default(ServicePermission);
             set => Policy = $"{PolicyPrefix}{value.ToString()}";
         }
-        
+
     }
 }

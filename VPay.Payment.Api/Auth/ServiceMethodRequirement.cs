@@ -8,7 +8,7 @@ namespace VPay.Payment.Api.Auth
     public class ServiceMethodRequirement : IAuthorizationRequirement
     {
         public ServicePermission Permission { get; }
-        
+
         public ServiceMethodRequirement(ServicePermission permission)
         {
             Permission = permission;

@@ -2,6 +2,6 @@
 {
     public class ResendFaxRequest : ChangeFaxNumberRequest
     {
-        
+
     }
 }
