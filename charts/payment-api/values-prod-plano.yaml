@@ -5,7 +5,11 @@ global:
       subdomain: prod.pks.vpayusa.net
       altSubdomains:
         - plpksprod.vpayusa.net
-        - plprod.pks.vpayusa.net
 
 api:
   replicas: 3
+  environment:
+    ingress:
+      domains:
+        - payapi.vpayusa.net
+

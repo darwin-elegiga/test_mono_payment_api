@@ -11,3 +11,9 @@ global:
       subdomain: dev.pks.vpayusa.net
       altSubdomains:
         - stlpksdev.vpayusa.net
+
+api:
+  environment:
+    ingress:
+      domains:
+        - dev-payapi.vpayusa.net

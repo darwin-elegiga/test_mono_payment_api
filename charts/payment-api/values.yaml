@@ -29,11 +29,13 @@ api:
   enabled: true
   listeningPort: 80
   contentRoot: /app
+  env:
+    ASPNETCORE_FORWARDEDHEADERS_ENABLED: 'true'
   probes:
     readiness:
-      healthEndpoint: /api/about
+      endpoint: /api/about
     liveness:
-      healthEndpoint: /api/about
+      endpoint: /api/about
   image:
     name: payment-api/payment-web-api
   secrets:

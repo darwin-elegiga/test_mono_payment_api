@@ -1,16 +1,14 @@
 include:
   - project: devops/cicd/templates
-    ref: v0.2.2
-    file: helm.gitlab-ci.yml
+    ref: v1.1.1
+    file:
+      - helm.gitlab-ci.yml
 
 stages:
   - deploy-dev
   - deploy-stg
   - security-gate
   - deploy-prod
-
-variables:
-  IS_MULTI_APP: 'true'
 
 plano-dev:
   stage: deploy-dev
