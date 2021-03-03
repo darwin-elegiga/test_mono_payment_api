@@ -24,6 +24,13 @@ These instructions will get you a copy of the project up and running on your loc
 1. Add file `appsettings.Local.json` to project `src/VPay.Payment.Api` and use the following template to setup your local settings
 ```json
 {
+  "Logging": {
+    "GELF": {
+      "AdditionalFields": {
+        "environment": "Local"
+      }
+    }
+  },
   "Db2": {
     "UserName": "<Db2UserName>",
     "Password": "<Db2Password>"

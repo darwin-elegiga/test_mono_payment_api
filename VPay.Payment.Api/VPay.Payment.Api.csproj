@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="7.6.104" />
-    <PackageReference Include="Gelf.Extensions.Logging" Version="1.5.1" />
+    <PackageReference Include="Gelf.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="GlobalExceptionHandler" Version="3.0.0" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="0.8.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -31,6 +31,7 @@
     <PackageReference Include="System.IO.Abstractions" Version="3.0.0" />
     <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.2.0.38" />
     <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.2.0.38" />
+    <PackageReference Include="VPay.Extensions.Logging.GrayLog" Version="0.2.0" />
   </ItemGroup>
 
   <ItemGroup>
