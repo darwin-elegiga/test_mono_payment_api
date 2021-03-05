@@ -203,7 +203,8 @@ namespace VPay.Payment.Api.Controllers
             {
                 TransNumber = transNumber,
                 User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
-                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
+                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
+                Source = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.System).Value[0]
             };
 
             return reasonCodeRequest;
@@ -215,7 +216,8 @@ namespace VPay.Payment.Api.Controllers
             {
                 TransNumber = transNumber,
                 User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
-                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
+                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
+                Source = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.System).Value[0]
             };
 
             return transactionDetailRequest;
