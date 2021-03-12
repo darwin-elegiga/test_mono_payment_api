@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using VPay.Extensions.Logging.GrayLog;
 
 namespace VPay.Payment.Api
 {
@@ -38,7 +39,7 @@ namespace VPay.Payment.Api
                     loggingBuilder.AddConfiguration(loggingSection)
                         .AddConsole()
                         .AddDebug()
-                        .AddGelf();
+                        .AddVPayGrayLog();
                 })
                 .UseStartup<Startup>();
     }
