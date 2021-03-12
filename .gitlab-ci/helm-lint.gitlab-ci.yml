@@ -1,14 +1,12 @@
 include:
   - project: devops/cicd/templates
-    ref: v0.2.2
-    file: helm.gitlab-ci.yml
+    ref: v1.1.1
+    file:
+      - helm.gitlab-ci.yml
 
 stages:
   - test
   - dryrun
-
-variables:
-  IS_MULTI_APP: 'true'
 
 helm:template:
   stage: test
@@ -86,4 +84,18 @@ dryrun:stg-stl:
     kubernetes:
       namespace: client-payments-stage
 
-# Deliberately excluding prod from dryrun
+dryrun:prod-pl:
+  extends: .helm_dryrun_plprod
+  needs:
+    - helm:lint-prod-pl
+  environment:
+    kubernetes:
+      namespace: client-payments-prod
+
+dryrun:prod-stl:
+  extends: .helm_dryrun_stlprod
+  needs:
+    - helm:lint-prod-stl
+  environment:
+    kubernetes:
+      namespace: client-payments-prod

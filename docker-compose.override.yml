@@ -4,5 +4,6 @@ services:
   paymentwebapi:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Logging__GELF__AdditionalFields__namespace=client-payments-local
     ports:
       - "5013:80"

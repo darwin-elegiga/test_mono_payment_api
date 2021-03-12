@@ -1,9 +1,6 @@
-﻿using System;
-using Gelf.Extensions.Logging;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using VPay.Extensions.Logging.GrayLog;
 
@@ -27,20 +24,13 @@ namespace VPay.Payment.Api
                         .AddJsonFile($"appsettings.Local.json", optional: true, reloadOnChange: true)
                         .AddJsonFile($"appsettings.secure.json", optional: true, reloadOnChange: true);
                 })
-                .ConfigureLogging((builderContext, loggingBuilder) =>
-                {
-                    IConfigurationSection graylogSection = builderContext.Configuration.GetSection("Graylog");
-                    loggingBuilder.Services.Configure<GelfLoggerOptions>(graylogSection);
-
-                    loggingBuilder.Services.PostConfigure<GelfLoggerOptions>(gelfLoggerOptions =>
-                        gelfLoggerOptions.AdditionalFields["machine_name"] = Environment.MachineName);
-
-                    IConfigurationSection loggingSection = builderContext.Configuration.GetSection("Logging");
-                    loggingBuilder.AddConfiguration(loggingSection)
+                .ConfigureLogging(loggingBuilder =>
+                    loggingBuilder
+                        .ClearProviders()
                         .AddConsole()
                         .AddDebug()
-                        .AddVPayGrayLog();
-                })
+                        .AddVPayGrayLog()
+                )
                 .UseStartup<Startup>();
     }
 }

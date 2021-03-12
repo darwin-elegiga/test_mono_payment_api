@@ -36,7 +36,6 @@ namespace VPay.Payment.Api.Controllers
             _accessor = accessor;
             _transactionService = transactionService;
             _logger = logger;
-
         }
 
         [HttpGet("wsdl")]
@@ -115,7 +114,6 @@ namespace VPay.Payment.Api.Controllers
             return $"{aboutInfo.VersionInfo} - {aboutInfo.BuildTime}";
         }
 
-
         [HttpPost("echo")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(StandardResponse), 200)]
@@ -167,7 +165,6 @@ namespace VPay.Payment.Api.Controllers
 
                 return errorResponse;
             }
-
         }
 
         /// <summary>
@@ -595,10 +592,10 @@ namespace VPay.Payment.Api.Controllers
             request.CommonData.User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value;
             request.CommonData.Token =
                 _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            request.Source = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.System).Value[0];
 
             return request;
         }
-
 
         private ReasonCodeRequest StandardReasonCodeRequest(ReasonCodeRequestDto request)
         {
@@ -606,7 +603,8 @@ namespace VPay.Payment.Api.Controllers
             {
                 TransNumber = request.TransNumber,
                 User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
-                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
+                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
+                Source = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.System).Value[0]
             };
 
             return reasonCodeRequest;
@@ -618,11 +616,11 @@ namespace VPay.Payment.Api.Controllers
             {
                 TransNumber = request.TransNumber,
                 User = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.Name).Value,
-                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value
+                Token = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value,
+                Source = _accessor.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.System).Value[0]
             };
 
             return transactionDetailRequest;
         }
-
     }
 }

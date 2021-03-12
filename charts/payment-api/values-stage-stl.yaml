@@ -11,3 +11,9 @@ global:
       subdomain: stg.pks.vpayusa.net
       altSubdomains:
         - stlpksstg.vpayusa.net
+
+api:
+  environment:
+    ingress:
+      domains:
+        - stg-payapi.vpayusa.net

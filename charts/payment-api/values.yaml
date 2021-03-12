@@ -8,6 +8,8 @@ chart:
       env:
         ASPNETCORE_ENVIRONMENT: '{{ .Values.global.environment.name }}'
         DOTNET_ENVIRONMENT: '{{ .Values.global.environment.name }}'
+        ASPNETCORE_Logging__GELF__AdditionalFields__environment: '{{ .Values.global.environment.name }}'
+        ASPNETCORE_Logging__GELF__AdditionalFields__namespace: '{{ .Release.Namespace }}'
         DOTNET_Logging__GELF__AdditionalFields__environment: '{{ .Values.global.environment.name }}'
         DOTNET_Logging__GELF__AdditionalFields__namespace: '{{ .Release.Namespace }}'
       generate:
@@ -29,11 +31,13 @@ api:
   enabled: true
   listeningPort: 80
   contentRoot: /app
+  env:
+    ASPNETCORE_FORWARDEDHEADERS_ENABLED: 'true'
   probes:
     readiness:
-      healthEndpoint: /api/about
+      endpoint: /api/about
     liveness:
-      healthEndpoint: /api/about
+      endpoint: /api/about
   image:
     name: payment-api/payment-web-api
   secrets:

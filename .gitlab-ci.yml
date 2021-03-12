@@ -1,18 +1,14 @@
 include:
   - project: devops/cicd/templates
-    ref: v0.2.2
-    file: docker.gitlab-ci.yml
-  - project: devops/cicd/templates
-    ref: v0.2.2
-    file: dotnet.gitlab-ci.yml
-  - project: devops/cicd/templates
-    ref: v0.2.2
-    file: disable-detached.gitlab-ci.yml
+    ref: v1.1.1
+    file:
+      - docker.gitlab-ci.yml
+      - dotnet.gitlab-ci.yml
+      - disable-detached.gitlab-ci.yml
 
 variables:
   PROJECT: payment-api
   CHART_DIR: charts/payment-api
-  IS_MULTI_APP: 'true'
 
 stages:
   - init

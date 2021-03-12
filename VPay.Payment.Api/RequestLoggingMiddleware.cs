@@ -17,12 +17,11 @@ namespace VPay.Payment.Api
     /// </summary>
     public class RequestLoggingMiddleware
     {
-
-        const string MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+        private const string MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
 
         private readonly ILogger _logger;
 
-        readonly RequestDelegate _next;
+        private readonly RequestDelegate _next;
 
         public RequestLoggingMiddleware(RequestDelegate next,
             ILoggerFactory loggerFactory)
@@ -61,7 +60,7 @@ namespace VPay.Payment.Api
 
                 if (statusCode < 500)
                 {
-                    if (path.StartsWith("/api", StringComparison.OrdinalIgnoreCase) && !path.StartsWith("/api/health", StringComparison.OrdinalIgnoreCase))
+                    if (path.StartsWith("/api", StringComparison.OrdinalIgnoreCase) && !path.StartsWith("/api/health", StringComparison.OrdinalIgnoreCase) && !path.StartsWith("/api/about", StringComparison.OrdinalIgnoreCase))
                     {
                         level = LogLevel.Information;
                     }
@@ -117,6 +116,5 @@ namespace VPay.Payment.Api
         {
             return httpContext.Features.Get<IHttpRequestFeature>()?.RawTarget ?? httpContext.Request.Path.ToString();
         }
-
     }
 }

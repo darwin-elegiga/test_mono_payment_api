@@ -1,6 +1,6 @@
 dependencies:
 - name: helm-gen
   repository: https://plinfharbor.vpayusa.net/chartrepo/devops
-  version: v0.2.1
-digest: sha256:779cf6361777741ddea77b04264edc8f662fd839481a009c24470b5a4bc67777
-generated: "2020-09-14T13:42:34.8901422-05:00"
+  version: v1.0.0-beta2
+digest: sha256:7620cfe4381b31adb70d5f7feb25cfec946243e8c171453a19d9833c0b307f06
+generated: "2021-03-02T15:05:19.1885314-06:00"
