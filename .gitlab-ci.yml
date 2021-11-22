@@ -1,36 +1,24 @@
 include:
   - project: devops/cicd/templates
-    ref: v1.1.1
+    ref: ${CICD_TEMPLATES_2_VERSION}
     file:
       - docker.gitlab-ci.yml
-      - dotnet.gitlab-ci.yml
-      - disable-detached.gitlab-ci.yml
+      - sonarqube.gitlab-ci.yml
 
 variables:
   PROJECT: payment-api
   CHART_DIR: charts/payment-api
 
 stages:
-  - init
   - build_and_test
   - publish
   - deploy
 
-app:test:generate-config:
-  stage: init
-  extends: .dotnet_generate_test_config
-  variables:
-    TEST_BASE_IMAGE: ${CI_REGISTRY}/base-images/dotnet/core/sdk:2.1-bionic
-
-app:test:
+app:sonarqube:
   stage: build_and_test
-  needs:
-    - app:test:generate-config
-  trigger:
-    include:
-      - artifact: app-test-config.yml
-        job: app:test:generate-config
-    strategy: depend
+  extends:
+    - .sonarqube_dotnet
+  needs: []
 
 helm:lint:
   stage: build_and_test
@@ -39,27 +27,41 @@ helm:lint:
     include:
       - local: /.gitlab-ci/helm-lint.gitlab-ci.yml
     strategy: depend
+  rules:
+    - when: always
 
-build:api:
+.build:
   stage: build_and_test
-  extends: .docker_build
+  extends:
+    - .docker_build
   needs: []
   variables:
-    PREBUILD_COMMAND: scripts/generate_tar.sh
-    IMAGE_NAME: payment-web-api
     DOCKERFILE: Dockerfile
-    PROJECT_TAR: projectfiles.tar
-    PROJECT_DIR: VPay.Payment.Api
-    PROJECT_NAME: VPay.Payment.Api
-    DOTNET_VERSION: '2.1'
-    DOTNET_RUNTIME_VARIANT: bionic-db2
-    BUILD_ARGS: "PROJECT_TAR PROJECT_DIR PROJECT_NAME DOTNET_VERSION DOTNET_RUNTIME_VARIANT"
+    BUILD_ARGS: "PROJECT_DIR PROJECT_NAME"
 
-publish:api:
+.publish:
   stage: publish
-  extends: .docker_publish
+  extends:
+    - .docker_publish
+
+.api:
   variables:
     IMAGE_NAME: payment-web-api
+
+build:api:
+  extends:
+    - .build
+    - .api
+  variables:
+    PROJECT_DIR: VPay.Payment.Api
+    PROJECT_NAME: VPay.Payment.Api
+
+publish:api:
+  extends:
+    - .publish
+    - .api
+  needs:
+    - build:api
 
 deploy:
   stage: deploy
