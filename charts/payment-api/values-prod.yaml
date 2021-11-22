@@ -1,0 +1,6 @@
+api:
+  replicas: 3
+  environment:
+    ingress:
+      domains:
+        - payapi.vpayusa.net

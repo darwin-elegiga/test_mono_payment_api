@@ -1,6 +1,6 @@
 include:
   - project: devops/cicd/templates
-    ref: v1.1.1
+    ref: ${CICD_TEMPLATES_2_VERSION}
     file:
       - helm.gitlab-ci.yml
 
@@ -18,39 +18,27 @@ helm:lint:
 
 helm:lint-dev-pl:
   stage: test
-  extends: .helm_lint
-  variables:
-    VALUE_FILES: values-dev-plano.yaml
+  extends: .helm_lint_pldev
 
 helm:lint-dev-stl:
   stage: test
-  extends: .helm_lint
-  variables:
-    VALUE_FILES: values-dev-stl.yaml
+  extends: .helm_lint_stldev
 
 helm:lint-stg-pl:
   stage: test
-  extends: .helm_lint
-  variables:
-    VALUE_FILES: values-stage-plano.yaml
+  extends: .helm_lint_plstg
 
 helm:lint-stg-stl:
   stage: test
-  extends: .helm_lint
-  variables:
-    VALUE_FILES: values-stage-stl.yaml
+  extends: .helm_lint_stlstg
 
 helm:lint-prod-pl:
   stage: test
-  extends: .helm_lint
-  variables:
-    VALUE_FILES: values-prod-plano.yaml
+  extends: .helm_lint_plprod
 
 helm:lint-prod-stl:
   stage: test
-  extends: .helm_lint
-  variables:
-    VALUE_FILES: values-prod-stl.yaml
+  extends: .helm_lint_stlprod
 
 dryrun:dev-pl:
   extends: .helm_dryrun_pldev

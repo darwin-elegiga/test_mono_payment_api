@@ -1,0 +1,5 @@
+api:
+  environment:
+    ingress:
+      domains:
+        - stg-payapi.vpayusa.net

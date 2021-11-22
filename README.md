@@ -1,3 +1,6 @@
+[![Quality Gate Status](https://sonarqube.vpayusa.net/api/project_badges/measure?project=engineering_client-payments_payment-api_AX1J9PGB2Z-xByzhep0J&metric=alert_status)](https://sonarqube.vpayusa.net/dashboard?id=engineering_client-payments_payment-api_AX1J9PGB2Z-xByzhep0J)
+[![Coverage](https://sonarqube.vpayusa.net/api/project_badges/measure?project=engineering_client-payments_payment-api_AX1J9PGB2Z-xByzhep0J&metric=coverage)](https://sonarqube.vpayusa.net/dashboard?id=engineering_client-payments_payment-api_AX1J9PGB2Z-xByzhep0J)
+
 # VPay Payment API
 
 This repo contains the logic and the API methods that are needed for warranty clients to handle their payments

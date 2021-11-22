@@ -1,6 +1,6 @@
 include:
   - project: devops/cicd/templates
-    ref: v1.1.1
+    ref: ${CICD_TEMPLATES_2_VERSION}
     file:
       - helm.gitlab-ci.yml
 

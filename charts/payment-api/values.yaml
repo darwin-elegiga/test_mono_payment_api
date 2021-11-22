@@ -31,8 +31,6 @@ api:
   enabled: true
   listeningPort: 80
   contentRoot: /app
-  env:
-    ASPNETCORE_FORWARDEDHEADERS_ENABLED: 'true'
   probes:
     readiness:
       endpoint: /api/about
@@ -42,5 +40,4 @@ api:
     name: payment-api/payment-web-api
   secrets:
     appsettings.secure.json:
-      mount: true
       data: {}

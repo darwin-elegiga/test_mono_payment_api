@@ -1,0 +1,5 @@
+api:
+  environment:
+    ingress:
+      domains:
+        - dev-payapi.vpayusa.net
