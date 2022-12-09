@@ -29,8 +29,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" PrivateAssets="All" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="3.0.0" />
     <PackageReference Include="System.IO.Abstractions" Version="3.0.0" />
-    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.2.0.38" />
-    <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.2.0.38" />
+    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.5.7" />
+    <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.5.7" />
     <PackageReference Include="VPay.Extensions.Logging.GrayLog" Version="0.2.0" />
   </ItemGroup>
 

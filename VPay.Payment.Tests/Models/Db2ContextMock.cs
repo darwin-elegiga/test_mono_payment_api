@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using VPay.Data.Db2.Abstractions;
@@ -7,12 +8,51 @@ namespace VPay.Payment.Tests.Models
 {
     public class Db2ContextMock : IDb2Context
     {
-
         public bool CanConnectMock { get; set; } = true;
 
         public Task<bool> CanConnectAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             return Task.FromResult(CanConnectMock);
+        }
+
+        public T GetRepository<T>() where T : IDb2BaseRepository
+        {
+            if (typeof(T) == typeof(IFax))
+            {
+                return (T)Fax;
+            }
+
+            if (typeof(T) == typeof(ISecurity))
+            {
+                return (T)Security;
+            }
+
+            if (typeof(T) == typeof(ITransactionWs))
+            {
+                return (T)TransactionWs;
+            }
+
+            if (typeof(T) == typeof(ITradingPostWs))
+            {
+                return (T)TradingPostWs;
+            }
+
+            if (typeof(T) == typeof(IPreferencing))
+            {
+                return (T)Preferencing;
+            }
+
+            if (typeof(T) == typeof(ICorrespondenceRepo))
+            {
+                return (T)Correspondence;
+            }
+
+            if (typeof(T) == typeof(IProviderRepository))
+            {
+                return (T)ProviderRepository;
+            }
+
+            throw new InvalidOperationException("Unknown type: " + typeof(T).FullName);
         }
 
         public IFax Fax => FaxMock.Object;
