@@ -1,4 +1,4 @@
-ARG REGISTRY=plinfharbor.vpayusa.net
+ARG REGISTRY=jfrog.vpayusa.net/plinfharbor
 
 FROM ${REGISTRY}/base-images/dotnet/core/aspnet:2.1-bionic-db2 AS base
 EXPOSE 80
