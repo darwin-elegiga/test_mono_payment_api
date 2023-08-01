@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using FluentValidation;
 using FluentValidation.AspNetCore;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using VPay.Data.Db2.Odbc;
@@ -25,7 +28,7 @@ namespace VPay.Payment.Api
         public static IMvcBuilder AddJsonSettings(this IMvcBuilder mvcBuilder)
         {
             mvcBuilder
-                .AddJsonOptions(options =>
+                .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                     options.SerializerSettings.Converters.Add(new DecimalJsonConverter());
@@ -36,9 +39,12 @@ namespace VPay.Payment.Api
             return mvcBuilder;
         }
 
-        public static IMvcBuilder AddFluentValidationSettings(this IMvcBuilder mvcBuilder)
+        public static IServiceCollection AddFluentValidationSettings(this IServiceCollection services)
         {
-            return mvcBuilder.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+            return services
+                .AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
+                .AddValidatorsFromAssemblyContaining<Startup>();
         }
 
         public static IServiceCollection SetupDb2(this IServiceCollection services, IConfiguration configuration)
@@ -71,9 +77,9 @@ namespace VPay.Payment.Api
             services.AddSwaggerGen(c =>
             {
                 //Names used here are used in URL for SwaggerUI
-                c.SwaggerDoc("v1.0", new Info { Title = "Payment API", Version = "v1.0" });
+                c.SwaggerDoc("v1.0", new OpenApiInfo { Title = "Payment API", Version = "v1.0" });
 
-                c.AddSecurityDefinition("VPay", new BasicAuthScheme()
+                c.AddSecurityDefinition("VPay", new OpenApiSecurityScheme()
                 {
                     Description = "Basic HTTP Auth"
                 });
@@ -97,14 +103,14 @@ namespace VPay.Payment.Api
                     return actionApiVersionModel.ImplementedApiVersions.Any(v => $"v{v.ToString()}" == docName);
                 });
 
-                c.AddFluentValidationRules();
-
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
+            services.AddFluentValidationRulesToSwagger();
 
 
             return services;

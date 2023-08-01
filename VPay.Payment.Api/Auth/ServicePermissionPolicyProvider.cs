@@ -9,7 +9,7 @@ namespace VPay.Payment.Api.Auth
     /// <inheritdoc />
     public class ServicePermissionPolicyProvider : IAuthorizationPolicyProvider
     {
-        const string PolicyPrefix = "ServicePermission_";
+        public const string PolicyPrefix = "ServicePermission_";
         public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
 
 
@@ -19,6 +19,9 @@ namespace VPay.Payment.Api.Auth
         }
 
         public Task<AuthorizationPolicy> GetDefaultPolicyAsync() => FallbackPolicyProvider.GetDefaultPolicyAsync();
+
+
+        public Task<AuthorizationPolicy> GetFallbackPolicyAsync() => FallbackPolicyProvider.GetFallbackPolicyAsync();
 
 
         /// <inheritdoc />

@@ -8,7 +8,6 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -99,7 +98,7 @@ namespace VPay.Payment.Api.Auth
                     {
                         try
                         {
-                            Request.EnableRewind();
+                            Request.EnableBuffering();
 
                             using (var reader = new MemoryStream())
                             {

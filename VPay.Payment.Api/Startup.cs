@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -27,13 +28,12 @@ namespace VPay.Payment.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddMvc(opt =>
+                .AddControllers(opt =>
                 {
+                    opt.EnableEndpointRouting = false;
                     opt.Filters.Add(typeof(ValidatorActionFilter));
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonSettings()
-                .AddFluentValidationSettings();
+                .AddJsonSettings();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -44,6 +44,7 @@ namespace VPay.Payment.Api
             });
 
             services
+                .AddFluentValidationSettings()
                 .AddApiVersioningService()
                 .AddOptions()
                 .AddSwaggerGenService()
@@ -61,11 +62,11 @@ namespace VPay.Payment.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHostApplicationLifetime appLifetime)
         {
-            app.UseExceptionHandler("/error").WithConventions(x =>
+            app.UseGlobalExceptionHandler(c =>
             {
-                ConfigureExceptionHandler(x, env.IsDevelopment());
+                ConfigureExceptionHandler(c, env.IsDevelopment());
             });
 
             app.Map("/error", x => x.Run(y => throw new Exception()));
@@ -116,7 +117,7 @@ namespace VPay.Payment.Api
 
             if (isDevelopment)
             {
-                config.MessageFormatter(s => JsonConvert.SerializeObject(new
+                config.ResponseBody(s => JsonConvert.SerializeObject(new
                 {
                     message = s.Message,
                     exceptionType = s.GetType().FullName,
@@ -131,7 +132,7 @@ namespace VPay.Payment.Api
             }
             else
             {
-                config.MessageFormatter(s => JsonConvert.SerializeObject(new
+                config.ResponseBody(s => JsonConvert.SerializeObject(new
                 {
                     message = "An error occurred while processing your request"
                 }));
