@@ -6,19 +6,19 @@
 
 ## General arguments
 ARG REGISTRY=plinfharbor.vpayusa.net
-ARG DOTNET_VERSION=2.1
+ARG DOTNET_VERSION=6.0
 
 ## ***Use for dotnet 5.0 and above***
-# ARG DOTNET_SDK_VARIANT=focal
-# ARG DOTNET_RUNTIME_VARIANT=focal
-# ARG BASE_SDK_IMAGE=dotnet/sdk
-# ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
+ARG DOTNET_SDK_VARIANT=focal
+ARG DOTNET_RUNTIME_VARIANT=focal
+ARG BASE_SDK_IMAGE=dotnet/sdk
+ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 
 ## ***Use for dotnet core 3.1 and below***
-ARG DOTNET_SDK_VARIANT=bionic
-ARG DOTNET_RUNTIME_VARIANT=bionic-db2
-ARG BASE_SDK_IMAGE=dotnet/core/sdk
-ARG BASE_RUNTIME_IMAGE=dotnet/core/aspnet
+# ARG DOTNET_SDK_VARIANT=bionic
+# ARG DOTNET_RUNTIME_VARIANT=bionic-db2
+# ARG BASE_SDK_IMAGE=dotnet/core/sdk
+# ARG BASE_RUNTIME_IMAGE=dotnet/core/aspnet
 
 ## Build Stage
 FROM ${REGISTRY}/base-images/${BASE_SDK_IMAGE}:${DOTNET_VERSION}-${DOTNET_SDK_VARIANT} as build
