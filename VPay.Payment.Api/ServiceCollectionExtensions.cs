@@ -43,7 +43,6 @@ namespace VPay.Payment.Api
         {
             return services
                 .AddFluentValidationAutoValidation()
-                .AddFluentValidationClientsideAdapters()
                 .AddValidatorsFromAssemblyContaining<Startup>();
         }
 
