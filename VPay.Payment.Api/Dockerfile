@@ -1,4 +1,4 @@
-ARG REGISTRY=jfrog.vpayusa.net/plinfharbor
+ARG REGISTRY=docker.repo1.uhc.com/vpay-docker
 
 FROM ${REGISTRY}/base-images/dotnet/aspnet:6.0-focal-db2 AS base
 EXPOSE 80
