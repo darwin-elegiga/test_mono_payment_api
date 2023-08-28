@@ -1,5 +1,8 @@
-﻿using System.Threading;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using VPay.Data.Db2.Abstractions;
 
@@ -7,12 +10,29 @@ namespace VPay.Payment.Tests.Models
 {
     public class Db2ContextMock : IDb2Context
     {
-
+        private readonly IServiceProvider _serviceProvider;
+        public Db2ContextMock()
+        {
+            _serviceProvider = new ServiceCollection()
+                .AddSingleton(Fax)
+                .AddSingleton(Security)
+                .AddSingleton(TransactionWs)
+                .AddSingleton(TradingPostWs)
+                .AddSingleton(Preferencing)
+                .AddSingleton(Correspondence)
+                .AddSingleton(ProviderRepository)
+                .BuildServiceProvider();
+        }
         public bool CanConnectMock { get; set; } = true;
 
         public Task<bool> CanConnectAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             return Task.FromResult(CanConnectMock);
+        }
+
+        public T GetRepository<T>() where T : IDb2BaseRepository
+        {
+            return _serviceProvider.GetRequiredService<T>();
         }
 
         public IFax Fax => FaxMock.Object;

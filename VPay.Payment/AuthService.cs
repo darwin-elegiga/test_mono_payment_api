@@ -30,7 +30,7 @@ namespace VPay.Payment
                 _logger.LogWarning("Id or Passphrase is greather than 10 characters: {Id}", param.Id);
             }
 
-            var result = await _db.Security.AuthenticateWebUserAsync(new AuthenticateUserParam()
+            var result = await _db.GetRepository<ISecurity>().AuthenticateWebUserAsync(new AuthenticateUserParam()
             {
                 UserId = param.Id,
                 Password = param.PassPhrase,
@@ -72,7 +72,7 @@ namespace VPay.Payment
         {
             var secObjName = $"UNIVERSE|WS_PUBLIC|{webServiceName}".ToUpper();
 
-            var result = await _db.Security.SecurityCheckAsync(new SecurityCheckParam()
+            var result = await _db.GetRepository<ISecurity>().SecurityCheckAsync(new SecurityCheckParam()
             {
                 UserId = userId,
                 Action = action,
@@ -93,7 +93,7 @@ namespace VPay.Payment
                 return null;
             }
 
-            var remoteLogin = await _db.Security.RemoteLoginAsync(new RemoteLoginParam()
+            var remoteLogin = await _db.GetRepository<ISecurity>().RemoteLoginAsync(new RemoteLoginParam()
             {
                 UserId = name,
                 Password = password,

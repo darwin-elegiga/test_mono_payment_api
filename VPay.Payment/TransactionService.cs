@@ -50,7 +50,7 @@ namespace VPay.Payment
                     }
                 };
 
-                var panRequest = await _db2Context.TransactionWs.GetPan(panRequestParam);
+                var panRequest = await _db2Context.GetRepository<ITransactionWs>().GetPan(panRequestParam);
 
                 var reasonCodeResponse = new ReasonCodeResponse();
 
@@ -60,7 +60,7 @@ namespace VPay.Payment
                 }
                 else
                 {
-                    var reasonCodes = await _db2Context.TransactionWs.ReasonCodesData(request.Token, request.User, request.TransNumber);
+                    var reasonCodes = await _db2Context.GetRepository<ITransactionWs>().ReasonCodesData(request.Token, request.User, request.TransNumber);
 
                     reasonCodeResponse.ReasonCodeList = reasonCodes;
                     reasonCodeResponse.CommonData = new CommonData
@@ -128,7 +128,7 @@ namespace VPay.Payment
                 }
                 else
                 {
-                    var headerData = (await _db2Context.TransactionWs.TransactionHeadersData(request.Token, request.User, request.TransNumber)).FirstOrDefault();
+                    var headerData = (await _db2Context.GetRepository<ITransactionWs>().TransactionHeadersData(request.Token, request.User, request.TransNumber)).FirstOrDefault();
                     if (headerData != null)
                     {
                         var convHeaderData = headerData.ToHeaderData();
@@ -151,7 +151,7 @@ namespace VPay.Payment
                         payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
                         payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
 
-                        var detailList = (await _db2Context.TransactionWs.TransactionDetailsData(request.Token, client, billCode, request.TransNumber)).ToDetail().ToList();
+                        var detailList = (await _db2Context.GetRepository<ITransactionWs>().TransactionDetailsData(request.Token, client, billCode, request.TransNumber)).ToDetail().ToList();
                         var correspList = await GetCorrespondenceList(long.Parse(request.TransNumber));
 
                         // when nothing goes wrong
@@ -238,7 +238,7 @@ namespace VPay.Payment
                     Request = standardRequest
                 };
 
-                var result = await _db2Context.TransactionWs.GetPan(request);
+                var result = await _db2Context.GetRepository<ITransactionWs>().GetPan(request);
 
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {
@@ -278,7 +278,7 @@ namespace VPay.Payment
                     Request = standardRequest
                 };
 
-                var result = await _db2Context.TransactionWs.OpenPreAuth(request);
+                var result = await _db2Context.GetRepository<ITransactionWs>().OpenPreAuth(request);
 
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {
@@ -329,7 +329,7 @@ namespace VPay.Payment
                     Request = standardRequest
                 };
 
-                var result = await _db2Context.TransactionWs.LoadPan(request, clientData);
+                var result = await _db2Context.GetRepository<ITransactionWs>().LoadPan(request, clientData);
 
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {
@@ -376,7 +376,7 @@ namespace VPay.Payment
                     Request = standardRequest
                 };
 
-                var result = await _db2Context.TransactionWs.BalanceRequest(request);
+                var result = await _db2Context.GetRepository<ITransactionWs>().BalanceRequest(request);
 
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {
@@ -416,7 +416,7 @@ namespace VPay.Payment
                     Request = standardRequest
                 };
 
-                var result = await _db2Context.TransactionWs.UnloadPan(request);
+                var result = await _db2Context.GetRepository<ITransactionWs>().UnloadPan(request);
 
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {
@@ -456,7 +456,7 @@ namespace VPay.Payment
                     Request = standardRequest
                 };
 
-                var result = await _db2Context.TransactionWs.StopPay(request);
+                var result = await _db2Context.GetRepository<ITransactionWs>().StopPay(request);
 
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {
@@ -483,7 +483,7 @@ namespace VPay.Payment
         {
             _logger.LogInformation("{ServiceName} - {Step} with: \nFaxCode={FaxCode}", nameof(CancelFax), "Starting", faxCode);
 
-            var dbResult = await _db2Context.Fax.CancelFaxAsync(_user.Token, faxCode);
+            var dbResult = await _db2Context.GetRepository<IFax>().CancelFaxAsync(_user.Token, faxCode);
 
             var sResp = PackAndUnpackResponse();
             sResp.CommonData.SuccessCode = dbResult.SuccessCode;
@@ -507,7 +507,7 @@ namespace VPay.Payment
         {
             _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \nFaxCode={{FaxCode}}, FaxNumber={faxNumber}", nameof(ChangeFaxNumber), "Starting", faxCode);
 
-            var dbResult = await _db2Context.Fax.ChangeFaxNumberAsync(_user.Token, faxCode, faxNumber);
+            var dbResult = await _db2Context.GetRepository<IFax>().ChangeFaxNumberAsync(_user.Token, faxCode, faxNumber);
 
             var sResp = PackAndUnpackResponse();
             sResp.CommonData.SuccessCode = dbResult.SuccessCode;
@@ -531,7 +531,7 @@ namespace VPay.Payment
         {
             _logger.LogInformation("{ServiceName} - {Step} with: \nFaxCode={FaxCode}", nameof(HoldFax), "Starting", faxCode);
 
-            var dbResult = await _db2Context.Fax.HoldFaxAsync(_user.Token, faxCode);
+            var dbResult = await _db2Context.GetRepository<IFax>().HoldFaxAsync(_user.Token, faxCode);
 
             var sResp = PackAndUnpackResponse();
             sResp.CommonData.SuccessCode = dbResult.SuccessCode;
@@ -555,7 +555,7 @@ namespace VPay.Payment
         {
             _logger.LogInformation("{ServiceName} - {Step} with: \nFaxCode={FaxCode}", nameof(ReleaseFax), "Starting", faxCode);
 
-            var dbResult = await _db2Context.Fax.ReleaseFaxAsync(_user.Token, faxCode);
+            var dbResult = await _db2Context.GetRepository<IFax>().ReleaseFaxAsync(_user.Token, faxCode);
 
             var sResp = PackAndUnpackResponse();
             sResp.CommonData.SuccessCode = dbResult.SuccessCode;
@@ -578,7 +578,7 @@ namespace VPay.Payment
         {
             _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \nFaxCode={{FaxCode}}, FaxNumber={faxNumber}", nameof(ResendFax), "Starting", faxCode);
 
-            var dbResult = await _db2Context.Fax.ResendFaxAsync(_user.Token, faxCode, faxNumber ?? "");
+            var dbResult = await _db2Context.GetRepository<IFax>().ResendFaxAsync(_user.Token, faxCode, faxNumber ?? "");
 
             var sResp = PackAndUnpackResponse();
             sResp.CommonData.SuccessCode = dbResult.SuccessCode;
@@ -600,15 +600,15 @@ namespace VPay.Payment
 
         private async Task<List<CorespDtl>> GetCorrespondenceList(long transactionId)
         {
-            var result = (await _db2Context.Correspondence.GetByTransactionId(transactionId)).ToCorespDtl().ToList();
+            var result = (await _db2Context.GetRepository<ICorrespondenceRepo>().GetByTransactionId(transactionId)).ToCorespDtl().ToList();
             if (result.Count > 0)
             {
-                var faxes = (await _db2Context.Fax.GetFaxJobByTransactionId(transactionId))
+                var faxes = (await _db2Context.GetRepository<IFax>().GetFaxJobByTransactionId(transactionId))
                     .OrderBy(x => x.CreatedTimeStamp).ThenBy(x => x.LastStatusTimeStamp).ToList();
 
                 if (faxes.Count > 0)
                 {
-                    var faxStatus = (await _db2Context.Fax.GetFaxJobStatusByTransactionId(transactionId))
+                    var faxStatus = (await _db2Context.GetRepository<IFax>().GetFaxJobStatusByTransactionId(transactionId))
                         .OrderBy(x => x.CreatedTimeStamp).ToList();
 
                     foreach (var corr in result)
