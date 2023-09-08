@@ -30,7 +30,7 @@ namespace VPay.Payment.Api.Tests
             _transactionService = new Mock<ILegacyTransactionService>();
             _fileProvider = new Mock<IFileProvider>();
 
-            var hostingEnv = new Mock<IHostingEnvironment>();
+            var hostingEnv = new Mock<IWebHostEnvironment>();
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             var context = new DefaultHttpContext();

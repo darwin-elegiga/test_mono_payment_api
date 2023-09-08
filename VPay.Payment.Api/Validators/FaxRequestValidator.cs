@@ -8,7 +8,8 @@ namespace VPay.Payment.Api.Validators
         public FaxRequestValidator()
         {
             // First set the cascade mode
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.FaxCode)
                 .NotNull().WithErrorCode("0055").WithMessage("Invalid value for FaxCode");

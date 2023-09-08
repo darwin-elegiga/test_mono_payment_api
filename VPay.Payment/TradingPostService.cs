@@ -16,7 +16,7 @@ namespace VPay.Payment
         public TradingPostService(IDb2Context db2Context, ILogger<TradingPostService> logger)
         {
             _logger = logger;
-            _tradingPostWs = db2Context.TradingPostWs;
+            _tradingPostWs = db2Context.GetRepository<ITradingPostWs>();
         }
 
         public async Task<TradingPostData.LoadResult> LoadCard(TradingPostData.AuthenticationValuesAndIp auth, TradingPostData.LoadRequest request)

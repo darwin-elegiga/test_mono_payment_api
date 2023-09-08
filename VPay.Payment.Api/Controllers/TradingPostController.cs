@@ -32,7 +32,7 @@ namespace VPay.Payment.Api.Controllers
 
         public TradingPostController(
             ITradingPostService tradingPostService,
-            IHostingEnvironment fileProvider,
+            IWebHostEnvironment fileProvider,
             IHttpContextAccessor accessor,
             PaymentConfig config,
             ILogger<LegacyController> logger)
