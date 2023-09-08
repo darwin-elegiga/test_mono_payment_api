@@ -115,40 +115,48 @@ namespace VPay.Payment.Api.Controllers
             return result;
         }
 
+        [Obsolete("Comment: This API endpoint nolonger used and has been deprecated")]
         [HttpPost("CancelFax")]
         [ServicePermissionAuthorize(ServicePermission.CancelFax)]
-        public async Task<StandardResponse> CancelFax(FaxRequest entity)
+        public StandardResponse CancelFax(FaxRequest entity)
         {
-            var result = await _transactionService.CancelFax(entity.FaxCode.GetValueOrDefault(0));
-
-            return result;
+            var reasonCodeResponse = new StandardResponse();
+            reasonCodeResponse.CommonData.SuccessCode = "9997";
+            reasonCodeResponse.CommonData.SuccessDesc = "This API endpoint has been deprecated.";
+            return reasonCodeResponse;
         }
 
+        [Obsolete("Comment: This API endpoint nolonger used and has been deprecated")]
         [HttpPost("ChangeFaxNumber")]
         [ServicePermissionAuthorize(ServicePermission.ChangeFaxNumber)]
-        public async Task<StandardResponse> ChangeFaxNumber(ChangeFaxNumberRequest entity)
+        public StandardResponse ChangeFaxNumber(ChangeFaxNumberRequest entity)
         {
-            var result = await _transactionService.ChangeFaxNumber(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
-
-            return result;
+            var reasonCodeResponse = new StandardResponse();
+            reasonCodeResponse.CommonData.SuccessCode = "9997";
+            reasonCodeResponse.CommonData.SuccessDesc = "This API endpoint has been deprecated.";
+            return reasonCodeResponse;
         }
 
+        [Obsolete("Comment: This API endpoint nolonger used and has been deprecated")]
         [HttpPost("HoldFax")]
         [ServicePermissionAuthorize(ServicePermission.HoldFax)]
-        public async Task<StandardResponse> HoldFax(FaxRequest entity)
+        public StandardResponse HoldFax(FaxRequest entity)
         {
-            var result = await _transactionService.HoldFax(entity.FaxCode.GetValueOrDefault(0));
-
-            return result;
+            var reasonCodeResponse = new StandardResponse();
+            reasonCodeResponse.CommonData.SuccessCode = "9997";
+            reasonCodeResponse.CommonData.SuccessDesc = "This API endpoint has been deprecated.";
+            return reasonCodeResponse;
         }
 
+        [Obsolete("Comment: This API endpoint nolonger used and has been deprecated")]
         [HttpPost("ReleaseFax")]
         [ServicePermissionAuthorize(ServicePermission.ReleaseFax)]
-        public async Task<StandardResponse> ReleaseFax(FaxRequest entity)
+        public StandardResponse ReleaseFax(FaxRequest entity)
         {
-            var result = await _transactionService.ReleaseFax(entity.FaxCode.GetValueOrDefault(0));
-
-            return result;
+            var reasonCodeResponse = new StandardResponse();
+            reasonCodeResponse.CommonData.SuccessCode = "9997";
+            reasonCodeResponse.CommonData.SuccessDesc = "This API endpoint has been deprecated.";
+            return reasonCodeResponse;
         }
 
         [HttpPost("ResendFax")]

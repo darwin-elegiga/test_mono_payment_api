@@ -13,10 +13,7 @@ namespace VPay.Payment.Common
         Task<StandardResponse> GetBalanceRequest(StandardRequest standardRequest);
         Task<StandardResponse> UnloadPan(StandardRequest standardRequest);
         Task<StandardResponse> StopPay(StandardRequest standardRequest);
-        Task<StandardResponse> CancelFax(int faxCode);
-        Task<StandardResponse> ChangeFaxNumber(int faxCode, string faxNumber);
-        Task<StandardResponse> HoldFax(int faxCode);
-        Task<StandardResponse> ReleaseFax(int faxCode);
+        
         Task<StandardResponse> ResendFax(int faxCode, string faxNumber);
 
     }

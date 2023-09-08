@@ -425,32 +425,16 @@ namespace VPay.Payment.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Obsolete("Comment: This API endpoint nolonger used and has been deprecated")]
         [HttpPost("CancelFax")]
         [ServicePermissionAuthorize(ServicePermission.CancelFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> CancelFax(LegacyRequest request)
+        public StandardResponse CancelFax(LegacyRequest request)
         {
-            try
-            {
-                var result = await _transactionService.CancelFax(request.Envelope.Body.CancelFax.Request);
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unexpected Error with CancelFax");
-
-                StandardResponse errorResponse = new StandardResponse()
-                {
-                    CommonData = new CommonData()
-                    {
-                        SuccessCode = "9997",
-                        SuccessDesc = "Unexpected Error with CancelFax"
-                    }
-                };
-
-                return errorResponse;
-            }
+            var reasonCodeResponse = new StandardResponse();
+            reasonCodeResponse.CommonData.SuccessCode = "9997";
+            reasonCodeResponse.CommonData.SuccessDesc = "This API endpoint has been deprecated.";
+            return reasonCodeResponse;
         }
 
         /// <summary>
@@ -459,32 +443,16 @@ namespace VPay.Payment.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Obsolete("Comment: This API endpoint nolonger used and has been deprecated")]
         [HttpPost("ChangeFaxNumber")]
         [ServicePermissionAuthorize(ServicePermission.ChangeFaxNumber)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> ChangeFaxNumber(LegacyRequest request)
+        public StandardResponse ChangeFaxNumber(LegacyRequest request)
         {
-            try
-            {
-                var result = await _transactionService.ChangeFaxNumber(request.Envelope.Body.ChangeFaxNumber.Request);
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unexpected Error with ChangeFaxNumber");
-
-                StandardResponse errorResponse = new StandardResponse()
-                {
-                    CommonData = new CommonData()
-                    {
-                        SuccessCode = "9997",
-                        SuccessDesc = "Unexpected Error with ChangeFaxNumber"
-                    }
-                };
-
-                return errorResponse;
-            }
+            var reasonCodeResponse = new StandardResponse();
+            reasonCodeResponse.CommonData.SuccessCode = "9997";
+            reasonCodeResponse.CommonData.SuccessDesc = "This API endpoint has been deprecated.";
+            return reasonCodeResponse;
         }
 
         /// <summary>
@@ -492,32 +460,16 @@ namespace VPay.Payment.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Obsolete("Comment: This API endpoint nolonger used and has been deprecated")]
         [HttpPost("HoldFax")]
         [ServicePermissionAuthorize(ServicePermission.HoldFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> HoldFax(LegacyRequest request)
+        public StandardResponse HoldFax(LegacyRequest request)
         {
-            try
-            {
-                var result = await _transactionService.HoldFax(request.Envelope.Body.HoldFax.Request);
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unexpected Error with HoldFax");
-
-                StandardResponse errorResponse = new StandardResponse()
-                {
-                    CommonData = new CommonData()
-                    {
-                        SuccessCode = "9997",
-                        SuccessDesc = "Unexpected Error with HoldFax"
-                    }
-                };
-
-                return errorResponse;
-            }
+            var reasonCodeResponse = new StandardResponse();
+            reasonCodeResponse.CommonData.SuccessCode = "9997";
+            reasonCodeResponse.CommonData.SuccessDesc = "This API endpoint has been deprecated.";
+            return reasonCodeResponse;
         }
 
         /// <summary>
@@ -526,32 +478,16 @@ namespace VPay.Payment.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Obsolete("Comment: This API endpoint nolonger used and has been deprecated")]
         [HttpPost("ReleaseFax")]
         [ServicePermissionAuthorize(ServicePermission.ReleaseFax)]
         [ProducesResponseType(typeof(StandardResponse), 200)]
-        public async Task<StandardResponse> ReleaseFax(LegacyRequest request)
+        public StandardResponse ReleaseFax(LegacyRequest request)
         {
-            try
-            {
-                var result = await _transactionService.ReleaseFax(request.Envelope.Body.ReleaseFax.Request);
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unexpected Error with ReleaseFax");
-
-                StandardResponse errorResponse = new StandardResponse()
-                {
-                    CommonData = new CommonData()
-                    {
-                        SuccessCode = "9997",
-                        SuccessDesc = "Unexpected Error with ReleaseFax"
-                    }
-                };
-
-                return errorResponse;
-            }
+            var reasonCodeResponse = new StandardResponse();
+            reasonCodeResponse.CommonData.SuccessCode = "9997";
+            reasonCodeResponse.CommonData.SuccessDesc = "This API endpoint has been deprecated.";
+            return reasonCodeResponse;
         }
 
         /// <summary>
