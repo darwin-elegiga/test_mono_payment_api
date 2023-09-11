@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using VPay.Data.Db2.Abstractions;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
 
@@ -53,6 +54,8 @@ namespace VPay.Payment.Api
 
             services.Configure<PaymentConfig>(Configuration.GetSection("PaymentSettings"));
             services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<PaymentConfig>>().Value);
+
+            services.AddTransient<ISecurity, Security>();
 
             services.AddTransient<IHealthCheckService, HealthCheckService>();
             services.AddTransient<ITransactionService, TransactionService>();
