@@ -40,6 +40,9 @@ namespace VPay.Payment.Api.Auth
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+
+            Logger.LogInformation($"VPay.PaymentApi: Pr-Pre-Validating Credentials");
+
             if (!Request.Headers.ContainsKey(AuthorizationHeaderName))
             {
                 //Authorization header not in request
@@ -98,7 +101,7 @@ namespace VPay.Payment.Api.Auth
 
                 var user = await _authenticationService.Login(av);
 
-                Logger.LogInformation($"VPay.PaymentApi: Login Completed: IsUserNull:{user==null}");
+                Logger.LogInformation($"VPay.PaymentApi: Login Completed: IsUserNull:{user == null}");
 
                 if (user == null)
                 {
