@@ -9,7 +9,7 @@ ARG REGISTRY=docker.repo1.uhc.com/vpay-docker
 ARG DOTNET_VERSION=6.0
 
 ## ***Use for dotnet 5.0 and above***
-ARG DOTNET_SDK_VARIANT=focal-db2
+ARG DOTNET_SDK_VARIANT=focal
 ARG DOTNET_RUNTIME_VARIANT=focal-db2
 ARG BASE_SDK_IMAGE=dotnet/sdk
 ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
