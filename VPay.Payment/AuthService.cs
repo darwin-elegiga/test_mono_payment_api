@@ -103,12 +103,16 @@ namespace VPay.Payment
                 return null;
             }
 
+            _logger.LogInformation($"AuthService: DoLogin: Starting for {name}");
+
             var remoteLogin = await _db.GetRepository<ISecurity>().RemoteLoginAsync(new RemoteLoginParam()
             {
                 UserId = name,
                 Password = password,
                 Source = source
             });
+
+            _logger.LogInformation($"AuthService: DoLogin: ReturnCode: {remoteLogin.ReturnCode}, ErrorMessage: {remoteLogin.ErrorMessage}");
 
             if (!string.Equals(remoteLogin.ReturnCode, "OK"))
             {
