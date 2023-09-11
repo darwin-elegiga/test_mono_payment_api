@@ -80,10 +80,14 @@ namespace VPay.Payment.Api
 
                 c.AddSecurityDefinition("VPay", new OpenApiSecurityScheme()
                 {
-                    Description = "Basic HTTP Auth"
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    In = ParameterLocation.Header,
+                    Description = "Basic Authorization header using the Bearer scheme."
                 });
 
-                c.OperationFilter<BasicAuthFilter>(); ;
+                c.OperationFilter<BasicAuthFilter>();
 
                 //Determine which set of documentation an API should belong to
                 c.DocInclusionPredicate((docName, apiDesc) =>

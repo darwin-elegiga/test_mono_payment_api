@@ -45,20 +45,12 @@ namespace VPay.Payment.Api.Auth
 
                 operation.Security = new List<OpenApiSecurityRequirement>
                 {
-                    new OpenApiSecurityRequirement
+                    new()
                     {
                         { new OpenApiSecurityScheme{ Name = "VPay" }, new string[]{} }
                     }
                 };
-                //new List<IDictionary<string, IEnumerable<string>>>
-                //{
-                //    new Dictionary<string, IEnumerable<string>>
-                //    {
-                //        {"VPay", new string[] { }}
-                //    }
-                //};
             }
         }
-
     }
 }
