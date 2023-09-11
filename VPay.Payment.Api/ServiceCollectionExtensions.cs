@@ -78,7 +78,7 @@ namespace VPay.Payment.Api
                 //Names used here are used in URL for SwaggerUI
                 c.SwaggerDoc("v1.0", new OpenApiInfo { Title = "Payment API", Version = "v1.0" });
 
-                c.AddSecurityDefinition("VPay", new OpenApiSecurityScheme()
+                c.AddSecurityDefinition("http", new OpenApiSecurityScheme()
                 {
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
