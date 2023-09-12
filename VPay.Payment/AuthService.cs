@@ -46,8 +46,6 @@ namespace VPay.Payment
 
         public async Task<UserSessionInfo> Login(AuthenticationParam param)
         {
-            _logger.LogInformation($"AuthService: Login: ValidateIP");
-
             if (_config.ValidateIP)
             {
                 var ipValidate = await TestAuthentication(param);
@@ -59,7 +57,6 @@ namespace VPay.Payment
 
             UserSessionInfo userSession = null;
 
-
             _logger.LogInformation($"AuthService: Try Login for {param.UserId}");
 
             var loginTry = await DoLogin(param.UserId, param.Password, "WEBSERVICE");
@@ -69,7 +66,6 @@ namespace VPay.Payment
                 userSession = loginTry;
                 userSession.Source = 'S';
             }
-
 
             _logger.LogInformation($"AuthService: Completed Login for {param.UserId}");
 

@@ -40,9 +40,6 @@ namespace VPay.Payment.Api.Auth
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-
-            Logger.LogInformation($"VPay.PaymentApi: Pr-Pre-Validating Credentials");
-
             if (!Request.Headers.ContainsKey(AuthorizationHeaderName))
             {
                 //Authorization header not in request
@@ -70,7 +67,6 @@ namespace VPay.Payment.Api.Auth
             {
                 return AuthenticateResult.Fail("Invalid VPay authentication header");
             }
-
 
             Logger.LogInformation($"VPay.PaymentApi: Post-Validating Credentials");
 
