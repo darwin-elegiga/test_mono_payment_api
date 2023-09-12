@@ -2,7 +2,10 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using FaxManagement.Client.v1;
+using FaxManagement.Client.v1.Models;
 using Microsoft.Extensions.Logging;
+using Refit;
 using VPay.Data.Db2.Abstractions;
 using VPay.Data.Db2.Abstractions.Helpers;
 using VPay.Data.Db2.Abstractions.TransactionWs;
@@ -14,12 +17,14 @@ namespace VPay.Payment
     {
         private readonly IDb2Context _db2Context;
         private readonly IUserInfo _user;
+        private readonly IFaxQueueV1Client _client;
         private readonly ILogger _logger;
 
-        public TransactionService(IDb2Context db2Context, IUserInfo user, ILogger<TransactionService> logger)
+        public TransactionService(IDb2Context db2Context, IUserInfo user, IFaxQueueV1Client client, ILogger<TransactionService> logger)
         {
             _db2Context = db2Context;
             _user = user;
+            _client = client;
             _logger = logger;
         }
 
@@ -483,7 +488,28 @@ namespace VPay.Payment
         {
             _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \nFaxCode={{FaxCode}}, FaxNumber={faxNumber}", nameof(ResendFax), "Starting", faxCode);
 
-            var dbResult = await _db2Context.GetRepository<IFax>().ResendFaxAsync(_user.Token, faxCode, faxNumber ?? "");
+            //Query For Fax Job
+            FaxJobDto faxJob;
+            try
+            {
+                faxJob = await _client.GetFaxJob(new FaxJobRequestDto { JobId = faxCode });
+            }
+            catch (ApiException ex)
+            {
+                _logger.LogWarning($"Transaction Service: Unable to find fax job for {faxCode}. Exception:{ex}");
+
+                return new StandardResponse
+                {
+                    CommonData = new CommonData
+                    {
+                        SuccessCode = "9997",
+                        SuccessDesc = $"Unable to find the fax job by {faxCode}"
+                    }
+                };
+            }
+
+            var dbResult = await _db2Context.GetRepository<IFax>()
+                .ResendFaxAsync(_user.Token, faxJob.TransactionIds.LastOrDefault(), faxJob.CorrespondenceId, faxNumber ?? "");
 
             var sResp = PackAndUnpackResponse();
             sResp.CommonData.SuccessCode = dbResult.SuccessCode;
