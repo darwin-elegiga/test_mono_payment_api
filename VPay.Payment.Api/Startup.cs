@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Configuration;
+using System.IO;
+using System.Net.Http;
+using FaxManagement.Client.v1;
 using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,7 +13,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Refit;
 using VPay.Data.Db2.Abstractions;
+using VPay.Payment.Api.Dtos;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
 
@@ -17,9 +23,22 @@ namespace VPay.Payment.Api
 {
     public class Startup
     {
+
+        public EnvironmentSettings? EnvironmentSettings { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            //var configuration = new ConfigurationBuilder()               
+            //  .SetBasePath(Directory.GetCurrentDirectory())
+            //  .AddJsonFile("appsettings.json")
+            //  .AddEnvironmentVariables()
+            //  .Build();
+
+            EnvironmentSettings = Configuration
+               .GetSection("Environment")
+               .Get<EnvironmentSettings>();
+
         }
 
         public IConfiguration Configuration { get; }
@@ -56,12 +75,22 @@ namespace VPay.Payment.Api
             services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<PaymentConfig>>().Value);
 
             services.AddTransient<ISecurity, Security>();
-
             services.AddTransient<IHealthCheckService, HealthCheckService>();
             services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<ITradingPostService, TradingPostService>();
             services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
             services.AddTransient<ILegacyValidationService, LegacyValidationService>();
+
+            services.AddHttpClient();
+            services.AddTransient(ctx => CreateClient<IFaxQueueV1Client>(ctx, EnvironmentSettings));
+
+        }
+
+        public T CreateClient<T>(IServiceProvider provider, EnvironmentSettings settings)
+        {
+            var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient();
+            httpClient.BaseAddress = new Uri(settings.BaseUrl);
+            return RestService.For<T>(httpClient);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

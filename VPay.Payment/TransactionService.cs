@@ -484,9 +484,9 @@ namespace VPay.Payment
             }
         }
 
-        public async Task<StandardResponse> ResendFax(int faxCode, string faxNumber)
+        public async Task<StandardResponse> ResendFax(int faxCode)
         {
-            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \nFaxCode={{FaxCode}}, FaxNumber={faxNumber}", nameof(ResendFax), "Starting", faxCode);
+            _logger.LogInformation($"{{ServiceName}} - {{Step}} with: \nFaxCode={{FaxCode}}", nameof(ResendFax), "Starting", faxCode);
 
             //Query For Fax Job
             FaxJobDto faxJob;
@@ -509,7 +509,7 @@ namespace VPay.Payment
             }
 
             var dbResult = await _db2Context.GetRepository<IFax>()
-                .ResendFaxAsync(_user.Token, faxJob.TransactionIds.LastOrDefault(), faxJob.CorrespondenceId, faxNumber ?? "");
+                .ResendFaxAsync(_user.Token, faxJob.TransactionIds.LastOrDefault(), faxJob.CorrespondenceId, "");
 
             var sResp = PackAndUnpackResponse();
             sResp.CommonData.SuccessCode = dbResult.SuccessCode;

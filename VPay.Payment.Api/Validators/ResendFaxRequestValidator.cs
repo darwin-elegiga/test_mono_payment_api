@@ -14,8 +14,8 @@ namespace VPay.Payment.Api.Validators
             RuleFor(x => x.FaxCode)
                 .NotNull().WithErrorCode("0055").WithMessage("Invalid value for FaxCode");
 
-            RuleFor(x => x.CleanFaxNumber)
-                .Matches("[0-9]{10,}").OverridePropertyName("FaxNumber").WithErrorCode("0005").WithMessage((f, s) => "New Fax Number Invalid: " + f.FaxNumber);
+            //RuleFor(x => x.CleanFaxNumber)
+            //    .Matches("[0-9]{10,}").OverridePropertyName("FaxNumber").WithErrorCode("0005").WithMessage((f, s) => "New Fax Number Invalid: " + f.FaxNumber);
         }
     }
 }

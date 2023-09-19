@@ -163,7 +163,7 @@ namespace VPay.Payment.Api.Controllers
         [ServicePermissionAuthorize(ServicePermission.ResendFax)]
         public async Task<StandardResponse> ResendFax(ResendFaxRequest entity)
         {
-            var result = await _transactionService.ResendFax(entity.FaxCode.GetValueOrDefault(0), entity.CleanFaxNumber);
+            var result = await _transactionService.ResendFax(entity.FaxCode.GetValueOrDefault(0) );
 
             return result;
         }

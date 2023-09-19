@@ -372,7 +372,7 @@ namespace VPay.Payment
             {
             }
 
-            return await _transactionService.ResendFax(faxCode, standardRequest.CorrespondenceData.PhoneNumber);
+            return await _transactionService.ResendFax(faxCode);
         }
 
         #region Private fields
