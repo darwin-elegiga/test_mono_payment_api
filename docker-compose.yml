@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.5'
 
 services:
   paymentwebapi:
@@ -6,3 +6,40 @@ services:
     build:
       context: .
       dockerfile: VPay.Payment.Api/Dockerfile
+    depends_on:
+      vpay.payment.db2:
+        condition: service_healthy
+    networks:
+      - paymentnetwork
+
+  vpay.payment.db2:
+    image: ${DOCKER_REGISTRY-}vpaypaymentdb2
+    container_name: VPay.Payment.DB2
+    privileged: true
+    ports:
+      - 50000:50000
+      - 50001:50001
+    environment:
+      DB2INST1_PASSWORD: apassword
+      LICENSE: accept
+      DBNAME: testdb
+      TZ: "America/Chicago"
+      PERSISTENT_HOME: true
+    build:
+      context: .
+      dockerfile: ./database/DB2/Dockerfile
+    volumes:
+      - ./db-data/db2:/database
+    healthcheck:
+      test:         bash -c "[ -f /tmp/healthy ]"
+      start_period: 3m
+      interval:     3s
+      timeout:      1s
+      retries:      120
+    networks:
+      - paymentnetwork
+
+networks:
+  paymentnetwork:
+    driver: bridge
+        

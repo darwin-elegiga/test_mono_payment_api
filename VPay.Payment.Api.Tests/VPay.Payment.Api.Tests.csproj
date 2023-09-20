@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VPay.Payment.Api\VPay.Payment.Api.csproj" />
-    <ProjectReference Include="..\VPay.Payment.Common\VPay.Payment.Common.csproj" />
   </ItemGroup>
 
 </Project>
