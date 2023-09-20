@@ -9,6 +9,7 @@ if db2 "SELECT schemaname FROM syscat.schemata WHERE schemaname = 'VPAYBRDDTA'" 
 else
     echo "Schema Does Not Exist so Initialize Database"
     db2 "create schema VPAYBRDDTA"
+    db2 "create schema VPAYFAX"
     db2 -tvf /InitializeDatabase.sql
     
 fi
