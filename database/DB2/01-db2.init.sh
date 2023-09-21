@@ -10,6 +10,7 @@ else
     echo "Schema Does Not Exist so Initialize Database"
     db2 "create schema VPAYBRDDTA"
     db2 "create schema VPAYFAX"
+    db2 "create schema VPAYPGM"
     db2 -tvf /InitializeDatabase.sql
     
 fi
