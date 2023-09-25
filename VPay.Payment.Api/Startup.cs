@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Configuration;
-using System.IO;
 using System.Net.Http;
 using FaxManagement.Client.v1;
 using GlobalExceptionHandler.WebApi;
-using Humanizer.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,16 +30,9 @@ namespace VPay.Payment.Api
         {
             Configuration = configuration;
 
-            //var configuration = new ConfigurationBuilder()               
-            //  .SetBasePath(Directory.GetCurrentDirectory())
-            //  .AddJsonFile("appsettings.json")
-            //  .AddEnvironmentVariables()
-            //  .Build();
-
             EnvironmentSettings = Configuration
                .GetSection("Environment")
                .Get<EnvironmentSettings>();
-
         }
 
         public IConfiguration Configuration { get; }
@@ -99,7 +89,6 @@ namespace VPay.Payment.Api
             services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
             services.AddTransient<ILegacyValidationService, LegacyValidationService>();
 
-            services.AddHttpClient();
             services.AddTransient(ctx => CreateClient<IFaxQueueV1Client>(ctx, EnvironmentSettings));
 
         }
@@ -138,7 +127,7 @@ namespace VPay.Payment.Api
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-               // endpoints.MapControllers();
+                // endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health", new DefaultHealthCheckOptions());
             });
 
