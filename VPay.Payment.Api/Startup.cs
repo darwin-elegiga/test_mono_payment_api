@@ -30,16 +30,9 @@ namespace VPay.Payment.Api
         {
             Configuration = configuration;
 
-            //var configuration = new ConfigurationBuilder()               
-            //  .SetBasePath(Directory.GetCurrentDirectory())
-            //  .AddJsonFile("appsettings.json")
-            //  .AddEnvironmentVariables()
-            //  .Build();
-
             EnvironmentSettings = Configuration
                .GetSection("Environment")
                .Get<EnvironmentSettings>();
-
         }
 
         public IConfiguration Configuration { get; }
