@@ -1,4 +1,4 @@
-﻿namespace VPay.Payment.Api
+﻿namespace VPay.Payment.Api.Dtos
 {
     public class EnvironmentSettings
     {
