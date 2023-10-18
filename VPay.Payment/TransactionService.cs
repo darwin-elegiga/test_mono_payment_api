@@ -532,21 +532,29 @@ namespace VPay.Payment
         private async Task<List<CorespDtl>> GetCorrespondenceList(long transactionId)
         {
             var result = (await _db2Context.GetRepository<ICorrespondenceRepo>().GetByTransactionId(transactionId)).ToCorespDtl().ToList();
-            if (result.Count > 0)
+            // If there are no results, just return the empty list
+            if (result.Count <= 0)
             {
-                var faxjobs = _client.JobsByTransaction(transactionId);
-                var faxjobslst = faxjobs.Result.ToList();
-                if (faxjobs.Result.Count > 0)
-                {
-                    foreach (var corr in result)
-                    {
-                        corr.FaxJobList = faxjobslst.Where(x => x.CorrespondenceId == corr.DmRecId).ToList();
-                        var faxstatus = await _client.GetFaxStatus(new FaxJobRequestDto() { JobId = corr.FaxJobList.SingleOrDefault().JobId });
-                        corr.StatusText = faxstatus.StatusName;
-                    }
-                }
+                return result;
             }
 
+            var faxJobs = (await _client.JobsByTransaction(transactionId));
+            // If there are no fax jobs found in Fax Client, just return the original list from CPSCOR
+            if (faxJobs.Count <= 0)
+            {
+                return result;
+            }
+            // Merge the results from Fax Client and what's in CPSCOR.
+            foreach (var corr in result)
+            {
+                corr.FaxJobList = faxJobs.Where(x => x.CorrespondenceId == corr.DmRecId).ToList();
+                var faxStatus = (await _client.GetFaxStatus(new FaxJobRequestDto()
+                {
+                    JobId = corr.FaxJobList.FirstOrDefault()?.JobId
+                }));
+
+                corr.StatusText = faxStatus.StatusName;
+            }
             return result;
         }
 
