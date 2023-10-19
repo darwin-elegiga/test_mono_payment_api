@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using FaxManagement.Client.v1;
 using FaxManagement.Client.v1.Models;
@@ -538,23 +539,36 @@ namespace VPay.Payment
                 return result;
             }
 
-            var faxJobs = (await _client.JobsByTransaction(transactionId));
-            // If there are no fax jobs found in Fax Client, just return the original list from CPSCOR
-            if (faxJobs.Count <= 0)
+            try
             {
-                return result;
-            }
-            // Merge the results from Fax Client and what's in CPSCOR.
-            foreach (var corr in result)
-            {
-                corr.FaxJobList = faxJobs.Where(x => x.CorrespondenceId == corr.DmRecId).ToList();
-                var faxStatus = (await _client.GetFaxStatus(new FaxJobRequestDto()
+                var faxJobs = (await _client.JobsByTransaction(transactionId));
+                // If there are no fax jobs found in Fax Client, just return the original list from CPSCOR
+                if (faxJobs.Count <= 0)
                 {
-                    JobId = corr.FaxJobList.FirstOrDefault()?.JobId
-                }));
+                    return result;
+                }
 
-                corr.StatusText = faxStatus.StatusName;
+                // Merge the results from Fax Client and what's in CPSCOR.
+                foreach (var corr in result)
+                {
+                    corr.FaxJobList = faxJobs.Where(x => x.CorrespondenceId == corr.DmRecId).ToList();
+                    var faxStatus = (await _client.GetFaxStatus(new FaxJobRequestDto()
+                    {
+                        JobId = corr.FaxJobList.FirstOrDefault()?.JobId
+                    }));
+
+                    corr.StatusText = faxStatus.StatusName;
+                }
+
             }
+            catch (ApiException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    _logger.LogInformation("TransactionId: {TransactionId} not found in FaxMan", transactionId);
+                }
+            }
+
             return result;
         }
 
