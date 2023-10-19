@@ -2,18 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FaxManagement.Client" Version="4.1.2-beta-1" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="7.0.11" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-    <PackageReference Include="VPay.AspNetCore.SwashBuckle.HealthChecks" Version="1.0.1" />
-    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.11.2-beta-3" />
+    <PackageReference Include="Net.IBM.Data.Db2-lnx" Version="7.0.0.200" />
+    <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.11.2-beta-3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\database\VPay.Payment.Data.Db2\VPay.Payment.Data.Db2.csproj" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
@@ -40,25 +41,23 @@ namespace VPay.Payment.Api.Auth
 
             if (hasAuthorize)
             {
-                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
-                operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
-
                 operation.Security = new List<OpenApiSecurityRequirement>
                 {
-                    new OpenApiSecurityRequirement
+                    new()
                     {
-                        { new OpenApiSecurityScheme{ Name = "VPay" }, new string[]{} }
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "http" },
+                                Scheme = "basic",
+                                Name = "basic",
+                                In = ParameterLocation.Header
+                            },
+                            new string[] { }
+                        }
                     }
                 };
-                //new List<IDictionary<string, IEnumerable<string>>>
-                //{
-                //    new Dictionary<string, IEnumerable<string>>
-                //    {
-                //        {"VPay", new string[] { }}
-                //    }
-                //};
             }
         }
-
     }
 }

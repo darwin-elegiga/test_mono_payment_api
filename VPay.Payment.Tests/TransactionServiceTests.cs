@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using FaxManagement.Client.v1;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -16,14 +17,16 @@ namespace VPay.Payment.Tests
         private readonly TransactionService _sut;
         private readonly Db2ContextMock _db2Context;
         private readonly Mock<IUserInfo> _user;
+        private readonly Mock<IFaxQueueV1Client> _fax;
         private readonly NullLogger<TransactionService> _logger;
 
         public TransactionServiceTests()
         {
             _db2Context = new Db2ContextMock();
             _user = new Mock<IUserInfo>();
+ 
             _logger = new NullLogger<TransactionService>();
-            _sut = new TransactionService(_db2Context, _user.Object, _logger);
+            _sut = new TransactionService(_db2Context, _user.Object, _fax.Object, _logger);
         }
 
         [Fact]

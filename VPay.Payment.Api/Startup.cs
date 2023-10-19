@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http;
+using FaxManagement.Client.v1;
 using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,16 +11,28 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Refit;
+using VPay.AspNetCore.HealthChecks;
+using VPay.Data.Db2.Abstractions;
+using VPay.Payment.Api.Dtos;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
+using VPay.Payment.Data.Db2.Connection;
+using VPay.Payment.Data.Health;
 
 namespace VPay.Payment.Api
 {
     public class Startup
     {
+
+        public EnvironmentSettings? EnvironmentSettings { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            EnvironmentSettings = Configuration
+               .GetSection("Environment")
+               .Get<EnvironmentSettings>();
         }
 
         public IConfiguration Configuration { get; }
@@ -49,16 +63,42 @@ namespace VPay.Payment.Api
                 .AddOptions()
                 .AddSwaggerGenService()
                 .SetupAuth()
-                .SetupDb2(Configuration);
+                .SetupDb2(Configuration)
+                .AddHttpClient();
 
             services.Configure<PaymentConfig>(Configuration.GetSection("PaymentSettings"));
             services.AddScoped(cfg => cfg.GetService<IOptionsSnapshot<PaymentConfig>>().Value);
 
-            services.AddTransient<IHealthCheckService, HealthCheckService>();
+            services.AddTransient<ISecurity, Security>();
+            //services.AddTransient<IHealthCheckService, HealthCheckService>();
+
+            services.AddDb2UnifiedConnection();
+
+            var checks = services.AddHealthChecks();
+
+            services
+                .Configure<DB2UnifiedConnectionSettings>(Configuration.GetSection("Db2"))
+                .AddTransient(cfg => cfg.GetService<IOptions<DB2UnifiedConnectionSettings>>().Value);
+            var healthCheckSetting = Configuration.GetSection("HealthcheckSetting").Get<HealthcheckSetting>();
+            if (healthCheckSetting.ApplyDB2HealthCheck)
+            {
+                checks.AddCheck<Db2HealthCheckService>("Db2");
+            }
+
             services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<ITradingPostService, TradingPostService>();
             services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
             services.AddTransient<ILegacyValidationService, LegacyValidationService>();
+
+            services.AddTransient(ctx => CreateClient<IFaxQueueV1Client>(ctx, EnvironmentSettings));
+
+        }
+
+        public T CreateClient<T>(IServiceProvider provider, EnvironmentSettings settings)
+        {
+            var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient();
+            httpClient.BaseAddress = new Uri(settings.BaseUrl);
+            return RestService.For<T>(httpClient);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,6 +124,12 @@ namespace VPay.Payment.Api
             {
                 //The version after /swagger/ in the URL must match the "name" established when defining the API documentation in calls to SwaggerDoc
                 c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Payment v1");
+            });
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                // endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health", new DefaultHealthCheckOptions());
             });
 
             _logger = loggerFactory.CreateLogger<Startup>();
@@ -138,5 +184,10 @@ namespace VPay.Payment.Api
                 }));
             }
         }
+    }
+
+    public class HealthcheckSetting
+    {
+        public bool ApplyDB2HealthCheck { get; set; }
     }
 }

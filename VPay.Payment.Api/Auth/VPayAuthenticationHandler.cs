@@ -40,6 +40,9 @@ namespace VPay.Payment.Api.Auth
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+
+            Logger.LogInformation($"VPay.PaymentApi: Pr-Pre-Validating Credentials");
+
             if (!Request.Headers.ContainsKey(AuthorizationHeaderName))
             {
                 //Authorization header not in request
@@ -58,6 +61,8 @@ namespace VPay.Payment.Api.Auth
                 return AuthenticateResult.NoResult();
             }
 
+            Logger.LogInformation($"VPay.PaymentApi: Pre-Validating Credentials");
+
             byte[] headerValueBytes = Convert.FromBase64String(headerValue.Parameter);
             string userAndPassword = Encoding.UTF8.GetString(headerValueBytes);
             string[] parts = userAndPassword.Split(':');
@@ -65,6 +70,9 @@ namespace VPay.Payment.Api.Auth
             {
                 return AuthenticateResult.Fail("Invalid VPay authentication header");
             }
+
+
+            Logger.LogInformation($"VPay.PaymentApi: Post-Validating Credentials");
 
             var ip = "0.0.0.0";
 
@@ -89,7 +97,11 @@ namespace VPay.Payment.Api.Auth
                 ["AuthId"] = av.Id
             }))
             {
+                Logger.LogInformation($"VPay.PaymentApi: Login: Attempting to log into {av.UserId}");
+
                 var user = await _authenticationService.Login(av);
+
+                Logger.LogInformation($"VPay.PaymentApi: Login Completed: IsUserNull:{user == null}");
 
                 if (user == null)
                 {
@@ -130,8 +142,6 @@ namespace VPay.Payment.Api.Auth
                 return AuthenticateResult.Success(ticket);
             }
         }
-
-
 
         private void TryToLogFailureBody(string userName, string bodyAsText)
         {

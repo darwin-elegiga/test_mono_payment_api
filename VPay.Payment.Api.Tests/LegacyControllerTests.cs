@@ -23,6 +23,7 @@ namespace VPay.Payment.Api.Tests
         private readonly NullLogger<LegacyController> _logger;
         private readonly Mock<ILegacyTransactionService> _transactionService;
         private readonly Mock<IFileProvider> _fileProvider;
+        private readonly LegacyRequest _setupRequest;
 
         public LegacyControllerTests()
         {
@@ -246,89 +247,30 @@ namespace VPay.Payment.Api.Tests
         }
 
         [Fact]
-        public async Task CancelFax_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
+        public void CancelFax_should_return_Deprecated_API_9997()
         {
-            var setupObj = new LegacyRequest()
-            {
-                Envelope = new LegacyEnvelope()
-                {
-                    Body = new LegacyBody()
-                    {
-                        CancelFax = new LegacyLoadPanRequest()
-                        {
-                            AuthenticationValues = new AuthenticationValues(),
-                            Request = new StandardRequest()
-                        }
-                    }
-                }
-            };
-
-            _transactionService
-                .Setup(_ => _.CancelFax(It.IsAny<StandardRequest>(), CancellationToken.None))
-                .ThrowsAsync(new Exception("General Exception"));
-
-            var result = await _sut.CancelFax(setupObj);
+            var result = _sut.CancelFax(_setupRequest);
 
             result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("Unexpected Error with CancelFax");
+            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
         }
 
         [Fact]
-        public async Task HoldFax_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
+        public void HoldFax_should_return_Deprecated_API_9997()
         {
-            var setupObj = new LegacyRequest()
-            {
-                Envelope = new LegacyEnvelope()
-                {
-                    Body = new LegacyBody()
-                    {
-                        HoldFax = new LegacyStandardRequest()
-                        {
-                            AuthenticationValues = new AuthenticationValues(),
-                            Request = new StandardRequest()
-                        }
-                    }
-                }
-            };
-
-            _transactionService
-                .Setup(_ => _.HoldFax(It.IsAny<StandardRequest>(), CancellationToken.None))
-                .ThrowsAsync(new Exception("General Exception"));
-
-            var result = await _sut.HoldFax(setupObj);
+            var result = _sut.HoldFax(_setupRequest);
 
             result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("Unexpected Error with HoldFax");
+            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
         }
 
         [Fact]
-        public async Task ReleaseFax_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
+        public void ReleaseFax_should_return_Deprecated_API_9997()
         {
-            var setupObj = new LegacyRequest()
-            {
-                Envelope = new LegacyEnvelope()
-                {
-                    Body = new LegacyBody()
-                    {
-                        ReleaseFax = new LegacyStandardRequest()
-                        {
-                            AuthenticationValues = new AuthenticationValues(),
-                            Request = new StandardRequest()
-                        }
-                    }
-                }
-            };
-
-            _transactionService
-                .Setup(_ => _.ReleaseFax(It.IsAny<StandardRequest>(), CancellationToken.None))
-                .ThrowsAsync(new Exception("General Exception"));
-
-            var result = await _sut.ReleaseFax(setupObj);
-
+            var result = _sut.ReleaseFax(_setupRequest);
             result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("Unexpected Error with ReleaseFax");
+            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
         }
-
         [Fact]
         public async Task ResendFax_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
         {

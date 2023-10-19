@@ -13,12 +13,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using VPay.AspNetCore.SwashBuckle.HealthChecks;
 using VPay.Data.Db2.Odbc;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
+using VPay.Payment.Data.Health;
 
 namespace VPay.Payment.Api
 {
@@ -51,7 +54,7 @@ namespace VPay.Payment.Api
             services.Configure<OdbcConnectionConfig>(configuration.GetSection("Db2"));
             services.AddDb2OdbcConnection();
 
-            services.AddScoped<IHealthCheck, Db2HealthCheckService>();
+            //services.AddScoped<IHealthCheck, Db2HealthCheckService>();
 
             return services;
         }
@@ -78,12 +81,16 @@ namespace VPay.Payment.Api
                 //Names used here are used in URL for SwaggerUI
                 c.SwaggerDoc("v1.0", new OpenApiInfo { Title = "Payment API", Version = "v1.0" });
 
-                c.AddSecurityDefinition("VPay", new OpenApiSecurityScheme()
+                c.AddSecurityDefinition("http", new OpenApiSecurityScheme()
                 {
-                    Description = "Basic HTTP Auth"
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    In = ParameterLocation.Header,
+                    Description = "Basic Authorization header using the Bearer scheme."
                 });
 
-                c.OperationFilter<BasicAuthFilter>(); ;
+                c.OperationFilter<BasicAuthFilter>();
 
                 //Determine which set of documentation an API should belong to
                 c.DocInclusionPredicate((docName, apiDesc) =>
@@ -101,7 +108,7 @@ namespace VPay.Payment.Api
                     }
                     return actionApiVersionModel.ImplementedApiVersions.Any(v => $"v{v.ToString()}" == docName);
                 });
-
+                c.AddHealthCheckDocument("/health");
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";

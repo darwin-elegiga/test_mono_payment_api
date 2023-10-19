@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.5'
 
 services:
   paymentwebapi:
@@ -7,3 +7,7 @@ services:
       - ASPNETCORE_Logging__GELF__AdditionalFields__namespace=client-payments-local
     ports:
       - "5013:80"
+
+  vpay.payment.db2:
+    environment:
+      PERSISTENT_HOME: false
