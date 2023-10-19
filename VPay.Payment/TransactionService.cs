@@ -567,6 +567,10 @@ namespace VPay.Payment
                 {
                     _logger.LogInformation("TransactionId: {TransactionId} not found in FaxMan", transactionId);
                 }
+                else
+                {
+                    _logger.LogWarning(ex, "An unhandled exception occurred calling FaxMan.");
+                }
             }
 
             return result;
