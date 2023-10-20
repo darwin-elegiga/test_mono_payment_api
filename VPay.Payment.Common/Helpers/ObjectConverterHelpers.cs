@@ -40,7 +40,7 @@ namespace VPay.Payment.Common
                 Status = entity.Status,
                 RequestDate = Convert.ToInt32(entity.RequestDatePart),
                 StatusDate = Convert.ToInt32(entity.StatusDatePart),
-                FaxJobList = entity.FaxJobList.ToFaxJobs()?.ToList(),
+                FaxJobList = null  //entity.FaxJobList.ToFaxJobs()?.ToList(),
             };
         }
 

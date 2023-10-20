@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FaxManagement.Client.v1.Models;
 
 namespace VPay.Payment.Common
 {
@@ -51,7 +52,7 @@ namespace VPay.Payment.Common
         public string ToFax { get; set; }
         public string ToPhone { get; set; }
         public string StatusText { get; set; }
-        public List<FaxJob> FaxJobList { get; set; }
+        public List<FaxJobDto> FaxJobList { get; set; }
         public long DmRecId { get; set; }
 
     }

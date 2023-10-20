@@ -532,117 +532,29 @@ namespace VPay.Payment
         private async Task<List<CorespDtl>> GetCorrespondenceList(long transactionId)
         {
             var result = (await _db2Context.GetRepository<ICorrespondenceRepo>().GetByTransactionId(transactionId)).ToCorespDtl().ToList();
-            if (result.Count > 0)
+            // If there are no results, just return the empty list
+            if (result.Count <= 0)
             {
-                var faxes = (await _db2Context.GetRepository<IFax>().GetFaxJobByTransactionId(transactionId))
-                    .OrderBy(x => x.CreatedTimeStamp).ThenBy(x => x.LastStatusTimeStamp).ToList();
-
-                if (faxes.Count > 0)
-                {
-                    var faxStatus = (await _db2Context.GetRepository<IFax>().GetFaxJobStatusByTransactionId(transactionId))
-                        .OrderBy(x => x.CreatedTimeStamp).ToList();
-
-                    foreach (var corr in result)
-                    {
-                        corr.FaxJobList = faxes.Where(x => x.CorrespondenceId == corr.DmRecId).ToFaxJobs().ToList();
-
-                        var lastStatRank = 10;
-
-                        foreach (var faxJob in corr.FaxJobList)
-                        {
-                            var statuses = faxStatus.Where(x => x.FaxJobId == faxJob.FaxJobId).ToList();
-
-                            foreach (var faxJobStatus in statuses)
-                            {
-                                switch (faxJobStatus.StatusCode?.Trim())
-                                {
-                                    case "000":
-                                        if (8 < lastStatRank)
-                                        {
-                                            corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatRank = 8;
-                                        }
-
-                                        break;
-
-                                    case "001":
-                                        if (7 < lastStatRank)
-                                        {
-                                            corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatRank = 7;
-                                        }
-
-                                        break;
-
-                                    case "004":
-                                        if (6 < lastStatRank)
-                                        {
-                                            corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatRank = 6;
-                                        }
-
-                                        break;
-
-                                    case "003":
-                                        if (5 < lastStatRank)
-                                        {
-                                            corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatRank = 5;
-                                        }
-
-                                        break;
-
-                                    case "002":
-                                        if (4 < lastStatRank)
-                                        {
-                                            corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatRank = 4;
-                                        }
-
-                                        break;
-
-                                    case "006":
-                                        if (3 < lastStatRank)
-                                        {
-                                            corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatRank = 3;
-                                        }
-
-                                        break;
-
-                                    case "005":
-                                        if (2 < lastStatRank)
-                                        {
-                                            corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatRank = 2;
-                                        }
-
-                                        break;
-
-                                    case "999":
-                                        if (1 < lastStatRank)
-                                        {
-                                            corr.StatusText = faxJobStatus.StatusText;
-                                            lastStatRank = 1;
-                                        }
-
-                                        break;
-
-                                    default:
-                                        if (0 < lastStatRank)
-                                        {
-                                            corr.StatusText = "";
-                                            lastStatRank = 0;
-                                        }
-
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
+                return result;
             }
 
+            var faxJobs = (await _client.JobsByTransaction(transactionId));
+            // If there are no fax jobs found in Fax Client, just return the original list from CPSCOR
+            if (faxJobs.Count <= 0)
+            {
+                return result;
+            }
+            // Merge the results from Fax Client and what's in CPSCOR.
+            foreach (var corr in result)
+            {
+                corr.FaxJobList = faxJobs.Where(x => x.CorrespondenceId == corr.DmRecId).ToList();
+                var faxStatus = (await _client.GetFaxStatus(new FaxJobRequestDto()
+                {
+                    JobId = corr.FaxJobList.FirstOrDefault()?.JobId
+                }));
+
+                corr.StatusText = faxStatus.StatusName;
+            }
             return result;
         }
 
