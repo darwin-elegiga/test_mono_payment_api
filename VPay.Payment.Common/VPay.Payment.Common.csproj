@@ -8,7 +8,7 @@
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="7.0.11" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
     <PackageReference Include="VPay.AspNetCore.SwashBuckle.HealthChecks" Version="1.0.1" />
-    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.11.3-PAY-23503-1" />
+    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.11.3-PAY-23503-2" />
     <PackageReference Include="FaxManagement.Client" Version="4.1.2-beta-1" />
   </ItemGroup>
 

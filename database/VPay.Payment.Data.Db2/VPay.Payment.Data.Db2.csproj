@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="7.0.11" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
     <PackageReference Include="Net.IBM.Data.Db2-lnx" Version="7.0.0.200" />
-    <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.11.3-PAY-23503-1" />
+    <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.11.3-PAY-23503-2" />
   </ItemGroup>
 
   <ItemGroup>
