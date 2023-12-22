@@ -2,7 +2,7 @@
 {
     public class HeaderData
     {
-        public int TransNumber { get; set; }
+        public long TransNumber { get; set; }
         public string Client { get; set; }
         public string BillCode { get; set; }
         public string BillType { get; set; }
