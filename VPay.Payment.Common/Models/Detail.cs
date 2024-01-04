@@ -2,9 +2,8 @@
 {
     public class Detail
     {
-
-        public int TranId { get; set; }
-        public int LoadTran { get; set; }
+        public long TranId { get; set; }
+        public long LoadTran { get; set; }
         public string Status { get; set; }
         public string Amount { get; set; }
         public string AuthCode { get; set; }

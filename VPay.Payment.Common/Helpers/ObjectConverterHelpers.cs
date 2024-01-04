@@ -89,7 +89,7 @@ namespace VPay.Payment.Common
 
             return new HeaderData()
             {
-                TransNumber = Convert.ToInt32(entity.TransactionId),
+                TransNumber = entity.TransactionId,
                 Client = entity.ClientCode,
                 BillCode = entity.BillingEntity,
                 BillType = entity.PaymentType,
@@ -116,8 +116,8 @@ namespace VPay.Payment.Common
 
             return new Detail
             {
-                TranId = Convert.ToInt32(entity.TransactionId),
-                LoadTran = Convert.ToInt32(entity.TransactionId),
+                TranId = entity.TransactionId,
+                LoadTran = entity.TransactionId,
                 Status = entity.Status,
                 Amount = entity.Amount.ToString("F2"),
                 AuthCode = entity.AuthCode,
