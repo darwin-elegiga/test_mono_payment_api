@@ -551,7 +551,7 @@
 <xs:element name="batchNumber" type="xs:string" minOccurs="0"/>
 <xs:element name="expiration" type="xs:string" minOccurs="0"/>
 <xs:element name="financialType" type="xs:string" minOccurs="0"/>
-<xs:element name="loadTran" type="xs:int" minOccurs="0"/>
+<xs:element name="loadTran" type="xs:long" minOccurs="0"/>
 <xs:element name="merchantCode" type="xs:string" minOccurs="0"/>
 <xs:element name="merchantName" type="xs:string" minOccurs="0"/>
 <xs:element name="reasonCode" type="xs:string" minOccurs="0"/>
@@ -559,7 +559,7 @@
 <xs:element name="requesterName" type="xs:string" minOccurs="0"/>
 <xs:element name="status" type="xs:string" minOccurs="0"/>
 <xs:element name="statusDesc" type="xs:string" minOccurs="0"/>
-<xs:element name="tranId" type="xs:int" minOccurs="0"/>
+<xs:element name="tranId" type="xs:long" minOccurs="0"/>
 <xs:element name="tranTimeStamp" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -579,7 +579,7 @@
 <xs:element name="switchAvailBal" type="xs:string" minOccurs="0"/>
 <xs:element name="switchCurrentBal" type="xs:string" minOccurs="0"/>
 <xs:element name="taxId" type="xs:string" minOccurs="0"/>
-<xs:element name="transNumber" type="xs:int" minOccurs="0"/>
+<xs:element name="transNumber" type="xs:long" minOccurs="0"/>
 <xs:element name="userField1" type="xs:string" minOccurs="0"/>
 <xs:element name="userField2" type="xs:string" minOccurs="0"/>
 <xs:element name="userField3" type="xs:string" minOccurs="0"/>
