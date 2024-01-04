@@ -2,7 +2,6 @@
 {
     public class Detail
     {
-
         public long TranId { get; set; }
         public long LoadTran { get; set; }
         public string Status { get; set; }
