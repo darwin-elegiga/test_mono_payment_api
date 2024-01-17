@@ -1,0 +1,98 @@
+name: helm-dryrun-dev
+on: push
+env:
+  NAMESPACE: client-payments-dev
+  DEPLOYMENT_NAME: client-payments-api
+  SECRET_VALUE_FILE: secret-values.yaml
+  USE_FAKE_SECRETS: "true"
+  IMAGE_TAG_KEY: chart.virtual.shared.image.tag
+  ENVIRONMENT_KEY: chart.virtual.shared.env
+  REVIEW_MUTATIONS_KEY: chart.virtual.shared.review
+  CONTEXT_NAME: pldev
+  DATACENTER: Plano
+  INGRESS_DOMAIN_PREFIX: ''
+  INGRESS_SUBDOMAIN_PREFIX: ''
+  RESOURCE_NAME_PREFIX: ''
+  HELM_RELEASE_PREFIX: ''
+  VALUE_FILES: ''
+  VALUE_FILES_ENV: dev
+  VALUE_FILES_DC: plano
+  VALUE_FILES_DC_DOMAIN: pl
+  DEFAULT_VALUES_ENVIRONMENT_NAME: Development
+  SECRET_REPLACE_ENV: dev
+
+jobs:
+  helm-dryrun-dev:
+    environment: pldev
+
+    # TODO: see if we can bypass the need to patch in the beginning of helm chart
+
+    runs-on:
+      group: vpay-runner-group
+    container: plinfharbor.vpayusa.net/devops/helm-deploy:v1.1.0
+    steps:
+    - uses: actions/checkout@main    
+    - uses: Azure/setup-helm@v3
+      with:
+        version: v3.8.2
+    - uses: azure/k8s-set-context@v3
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.VPAY_KUBECONFIG }}
+        context: ${{ env.CONTEXT_NAME }}
+    - name: Set env
+      run: |
+        echo "VAULT_ADDR=$(echo ${{ vars.VPAY_DEV_VAULT_URL }})" >> $GITHUB_ENV
+        echo "VAULT_TOKEN=$(echo ${{ secrets.DEVVAULT_TOKEN }})" >> $GITHUB_ENV
+    - name: Generate Helm Chart
+      run: |
+        cd charts/payment-api
+        if [[ ! -f default-env-dc-values.yaml ]] ; then
+        cat <<EOF > default-env-dc-values.yaml
+        global:
+          environment:
+            name: ${DEFAULT_VALUES_ENVIRONMENT_NAME}
+            ingress:
+              subdomain: ${VALUE_FILES_ENV_DOMAIN:-${VALUE_FILES_ENV}}.pks.vpayusa.net
+              altSubdomains:
+              - ${VALUE_FILES_DC_DOMAIN:-${VALUE_FILES_DC}}pks${VALUE_FILES_ENV_DOMAIN:-${VALUE_FILES_ENV}}.vpayusa.net
+        chart:
+          virtual:
+            shared:
+              image:
+                registry: ${VALUE_FILES_DC_DOMAIN:-${VALUE_FILES_DC}}infharbor.vpayusa.net
+        EOF
+          echo "Using generated default-env-dc-values.yaml. Using values:"
+          cat default-env-dc-values.yaml
+        fi      
+        if [ -z "$VALUE_FILES" ]; then
+          VALUE_FILES_UNCHECKED="default-env-dc-values.yaml values-${VALUE_FILES_DC:-nodc}.yaml values-${VALUE_FILES_ENV:-noenv}.yaml values-${VALUE_FILES_ENV:-noenv}-${VALUE_FILES_DC:-nodc}.yaml"
+          VALUE_FILES=""
+          for VALUE_FILE in ${VALUE_FILES_UNCHECKED}; do
+            if [[ -f ${VALUE_FILE} ]] ; then VALUE_FILES="${VALUE_FILES} ${VALUE_FILE}"; fi
+          done
+          echo "Using generated value for VALUE_FILES. Generated value: ${VALUE_FILES}"
+        fi
+        VALUE_FILES_FLAGS=${VALUE_FILES:+$(printf -- "-f %s " ${VALUE_FILES[@]})}
+        echo "Generated VALUE_FILES_FLAGS := ${VALUE_FILES_FLAGS}"
+  
+        HELM_SET_STRING_FLAGS="${IMAGE_TAG_KEY:+${GITHUB_REF_NAME:+--set-string ${IMAGE_TAG_KEY}=\"${GITHUB_REF_NAME}\"}}
+          ${ENVIRONMENT_KEY:+${GITHUB_SHA:+--set-string ${ENVIRONMENT_KEY}.RELEASE_COMMIT_SHA=\"${GITHUB_SHA}\"}}
+          ${ENVIRONMENT_KEY:+${GITHUB_REF_NAME:+--set-string ${ENVIRONMENT_KEY}.RELEASE_TAG=\"${GITHUB_REF_NAME}\"}}
+          ${ENVIRONMENT_KEY:+--set-string ${ENVIRONMENT_KEY}.DEPLOYMENT_TIME=\"$(TZ=UTC date -R | sed 's/,/\\,/g')\"}
+          ${ENVIRONMENT_KEY:+${DATACENTER:+--set-string ${ENVIRONMENT_KEY}.DEPLOYMENT_DATACENTER=\"${DATACENTER}\"}}
+          ${INGRESS_DOMAIN_PREFIX:+--set-string ${REVIEW_MUTATIONS_KEY:-chart.virtual.shared.review}.ingressDomainPrefix=\"${INGRESS_DOMAIN_PREFIX}\"}
+          ${INGRESS_SUBDOMAIN_PREFIX:+--set-string ${REVIEW_MUTATIONS_KEY:-chart.virtual.shared.review}.ingressSubdomainPrefix=\"${INGRESS_SUBDOMAIN_PREFIX}\"}
+          ${RESOURCE_NAME_PREFIX:+--set-string ${REVIEW_MUTATIONS_KEY:-chart.virtual.shared.review}.resourceNamePrefix=\"${RESOURCE_NAME_PREFIX}\"}"
+
+        echo "Generated HELM_SET_STRING_FLAGS := ${HELM_SET_STRING_FLAGS}"
+        if [[ -f ${SECRET_VALUE_FILE} ]] && [[ -n ${USE_FAKE_SECRETS} ]] ; then cp ${SECRET_VALUE_FILE} ${SECRET_VALUE_FILE}.fake; fi
+        if [[ -f ${SECRET_VALUE_FILE} ]] ; then vault-helper fill --env DEPLOYMENT=${SECRET_REPLACE_ENV} secret-values.yaml; SECRET_EXISTS=true; fi
+        if [[ -f ${SECRET_VALUE_FILE} ]] && [[ -n ${USE_FAKE_SECRETS} ]] ; then SECRET_VALUE_FILE=${SECRET_VALUE_FILE}.fake; sed -i -r -e 's/\{\{ ?vault.+ ?\}\}/fake-data/g' ${SECRET_VALUE_FILE}; fi        
+        rm -f Chart.lock && sed -i "s/\\(pl\\|stl\\)infharbor.vpayusa.net/plinfharbor.vpayusa.net/g" Chart.yaml && helm dependency update
+        HELM_COMMAND="helm upgrade ${{ env.DEPLOYMENT_NAME }} . --install --namespace ${{ env.NAMESPACE }} --wait  --dry-run ${HELM_SET_STRING_FLAGS} ${VALUE_FILES_FLAGS} ${SECRET_EXISTS:+-f ${SECRET_VALUE_FILE}}"
+        HELM_COMMAND="${HELM_COMMAND} ${IGNORE_STDOUT:+> /dev/null}"
+        echo $HELM_COMMAND
+        echo $HELM_COMMAND | bash
+      shell: bash
+
