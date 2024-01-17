@@ -2,7 +2,7 @@ name: helm-dryrun-dev
 on: push
 env:
   NAMESPACE: client-payments-dev
-  DEPLOYMENT_NAME: client-payments-api
+  DEPLOYMENT_NAME: payment-api
   SECRET_VALUE_FILE: secret-values.yaml
   USE_FAKE_SECRETS: "true"
   IMAGE_TAG_KEY: chart.virtual.shared.image.tag
