@@ -8,7 +8,7 @@ jobs:
   build-and-publish:
     uses: optum-financial/payments-github/.github/workflows/docker-build-and-publish.yml@ci/helm-deploy
     with: 
-      PROJECT: client-payments-api
+      PROJECT: payment-api
       IMAGE_NAME: payment-web-api
       BUILD_ARGS: "PROJECT_DIR PROJECT_NAME"
       DOCKER_URL: ${{ vars.VPAY_DOCKER_REGISTRY_URL }}
