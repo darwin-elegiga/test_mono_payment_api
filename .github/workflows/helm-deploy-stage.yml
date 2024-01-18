@@ -1,5 +1,7 @@
 name: helm-deploy-to-plano-stage
-on: [workflow_dispatch]
+on: 
+   workflow_dispatch:
+   push:
 
 jobs:
   deployment-plano-stage-dryrun:
