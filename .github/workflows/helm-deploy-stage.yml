@@ -1,0 +1,22 @@
+name: helm-deploy-to-stage
+on: 
+   workflow_dispatch:
+jobs:
+  deployment-plano-stage:
+    uses: optum-financial/payments-github/.github/workflows/helm-deploy-plano-stage.yml@ci/helm-deploy
+    with: 
+      CHARTS_PATH: charts/payment-api
+      NAMESPACE: client-payments-stage
+      RELEASE_NAME: payment-api
+      DRYRUN: false
+    secrets: inherit      
+  deployment-stl-stage:
+    uses: optum-financial/payments-github/.github/workflows/helm-deploy-stl-stage.yml@ci/helm-deploy
+    with: 
+      CHARTS_PATH: charts/payment-api
+      NAMESPACE: client-payments-stage
+      RELEASE_NAME: payment-api
+      DRYRUN: false
+    secrets: inherit      
+
+    
