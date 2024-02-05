@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace VPay.Payment.Common
@@ -15,7 +16,7 @@ namespace VPay.Payment.Common
 
         public static string CleanFaxNumber(this string faxNumber)
         {
-            if (faxNumber == null)
+            if (String.IsNullOrEmpty(faxNumber))
             {
                 return null;
             }

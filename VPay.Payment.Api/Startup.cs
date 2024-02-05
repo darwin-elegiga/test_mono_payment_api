@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using FaxManagement.Client.Extension;
 using FaxManagement.Client.v1;
 using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
@@ -25,14 +26,10 @@ namespace VPay.Payment.Api
     public class Startup
     {
 
-        public EnvironmentSettings? EnvironmentSettings { get; set; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            EnvironmentSettings = Configuration
-               .GetSection("Environment")
-               .Get<EnvironmentSettings>();
         }
 
         public IConfiguration Configuration { get; }
@@ -89,16 +86,10 @@ namespace VPay.Payment.Api
             services.AddTransient<ITradingPostService, TradingPostService>();
             services.AddTransient<ILegacyTransactionService, LegacyTransactionService>();
             services.AddTransient<ILegacyValidationService, LegacyValidationService>();
+            services.AddSwaggerGenNewtonsoftSupport();
 
-            services.AddTransient(ctx => CreateClient<IFaxQueueV1Client>(ctx, EnvironmentSettings));
+            services.AddFaxClient(config => Configuration.Bind("FaxmanApi", config), false);
 
-        }
-
-        public T CreateClient<T>(IServiceProvider provider, EnvironmentSettings settings)
-        {
-            var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient();
-            httpClient.BaseAddress = new Uri(settings.BaseUrl);
-            return RestService.For<T>(httpClient);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

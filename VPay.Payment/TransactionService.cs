@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using FaxManagement.Client.v1;
 using FaxManagement.Client.v1.Models;
@@ -122,85 +123,103 @@ namespace VPay.Payment
 
                 TransactionDetailResponse response;
 
-                var panNumResponse = await GetPanNumber(standardRequest);
-
-                if (panNumResponse.CommonData.SuccessCode == "0002")
+                var responseValidationMessage = CheckTransactionDetailForValidations(standardRequest);
+                if (responseValidationMessage.code == "0000")
                 {
-                    response = new TransactionDetailResponse()
+
+                    var panNumResponse = await GetPanNumber(standardRequest);
+
+                    if (panNumResponse.CommonData.SuccessCode == "0002")
                     {
-                        CommonData = panNumResponse.CommonData
-                    };
+                        response = new TransactionDetailResponse()
+                        {
+                            CommonData = panNumResponse.CommonData
+                        };
+                    }
+                    else
+                    {
+                        var headerData = (await _db2Context.GetRepository<ITransactionWs>().TransactionHeadersData(request.Token, request.User, request.TransNumber)).FirstOrDefault();
+                        if (headerData != null)
+                        {
+                            var convHeaderData = headerData.ToHeaderData();
+
+                            string client = convHeaderData.Client;
+                            string billCode = convHeaderData.BillCode;
+
+                            StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
+                            convHeaderData.SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
+                            convHeaderData.SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
+
+                            PayTypeDetail payTypeDetail = new PayTypeDetail();
+                            payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
+                            payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
+                            payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
+                            payTypeDetail.Association = panNumResponse.CardData.CardType;
+                            payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
+                            payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
+                            payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
+                            payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
+                            payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
+
+                            var detailList = (await _db2Context.GetRepository<ITransactionWs>().TransactionDetailsData(request.Token, client, billCode, request.TransNumber)).ToDetail().ToList();
+                            var correspList = await GetCorrespondenceList(long.Parse(request.TransNumber));
+
+                            // when nothing goes wrong
+                            string finalSuccessCode = "0000";
+                            string finalSuccessDesc = "Successful Query";
+
+                            if (detailList.Count == 0)
+                            {
+                                finalSuccessCode = "0101";
+                                finalSuccessDesc = "Details Not Found for: " + request.TransNumber + "," + client + "," + billCode;
+                            }
+                            else if (correspList.Count == 0)
+                            {
+                                finalSuccessDesc = "No Correspondence Data For : " + request.TransNumber;
+                            }
+
+                            response = new TransactionDetailResponse()
+                            {
+                                DetailList = detailList,
+                                HeaderData = convHeaderData,
+                                CorrespondenceList = correspList,
+                                PayTypeDetail = payTypeDetail,
+                                CommonData = new CommonData()
+                                {
+                                    User = request.User.ToUpper(),
+                                    TransNumber = request.TransNumber,
+                                    SuccessCode = finalSuccessCode,
+                                    SuccessDesc = finalSuccessDesc
+                                }
+                            };
+                        }
+                        else // if no header data exists
+                        {
+                            response = new TransactionDetailResponse()
+                            {
+                                CommonData = new CommonData()
+                                {
+                                    User = request.User.ToUpper(),
+                                    TransNumber = request.TransNumber,
+                                    SuccessCode = "0103",
+                                    SuccessDesc = "No Header for: " + request.TransNumber
+                                }
+                            };
+                        }
+                    }
                 }
                 else
                 {
-                    var headerData = (await _db2Context.GetRepository<ITransactionWs>().TransactionHeadersData(request.Token, request.User, request.TransNumber)).FirstOrDefault();
-                    if (headerData != null)
+                    response = new TransactionDetailResponse()
                     {
-                        var convHeaderData = headerData.ToHeaderData();
-
-                        string client = convHeaderData.Client;
-                        string billCode = convHeaderData.BillCode;
-
-                        StandardResponse balRequestResponse = await GetBalanceRequest(standardRequest);
-                        convHeaderData.SwitchAvailBal = balRequestResponse.SwitchTransaction.AvailableBal;
-                        convHeaderData.SwitchCurrentBal = balRequestResponse.SwitchTransaction.CurrentBal;
-
-                        PayTypeDetail payTypeDetail = new PayTypeDetail();
-                        payTypeDetail.CardNumber = panNumResponse.CardData.CardNumber;
-                        payTypeDetail.CardCvv2 = panNumResponse.CardData.CardCvv2;
-                        payTypeDetail.CardExp = panNumResponse.CardData.CardExpiration;
-                        payTypeDetail.Association = panNumResponse.CardData.CardType;
-                        payTypeDetail.Bank = panNumResponse.CardData.CardholderName;
-                        payTypeDetail.OutsideCheck = panNumResponse.CheckData.CheckNumber;
-                        payTypeDetail.PosPayCheck = panNumResponse.CheckData.PosPayNumber;
-                        payTypeDetail.SwitchNumber = panNumResponse.CheckData.SwitchNumber;
-                        payTypeDetail.ClearCheck = panNumResponse.CheckData.ChkNum1;
-
-                        var detailList = (await _db2Context.GetRepository<ITransactionWs>().TransactionDetailsData(request.Token, client, billCode, request.TransNumber)).ToDetail().ToList();
-                        var correspList = await GetCorrespondenceList(long.Parse(request.TransNumber));
-
-                        // when nothing goes wrong
-                        string finalSuccessCode = "0000";
-                        string finalSuccessDesc = "Successful Query";
-
-                        if (detailList.Count == 0)
+                        CommonData = new CommonData()
                         {
-                            finalSuccessCode = "0101";
-                            finalSuccessDesc = "Details Not Found for: " + request.TransNumber + "," + client + "," + billCode;
+                            User = request.User.ToUpper(),
+                            TransNumber = request.TransNumber,
+                            SuccessCode = responseValidationMessage.code.ToString(),
+                            SuccessDesc = responseValidationMessage.message
                         }
-                        else if (correspList.Count == 0)
-                        {
-                            finalSuccessDesc = "No Correspondence Data For : " + request.TransNumber;
-                        }
-
-                        response = new TransactionDetailResponse()
-                        {
-                            DetailList = detailList,
-                            HeaderData = convHeaderData,
-                            CorrespondenceList = correspList,
-                            PayTypeDetail = payTypeDetail,
-                            CommonData = new CommonData()
-                            {
-                                User = request.User.ToUpper(),
-                                TransNumber = request.TransNumber,
-                                SuccessCode = finalSuccessCode,
-                                SuccessDesc = finalSuccessDesc
-                            }
-                        };
-                    }
-                    else // if no header data exists
-                    {
-                        response = new TransactionDetailResponse()
-                        {
-                            CommonData = new CommonData()
-                            {
-                                User = request.User.ToUpper(),
-                                TransNumber = request.TransNumber,
-                                SuccessCode = "0103",
-                                SuccessDesc = "No Header for: " + request.TransNumber
-                            }
-                        };
-                    }
+                    };
                 }
 
                 using (_logger.BeginScope(new Dictionary<string, object>
@@ -538,23 +557,40 @@ namespace VPay.Payment
                 return result;
             }
 
-            var faxJobs = (await _client.JobsByTransaction(transactionId));
-            // If there are no fax jobs found in Fax Client, just return the original list from CPSCOR
-            if (faxJobs.Count <= 0)
+            try
             {
-                return result;
-            }
-            // Merge the results from Fax Client and what's in CPSCOR.
-            foreach (var corr in result)
-            {
-                corr.FaxJobList = faxJobs.Where(x => x.CorrespondenceId == corr.DmRecId).ToList();
-                var faxStatus = (await _client.GetFaxStatus(new FaxJobRequestDto()
+                var faxJobs = (await _client.JobsByTransaction(transactionId));
+                // If there are no fax jobs found in Fax Client, just return the original list from CPSCOR
+                if (faxJobs.Count <= 0)
                 {
-                    JobId = corr.FaxJobList.FirstOrDefault()?.JobId
-                }));
+                    return result;
+                }
 
-                corr.StatusText = faxStatus.StatusName;
+                // Merge the results from Fax Client and what's in CPSCOR.
+                foreach (var corr in result)
+                {
+                    corr.FaxJobList = faxJobs.Where(x => x.CorrespondenceId == corr.DmRecId).ToList();
+                    var faxStatus = (await _client.GetFaxStatus(new FaxJobRequestDto()
+                    {
+                        JobId = corr.FaxJobList.FirstOrDefault()?.JobId
+                    }));
+
+                    corr.StatusText = faxStatus.StatusName;
+                }
+
             }
+            catch (ApiException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    _logger.LogInformation("TransactionId: {TransactionId} not found in FaxMan", transactionId);
+                }
+                else
+                {
+                    _logger.LogWarning(ex, "An unhandled exception occurred calling FaxMan.");
+                }
+            }
+
             return result;
         }
 
@@ -788,6 +824,20 @@ namespace VPay.Payment
             StandardResponse unpackedResponse = TransactionWsStringHelpers.Unpack(packedRequest);
 
             return unpackedResponse;
+        }
+        private (string code, string message) CheckTransactionDetailForValidations(StandardRequest request)
+        {
+            var invalidTransNumber = "Invalid Trans Number";
+
+            var result = (code: "0000", message: "Successful Validation");
+
+            if (!long.TryParse(request.CommonData.TransNumber, out var amount))
+            {
+
+                result = (code: "0997", message: invalidTransNumber);
+            }
+
+            return result;
         }
     }
 }
