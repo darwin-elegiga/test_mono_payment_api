@@ -97,7 +97,7 @@ namespace VPay.Payment.Api
         {
             app.UseGlobalExceptionHandler(c =>
             {
-                ConfigureExceptionHandler(c, env.IsDevelopment());
+                ConfigureExceptionHandler(c, env.IsDevelopment() || env.IsEnvironment("LocalDevelopment"));
             });
 
             app.Map("/error", x => x.Run(y => throw new Exception()));

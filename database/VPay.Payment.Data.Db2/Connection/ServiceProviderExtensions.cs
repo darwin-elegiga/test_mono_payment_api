@@ -36,7 +36,7 @@ public static class ServiceProviderExtensions
             return new DB2ConnectionStringBuilder
             {
                 Database = "testdb",
-                UserID = config.UserName,
+                UserID = config.Username,
                 Password = config.Password,
                 Server = config.Hostname
             }.ToString();
@@ -46,7 +46,7 @@ public static class ServiceProviderExtensions
         {
             Dsn = config.Dsn,
             ["DefaultLibraries"] = config.DefaultLibraries,
-            ["UID"] = config.UserName,
+            ["UID"] = config.Username,
             ["PWD"] = config.Password,
             ["System"] = config.Hostname
         }.ToString();
