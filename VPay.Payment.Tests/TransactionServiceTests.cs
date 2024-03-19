@@ -24,7 +24,7 @@ namespace VPay.Payment.Tests
         {
             _db2Context = new Db2ContextMock();
             _user = new Mock<IUserInfo>();
- 
+            _fax=new Mock<IFaxQueueV1Client>();
             _logger = new NullLogger<TransactionService>();
             _sut = new TransactionService(_db2Context, _user.Object, _fax.Object, _logger);
         }

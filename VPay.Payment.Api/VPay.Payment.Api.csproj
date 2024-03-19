@@ -35,7 +35,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
     <PackageReference Include="System.IO.Abstractions" Version="19.2.51" />
-    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.11.3-PAY-23503-2" />
+    <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.12.2" />
     <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.11.3-PAY-23503-2" />
     <PackageReference Include="VPay.Extensions.Logging.GrayLog" Version="1.0.1" />
   </ItemGroup>

@@ -1,0 +1,175 @@
+# This file is part of the Optum code scanning requirements, for all UHG organizations.   It is
+# required, but we are attempting to deploy it to all repositories in a way that does not break
+# any branch protection rules in place.  The script creating these pull requests don’t know about
+# any bespoke protection rules or requirements.  When you see this – and it was successful in
+# building the project – please merge the pull request.  The scan will then be applied to the
+# default branch and developer information will be present under the code scanning tab.
+#
+# Automation will be cleaning up PRs that are not merged, so if you are part of the organization
+# that has a significant number of these, we will be working with the Organization owners to merge
+# outstanding PRs.
+#
+# When this file is added, it also performs a code scan.  If there are critical or high severity
+# issues, it will flag that step as failing.  It is up to you on resolving those issues – but the
+# issue is with the existing code and not the scanner.  You can choose to raise or lower the thresholds
+# in the repository settings, mark the items found with an appropriate tag, or even ignore it for
+# the time being.
+#
+# Automation will be performing further updates to this file.  Once the build is successful, the cron
+# aspect will be removed.
+#
+# For projects that have failing builds, we have teams that are working to resolve build issues.
+# Typically, older Java code will require the Java actions below to be uncommented.  Additional
+# training, documentation, office hours, and help is available.
+#
+# For projects where this is successfully scanning the default branch, Contrast may be discontinued.
+#
+# For questions, and you want a human, reach out Chris.Rothwell@Optum.com with the EIS team.  More
+# information is available here: https://appsec.optum.com/docs/pullreq/
+#
+#Added via Firehose 1.6
+
+name: "CodeQL"
+
+env:
+  CODEQL_RAM: 4096
+  CODEQL_THREADS: 2
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  ## By default, this is configured to the default branch.  There are many options as to what tag or
+  ## action triggers the scan, which may be needed if you are doing a new default branch every sprint
+  ## or some other workflow.
+  ## https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+  ## https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
+  ## https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/triggers.html
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+  ## Please don't modify this, for now.  We/you can remove it
+  ## in a later pull request, once the scan is successful and
+  ## scanning on PR only.
+  schedule:
+    - cron: '40 4 * * 0'
+
+jobs:
+  analyze:
+    name: Analyze ${{github.repository}} (${{matrix.language}})
+    ## For C#/.NET projects, comment out the Linux 'runs on' and use Windows.  In most cases, the Linux boxes
+    ## will be faster.
+    #runs-on: [ uhg-ghas, Linux ]  # non-java/c# projects don't need artifactory
+    runs-on: uhg-runner
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['csharp']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.ref || github.ref }}
+
+    - name: Setup .NET Core
+      uses: optum-financial/payments-github/actions/setup-dotnet@main
+      with:
+        versions: |
+          6.0
+
+    ## C#
+
+    ## For newer .NET projects that need a specific version, this
+    ## works with both Linux and Windows runners
+    ## See https://github.com/actions/setup-dotnet for more settings information.
+    #- uses: actions/setup-dotnet@v2
+    #  with:
+    #    dotnet-version: '6.0.x'
+
+
+    ## This is needed for older C# and other .NET code.  It requires the Windows runners.
+    ## See https://github.com/microsoft/setup-msbuild for more settings information
+    #- name: Add msbuild to PATH
+    #  uses: microsoft/setup-msbuild@v1.1
+
+    #- name: Build app for release
+    #  run: msbuild src\YourProjectFile.csproj -t:rebuild -verbosity:diag -property:Configuration=Release
+
+
+    ## Java
+
+    ## If you need a specific version of Java, an LTS runtime can be targeted.  11 is defaulted today
+    ## See https://github.com/actions/setup-java
+    #- uses: actions/setup-java@v3
+    #  with:
+    #    distribution: 'temurin' # See 'Supported distributions' for available options
+    #    java-version: '11'      # 17, 11, or 8 are the allowed LTS options
+    #    overwrite-settings: false
+
+    ## If you need a custom version of Maven (default is 3.8.x), it can be added here.
+    ## Maven 3.8.x is available by default.  If you need this for older versions, you
+    ## probably need a PEX.
+    ## https://github.com/stCarolas/setup-maven
+    #- name: Set up Maven
+    #  uses: stCarolas/setup-maven@v4.5
+    #  with:
+    #    maven-version: 3.1.1
+
+    ## If you need custom gradle support, or a non-standard version, it can be
+    ## added with this action. More information at
+    ## https://github.com/gradle/gradle-build-action
+    #- uses: gradle/gradle-build-action@v2
+    #  with:
+    #    gradle-version: 6.5
+
+
+    # Python : See https://github.optum.com/actions/setup-python
+
+    # Golang : See https://github.optum.com/actions/setup-go
+
+    #- uses: actions/setup-go@v3
+    #  with:
+    #    go-version: '1.19'
+    #    check-latest: true
+
+    # Node   : See https://github.optum.com/actions/setup-node
+
+    
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python' ]
+        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+        queries: security-extended,security-and-quality
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    # ℹ️ Command-line programs to run using the OS shell.
+    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+
+    #   If the Autobuild fails above, remove it and uncomment the following three lines. 
+    #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
+
+    # - run: |
+    #   echo "Run, Build Application using script"
+    #   ./location_of_script_within_repo/buildscript.
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:csharp"
+      
