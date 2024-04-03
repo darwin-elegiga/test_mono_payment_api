@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
 using VPay.Data.Db2.Abstractions.Security;
@@ -59,8 +62,10 @@ namespace VPay.Payment
 
             UserSessionInfo userSession = null;
 
-
-            _logger.LogInformation($"AuthService: Try Login for {param.UserId}");
+            using (_logger.BeginScope(new Dictionary<string, object> { ["UserID"] = param.UserId }))
+            {
+                _logger.LogInformation($"AuthService: Try Login");
+            }
 
             var loginTry = await DoLogin(param.UserId, param.Password, "WEBSERVICE");
 
@@ -70,8 +75,10 @@ namespace VPay.Payment
                 userSession.Source = 'S';
             }
 
-
-            _logger.LogInformation($"AuthService: Completed Login for {param.UserId}");
+            using (_logger.BeginScope(new Dictionary<string, object> { ["UserID"] = param.UserId }))
+            {
+                _logger.LogInformation($"AuthService: Completed Login");
+            }
 
             return userSession;
         }
@@ -99,11 +106,18 @@ namespace VPay.Payment
 
             if (name.Length > 10 || password.Length > 10)
             {
-                _logger.LogWarning("UserName or Password is greather than 10 characters: {UserName}", name);
+                using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = name }))
+                {
+                    _logger.LogWarning("UserName or Password is greather than 10 characters");
+                }
+
                 return null;
             }
 
-            _logger.LogInformation($"AuthService: DoLogin: Starting for {name}");
+            using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = name }))
+            {
+                _logger.LogInformation($"AuthService: DoLogin: Starting");
+            }
 
             var remoteLogin = await _db.GetRepository<ISecurity>().RemoteLoginAsync(new RemoteLoginParam()
             {
@@ -116,7 +130,10 @@ namespace VPay.Payment
 
             if (!string.Equals(remoteLogin.ReturnCode, "OK"))
             {
-                _logger.LogWarning("Error Response from login [{ErrorMessage}] - Name: {UserName}", remoteLogin.ErrorMessage, name);
+                using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = name }))
+                {
+                    _logger.LogWarning("Error Response from login [{ErrorMessage}]", remoteLogin.ErrorMessage);
+                }
                 return null;
             }
 

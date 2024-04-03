@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -37,7 +38,7 @@ namespace VPay.Payment
             }))
             {
                 _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
-                nameof(GetReasonCodes), "Starting", request.ToDisplayString());
+                nameof(GetReasonCodes), "Starting", request.ToDisplayString().Replace(Environment.NewLine, string.Empty));
 
                 var panRequestParam = new TransactionWsRequest()
                 {

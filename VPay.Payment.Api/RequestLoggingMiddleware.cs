@@ -72,7 +72,7 @@ namespace VPay.Payment.Api
 
                 using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
                 {
-                    _logger.Log(level, MessageTemplate, httpContext.Request.Method, path, statusCode, elapsedMs);
+                    _logger.Log(level, MessageTemplate, httpContext.Request.Method.Replace(Environment.NewLine, string.Empty), path, statusCode, elapsedMs);
                 }
             }
             // Never caught, because `LogException()` returns false, so exceptions will continue through
@@ -92,7 +92,7 @@ namespace VPay.Payment.Api
         {
             using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
             {
-                _logger.LogError(ex, MessageTemplate, httpContext.Request.Method, GetPath(httpContext), 500, elapsedMs);
+                _logger.LogError(ex, MessageTemplate, httpContext.Request.Method.Replace(Environment.NewLine, string.Empty), GetPath(httpContext), 500, elapsedMs);
             }
 
             return false;

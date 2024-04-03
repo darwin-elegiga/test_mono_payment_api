@@ -24,7 +24,6 @@ namespace VPay.Payment.Api.Auth
         private readonly IAuthService _authenticationService;
         private readonly IHttpContextAccessor _accessor;
 
-
         public VPayAuthenticationHandler(
             IOptionsMonitor<VPayAuthenticationOptions> options,
             ILoggerFactory logger,
@@ -40,7 +39,6 @@ namespace VPay.Payment.Api.Auth
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-
             Logger.LogDebug($"VPay.PaymentApi: Pre-Pre-Validating Credentials");
 
             if (!Request.Headers.ContainsKey(AuthorizationHeaderName))
@@ -96,7 +94,10 @@ namespace VPay.Payment.Api.Auth
                 ["AuthId"] = av.Id
             }))
             {
-                Logger.LogDebug($"VPay.PaymentApi: Login: Attempting to log into {av.UserId}");
+                using (Logger.BeginScope(new Dictionary<string, object> { ["UserID"] = av.UserId }))
+                {
+                    Logger.LogDebug($"VPay.PaymentApi: Login: Attempting to logon");
+                }
 
                 var user = await _authenticationService.Login(av);
 
@@ -162,7 +163,11 @@ namespace VPay.Payment.Api.Auth
                                 TransNumber = body.GetTransactionDetails.Request.TransNumber
                             }
                         };
-                        Logger.LogWarning("Login Failed [{UserName}]: \n{UserRequestBody}", userName, result.ToDisplayString());
+
+                        using (Logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
+                        {
+                            Logger.LogWarning("Login Failed: \n{UserRequestBody}", result.ToDisplayString());
+                        }
                     }
                     else if (body.GetReasonCodes?.Request != null)
                     {
@@ -192,9 +197,11 @@ namespace VPay.Payment.Api.Auth
 
                     if (result != null)
                     {
-                        Logger.LogWarning("Login Failed [{UserName}]: \n{UserRequestBody}", userName, result.ToDisplayString());
+                        using (Logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
+                        {
+                            Logger.LogWarning("Login Failed: \n{UserRequestBody}", result.ToDisplayString());
+                        }
                     }
-
                 }
             }
             catch
@@ -203,5 +210,4 @@ namespace VPay.Payment.Api.Auth
             }
         }
     }
-
 }
