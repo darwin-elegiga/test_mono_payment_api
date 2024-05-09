@@ -166,7 +166,7 @@ namespace VPay.Payment.Api.Auth
 
                         using (Logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
                         {
-                            Logger.LogWarning("Login Failed: \n{UserRequestBody}", result.ToDisplayString());
+                            Logger.LogWarning("Login Failed: \n{UserRequestBody}", result.ToDisplayString().Replace(Environment.NewLine, ""));
                         }
                     }
                     else if (body.GetReasonCodes?.Request != null)
@@ -199,7 +199,7 @@ namespace VPay.Payment.Api.Auth
                     {
                         using (Logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
                         {
-                            Logger.LogWarning("Login Failed: \n{UserRequestBody}", result.ToDisplayString());
+                            Logger.LogWarning("Login Failed: \n{UserRequestBody}", result.ToDisplayString().Replace(Environment.NewLine,""));
                         }
                     }
                 }

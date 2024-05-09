@@ -91,7 +91,7 @@ namespace VPay.Payment
                 {
                     var level = reasonCodeResponse.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
                     _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
-                        nameof(GetPanNumber), "Response", reasonCodeResponse.ToDisplayString());
+                        nameof(GetPanNumber), "Response", reasonCodeResponse.ToDisplayString().Replace(Environment.NewLine, ""));
                 }
 
                 reasonCodeResponse.CommonData.ReasonDesc = "";
@@ -120,7 +120,7 @@ namespace VPay.Payment
             }))
             {
                 _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
-                nameof(GetTransactionDetails), "Starting", standardRequest.ToDisplayString());
+                nameof(GetTransactionDetails), "Starting", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
 
                 TransactionDetailResponse response;
 
@@ -235,7 +235,7 @@ namespace VPay.Payment
                 {
                     var level = response.CommonData.SuccessCode == "0000" ? LogLevel.Information : LogLevel.Warning;
                     _logger.Log(level, "{ServiceName} - {Step} with: \n{UserResponseBody}",
-                        nameof(GetTransactionDetails), "Response", response.ToDisplayString());
+                        nameof(GetTransactionDetails), "Response", response.ToDisplayString().Replace(Environment.NewLine, ""));
                 }
 
                 response.CommonData.ReasonDesc = "";
@@ -253,7 +253,7 @@ namespace VPay.Payment
             }))
             {
                 _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}",
-                nameof(GetPanNumber), "Starting", standardRequest.ToDisplayString());
+                nameof(GetPanNumber), "Starting", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
 
                 var request = new TransactionWsRequest()
                 {
@@ -293,7 +293,7 @@ namespace VPay.Payment
                 ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(OpenPreAuth), "Starting", standardRequest.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(OpenPreAuth), "Starting", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
 
                 var request = new TransactionWsRequest()
                 {
@@ -332,7 +332,7 @@ namespace VPay.Payment
                 ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "Starting", standardRequest.ToDisplayString(), clientData);
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "Starting", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""), clientData);
 
                 SetupDefaultValuesForLoadPan(standardRequest);
 
@@ -344,7 +344,7 @@ namespace VPay.Payment
                 standardRequest.CommonData.ResponseCode = checkDeclineMessages.code;
                 standardRequest.CommonData.ResponseDesc = checkDeclineMessages.message;
 
-                _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage", standardRequest.ToDisplayString(), clientData);
+                _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}\nclientData: {clientData}", nameof(LoadPan), "After CheckMessage", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""), clientData);
 
                 var request = new TransactionWsRequest()
                 {
@@ -391,7 +391,7 @@ namespace VPay.Payment
                 ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(GetBalanceRequest), "Starting", standardRequest.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(GetBalanceRequest), "Starting", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
 
                 var request = new TransactionWsRequest()
                 {
@@ -431,7 +431,7 @@ namespace VPay.Payment
                 ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(UnloadPan), "Starting", standardRequest.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(UnloadPan), "Starting", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
 
                 var request = new TransactionWsRequest()
                 {
@@ -471,7 +471,7 @@ namespace VPay.Payment
                 ["UserRequestBody"] = standardRequest.ToDisplayString()
             }))
             {
-                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(StopPay), "Starting", standardRequest.ToDisplayString());
+                _logger.LogInformation("{ServiceName} - {Step} with: \n{UserRequestBody}", nameof(StopPay), "Starting", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
 
                 var request = new TransactionWsRequest()
                 {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -39,7 +40,7 @@ namespace VPay.Payment
             };
 
             _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
-                nameof(GetReasonCodes), "Validating", standardRequest.ToDisplayString());
+                nameof(GetReasonCodes), "Validating", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
 
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
@@ -52,7 +53,7 @@ namespace VPay.Payment
                 }))
                 {
                     _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
-                        nameof(GetReasonCodes), "ValidationError", standardRequest.ToDisplayString());
+                        nameof(GetReasonCodes), "ValidationError", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
                 }
 
                 return new ReasonCodeResponse()
@@ -86,7 +87,7 @@ namespace VPay.Payment
             };
 
             _logger.LogDebug("{ServiceName} - {Step} with: \n{UserRequestBody}",
-                nameof(GetTransactionDetails), "Validating", standardRequest.ToDisplayString());
+                nameof(GetTransactionDetails), "Validating", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
 
             var validation = await _validationService.ValidateStandardRequest(standardRequest, cancellationToken);
 
@@ -99,7 +100,7 @@ namespace VPay.Payment
                 }))
                 {
                     _logger.LogWarning("{ServiceName} - {ValidationStatus} - Original Message: {UserRequestBody}",
-                        nameof(GetTransactionDetails), "ValidationError", standardRequest.ToDisplayString());
+                        nameof(GetTransactionDetails), "ValidationError", standardRequest.ToDisplayString().Replace(Environment.NewLine, ""));
                 }
 
                 return new TransactionDetailResponse()

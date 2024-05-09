@@ -126,13 +126,16 @@ namespace VPay.Payment
                 Source = source
             });
 
-            _logger.LogInformation($"AuthService: DoLogin: ReturnCode: {remoteLogin.ReturnCode}, ErrorMessage: {remoteLogin.ErrorMessage}");
+            using (_logger.BeginScope(new Dictionary<string, object> { ["ReturnCode"] = remoteLogin.ReturnCode, ["ErrorMessage"] = remoteLogin.ErrorMessage }))
+            {
+                _logger.LogInformation("AuthService: DoLogin returned Error");
+            }
 
             if (!string.Equals(remoteLogin.ReturnCode, "OK"))
             {
-                using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = name }))
+                using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = name, ["ErrorMessage"] = remoteLogin.ErrorMessage }))
                 {
-                    _logger.LogWarning("Error Response from login [{ErrorMessage}]", remoteLogin.ErrorMessage);
+                    _logger.LogWarning("Error occured During Remote login");
                 }
                 return null;
             }
