@@ -23,38 +23,38 @@ jobs:
     with: 
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
-      VALUE_FILES_ENV: dev
-      DEFAULT_VALUES_ENVIRONMENT_NAME: Development
+      #VALUE_FILES_ENV: dev
+      #DEFAULT_VALUES_ENVIRONMENT_NAME: Development
       RELEASE_NAME: payment-api
-      VALUE_FILES_DC: plano
-      DATACENTER: Plano
-      CONTEXT_NAME: pldev
-      SECRET_REPLACE_ENV: dev
-      VALUE_FILES_DC_DOMAIN: pl
-      VAULT_URL: ${{ vars.VPAY_DEV_VAULT_URL }}
+      #VALUE_FILES_DC: plano
+      #DATACENTER: Plano
+      #CONTEXT_NAME: pldev
+      #SECRET_REPLACE_ENV: dev
+      #VALUE_FILES_DC_DOMAIN: pl
+      #VAULT_URL: ${{ vars.VPAY_DEV_VAULT_URL }}
       DRYRUN: true
-    secrets:
-      VPAY_KUBECONFIG: ${{ secrets.VPAY_KUBECONFIG }}
-      VAULT_TOKEN: ${{ secrets.DEVVAULT_TOKEN }}      
+    secrets: inherit
+      #VPAY_KUBECONFIG: ${{ secrets.VPAY_KUBECONFIG }}
+      #VAULT_TOKEN: ${{ secrets.DEVVAULT_TOKEN }}      
   deployment-stl-dev-dryrun:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
     needs: build-and-publish
     with: 
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
-      VALUE_FILES_ENV: dev
-      DEFAULT_VALUES_ENVIRONMENT_NAME: Development
+      #VALUE_FILES_ENV: dev
+      #DEFAULT_VALUES_ENVIRONMENT_NAME: Development
       RELEASE_NAME: payment-api
-      VALUE_FILES_DC: stl
-      DATACENTER: St. Louis
-      CONTEXT_NAME: stldev
-      SECRET_REPLACE_ENV: dev
-      VALUE_FILES_DC_DOMAIN: stl
-      VAULT_URL: ${{ vars.VPAY_DEV_VAULT_URL }}
+      #VALUE_FILES_DC: stl
+      #DATACENTER: St. Louis
+      #CONTEXT_NAME: stldev
+      #SECRET_REPLACE_ENV: dev
+      #VALUE_FILES_DC_DOMAIN: stl
+      #VAULT_URL: ${{ vars.VPAY_DEV_VAULT_URL }}
       DRYRUN: true
-    secrets:
-      VPAY_KUBECONFIG: ${{ secrets.VPAY_KUBECONFIG }}
-      VAULT_TOKEN: ${{ secrets.DEVVAULT_TOKEN }}
+    secrets: inherit
+      #VPAY_KUBECONFIG: ${{ secrets.VPAY_KUBECONFIG }}
+      #VAULT_TOKEN: ${{ secrets.DEVVAULT_TOKEN }}
   deployment-plano-stage-dryrun:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-stage.yml@main
     needs: build-and-publish
