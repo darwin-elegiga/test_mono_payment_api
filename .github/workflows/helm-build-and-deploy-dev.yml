@@ -11,11 +11,12 @@ jobs:
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
       BUILD_ARGS: "PROJECT_DIR PROJECT_NAME"
-      DOCKER_URL: ${{ vars.VPAY_DOCKER_REGISTRY_URL }}
-      DOCKER_USERNAME: ${{ vars.VPAY_CI_REGISTRY_USER }}
+      DOCKER_URL: "docker.repo1.uhc.com"
+      DOCKER_USERNAME: ${{ vars.PMNTS_DEVOPS_MSA }}
+      DOCKER_REGISTRY_URL: "docker.repo1.uhc.com/vpay-docker"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
     secrets:
-      DOCKER_PASSWORD: ${{ secrets.VPAY_CI_REGISTRY_PASSWORD }}
+      DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
   deployment-plano-dev-dryrun:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
     needs: build-and-publish
