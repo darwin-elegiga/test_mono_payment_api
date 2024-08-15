@@ -1,6 +1,6 @@
 name: helm-deploy-to-prod
-on: 
-   workflow_dispatch:
+on: workflow_dispatch
+
 jobs:
   deployment-plano-prod:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-prod.yml@main
@@ -18,5 +18,3 @@ jobs:
       RELEASE_NAME: payment-api
       DRYRUN: false
     secrets: inherit      
-
-    
