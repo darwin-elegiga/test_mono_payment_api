@@ -1,9 +1,6 @@
 name: helm-build-and-deploy-to-dev
-on: 
-  workflow_dispatch:
-  push:
-    tags:
-    - '*'
+on: [workflow_dispatch,push]
+
 jobs:
   build-and-publish:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
