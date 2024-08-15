@@ -1,6 +1,6 @@
 name: helm-deploy-to-stage
-on: 
-   workflow_dispatch:
+on: workflow_dispatch
+
 jobs:
   deployment-plano-stage:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-stage.yml@main
@@ -18,5 +18,3 @@ jobs:
       RELEASE_NAME: payment-api
       DRYRUN: false
     secrets: inherit      
-
-    
