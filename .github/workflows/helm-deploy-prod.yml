@@ -13,7 +13,7 @@ jobs:
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-prod
       RELEASE_NAME: payment-api
-      DRYRUN: false
+      DRYRUN: true
     secrets: inherit
   deployment-prod:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-prod.yml@main
