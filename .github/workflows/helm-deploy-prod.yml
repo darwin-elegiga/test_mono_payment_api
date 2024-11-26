@@ -5,6 +5,9 @@ on:
       CHG_TICKET:
         required: true
         type: string
+      WAR_ROOM:
+        type: string
+        default: 'false'
 
 jobs:
   deployment-prod-dryrun:
@@ -23,5 +26,6 @@ jobs:
       NAMESPACE: client-payments-prod
       RELEASE_NAME: payment-api
       CHG_TICKET: ${{inputs.CHG_TICKET}}
+      WAR_ROOM: ${{inputs.WAR_ROOM}}
       DRYRUN: false
     secrets: inherit
