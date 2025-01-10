@@ -12,4 +12,4 @@ jobs:
       solution-name: VPay.Payment
       unit-test-threshold: 40
       dotnet-version: 6.x
-      build-config: Release
+      build-config: Release 
