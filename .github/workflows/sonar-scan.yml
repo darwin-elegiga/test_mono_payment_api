@@ -6,7 +6,7 @@ on:
 jobs:     
   check:
     name: Sonar
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@sonar-scan-poc    
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@sonar-scan-poc     
     secrets: inherit
     with:
       solution-name: VPay.Payment
