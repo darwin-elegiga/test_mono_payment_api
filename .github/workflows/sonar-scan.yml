@@ -3,7 +3,7 @@ on:
   workflow_call:   
   push:       
       
-jobs:     
+jobs:      
   check:
     name: Sonar
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@sonar-scan-poc      
