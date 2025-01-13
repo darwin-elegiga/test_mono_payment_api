@@ -9,7 +9,7 @@ jobs:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@sonar-scan-poc       
     secrets: inherit
     with:
-      #solution-name: VPay.Payment 
+      #solution-name: VPay.Payment  
       unit-test-threshold: 40
       #dotnet-version: 6.x
       #build-config: Release 
