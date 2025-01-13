@@ -2,7 +2,7 @@ name: SonarQube
 on:
   workflow_call:   
   push:       
-      
+       
 jobs:      
   check:
     name: Sonar
