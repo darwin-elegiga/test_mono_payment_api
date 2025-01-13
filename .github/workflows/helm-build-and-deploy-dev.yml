@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-publish:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@sonar-scan-poc
     with: 
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
