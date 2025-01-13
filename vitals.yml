@@ -6,3 +6,6 @@ metadata:
   projectFriendlyName: vpay-test
   componentType: code
   targetQG: GATE_00
+  solutionFileName: VPay.Payment.sln
+  buildConfiguration: Release
+  dotnetVersion: 6.x
