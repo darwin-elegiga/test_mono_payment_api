@@ -18,7 +18,7 @@ jobs:
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
     secrets:
       DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
-      GIT_TOKEN: ${{ secrets.GH_TOKEN }}
+      #GIT_TOKEN: ${{ secrets.GH_TOKEN }}
   deployment-plano-dev-dryrun:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
     needs: build-and-publish
