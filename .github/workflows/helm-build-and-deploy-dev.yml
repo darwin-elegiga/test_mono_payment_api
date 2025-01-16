@@ -17,7 +17,7 @@ jobs:
       DOCKER_REGISTRY_URL: "docker.repo1.uhc.com/vpay-docker"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
     secrets: inherit
-        #DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
+      DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
       #GIT_TOKEN: ${{ secrets.GH_TOKEN }}
   deployment-plano-dev-dryrun:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
