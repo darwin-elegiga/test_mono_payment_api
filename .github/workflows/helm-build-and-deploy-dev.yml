@@ -12,6 +12,7 @@ jobs:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     
   build-and-publish:
+    needs: sonar-analysis
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
     with: 
       PROJECT: payment-api
