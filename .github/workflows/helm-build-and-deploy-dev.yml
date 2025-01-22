@@ -7,9 +7,9 @@ on:
 
 jobs:
   sonar-analysis:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@sonar-scan-poc
-    #secrets:
-      #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@sonar-scan-final
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     
   build-and-publish:
     needs: sonar-analysis
