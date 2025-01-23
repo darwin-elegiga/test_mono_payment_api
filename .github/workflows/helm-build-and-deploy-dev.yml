@@ -6,13 +6,13 @@ on:
     - '*'
 
 jobs:
-  sonar-analysis:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@sonar-scan-final
+  sonar:
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@main
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     
   build-and-publish:
-    needs: sonar-analysis
+    needs: sonar
     if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
     with: 
