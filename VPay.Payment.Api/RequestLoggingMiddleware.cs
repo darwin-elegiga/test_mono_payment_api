@@ -56,7 +56,7 @@ namespace VPay.Payment.Api
                 var statusCode = httpContext.Response?.StatusCode;
                 var level = LogLevel.Debug;
 
-                var path = GetPath(httpContext);
+                var path = GetPath(httpContext).Replace(Environment.NewLine, string.Empty);
 
                 if (statusCode < 500)
                 {
@@ -92,7 +92,7 @@ namespace VPay.Payment.Api
         {
             using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
             {
-                _logger.LogError(ex, MessageTemplate, httpContext.Request.Method.Replace(Environment.NewLine, string.Empty), GetPath(httpContext), 500, elapsedMs);
+                _logger.LogError(ex, MessageTemplate, httpContext.Request.Method.Replace(Environment.NewLine, string.Empty), GetPath(httpContext).Replace(Environment.NewLine, string.Empty), 500, elapsedMs);
             }
 
             return false;
@@ -114,7 +114,8 @@ namespace VPay.Payment.Api
 
         private static string GetPath(HttpContext httpContext)
         {
-            return httpContext.Features.Get<IHttpRequestFeature>()?.RawTarget ?? httpContext.Request.Path.ToString();
+            var path = httpContext.Features.Get<IHttpRequestFeature>()?.RawTarget ?? httpContext.Request.Path.ToString();
+            return path.Replace(Environment.NewLine, string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty);
         }
     }
 }
