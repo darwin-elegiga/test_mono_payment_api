@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB2", "DB2", "{8107F8E3-F61
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPay.Payment.Data.Db2", "database\VPay.Payment.Data.Db2\VPay.Payment.Data.Db2.csproj", "{EA949F9A-EC6C-413E-A015-8BECB0E30DC5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPay.Payment.Common.Tests", "..\VPay.Payment.Common.Tests\VPay.Payment.Common.Tests.csproj", "{93AE72A3-2B22-4A01-AB6C-68C33AF777B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{EA949F9A-EC6C-413E-A015-8BECB0E30DC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA949F9A-EC6C-413E-A015-8BECB0E30DC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA949F9A-EC6C-413E-A015-8BECB0E30DC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93AE72A3-2B22-4A01-AB6C-68C33AF777B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93AE72A3-2B22-4A01-AB6C-68C33AF777B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93AE72A3-2B22-4A01-AB6C-68C33AF777B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93AE72A3-2B22-4A01-AB6C-68C33AF777B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{60DB8381-E335-4D93-8EF2-CA3B19DF6821} = {E9E9420C-73E8-49CF-9073-D75EB7F3AFBF}
 		{C3456BB9-EED6-42BB-A918-00D7EAB46D28} = {E9E9420C-73E8-49CF-9073-D75EB7F3AFBF}
 		{8107F8E3-F612-4B3C-AE77-A29204F0FD9C} = {903A3768-1CFF-4667-B82E-B80625CEFE0B}
+		{93AE72A3-2B22-4A01-AB6C-68C33AF777B8} = {E9E9420C-73E8-49CF-9073-D75EB7F3AFBF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2220BD7D-97B5-4EE8-A6FC-938957818909}
