@@ -910,7 +910,7 @@ namespace VPay.Payment.Common.Tests
             var result = entity.ToDisplayString();
 
             // Assert
-            var expected = "CardInformation [ CardType=Visa, CardNumber=1234*********56, CardCvv2=***, CardExpiration=12/2023, LoadTransactionId=1,PayeeName=name, CardholderName=name, CardholderAddress=address, CardholderPostalCode=postal ]\r\n";
+            var expected = "CardInformation [ CardType=Visa, CardNumber=1234*********56, CardCvv2=***, CardExpiration=12/2023, LoadTransactionId=1, PayeeName=name, CardholderName=name, CardholderAddress=address, CardholderPostalCode=postal ]\r\n";
             Assert.Equal(expected, result);
         }
 
