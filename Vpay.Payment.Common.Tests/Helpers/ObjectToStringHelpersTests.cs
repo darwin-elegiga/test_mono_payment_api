@@ -413,14 +413,19 @@ namespace VPay.Payment.Common.Tests
             var entity = new MerchantData
             {
                 PayeeCode = "code",
-                PayeeName = "name"
+                PayeeName = "name",
+                ContactPerson = "person",
+                PostalCode = "Test",
+                Telephone = "12345",
+                Fax = "Test",
+                EmailAddress = "test@ff.com"
             };
 
             // Act
             var result = entity.ToDisplayString();
 
             // Assert
-            var expected = "Merchant [ PayeeCode=code, PayeeName=name ]\r\n";
+            var expected = "Merchant [ PayeeCode=code, PayeeName=name, ContactPerson=person, PostalCode=Test, Telephone=12345, Fax=Test, PostalCode=Test, EmailAddress=test@ff.com ]\r\n";
             Assert.Equal(expected, result);
         }
 
@@ -431,14 +436,30 @@ namespace VPay.Payment.Common.Tests
             var entity = new PaymentData
             {
                 AccountingCode = "code",
-                AccountingDesc = "desc"
+                AccountingDesc = "desc",
+                AccountNumber = "12345",
+                Action = "Test",
+                AvailableBalance = "0",
+                BillCode = "code",
+                Client = "client",
+                CurrencyCode = "code",
+                CurrentBalance = "0",
+                Free = "free",
+                FutureUse = "Test",
+                Id = "Test",
+                LoadAmount = "0",
+                PanNumber = "0",
+                RequestedAmount = "0",
+                Type = "Test",
+
+
             };
 
             // Act
             var result = entity.ToDisplayString();
 
             // Assert
-            var expected = "Payment [ AccountingCode=code, AccountingDesc=desc ]\r\n";
+            var expected = "Payment [ AccountingCode=code, AccountingDesc=desc, AccountNumber=12345, Action=Test, AvailableBalance=0, BillCode=code, Client=client, CurrencyCode=code, CurrentBalance=0, Free=free, FutureUse=Test, Id=Test, LoadAmount=0, PanNumber=*****, RequestedAmount=0, Type=Test ]\r\n";
             Assert.Equal(expected, result);
         }
 
@@ -604,14 +625,15 @@ namespace VPay.Payment.Common.Tests
                 ToPostalCode = "topostal",
                 ToFax = "tofax",
                 ToPhone = "tophone",
-                StatusText = "statusText"
+                StatusText = "statusText",
+                FaxJobList = new List<FaxManagement.Client.v1.Models.FaxJobDto>()
             };
 
             // Act
             var result = entity.ToDisplayString();
 
             // Assert
-            var expected = "Correspondence [ Direction=dir, Type=type, Status=status, RequestDate=0, StatusDate=0, SentBehalfName=name, FromName=fromName, FromAddress1=fromaddress1, FromAddress2=fromaddress2, FromCity=fromcity, FromState=fromstate, FromPostalCode=frompostal, FromFax=fromfax, ToName=toName, ToAddress1=toaddress1, ToAddress2=toaddress2, ToCity=tocity, ToState=tostate, ToPostalCode=topostal, ToFax=tofax, ToPhone=tophone, StatusText=statusText, DmRecId=0 ]\r\n";
+            var expected = "Correspondence [ Direction=dir, Type=type, Status=status, RequestDate=0, StatusDate=0, SentBehalfName=name, FromName=fromName, FromAddress1=fromaddress1, FromAddress2=fromaddress2, FromCity=fromcity, FromState=fromstate, FromPostalCode=frompostal, FromFax=fromfax, ToName=toName, ToAddress1=toaddress1, ToAddress2=toaddress2, ToCity=tocity, ToState=tostate, ToPostalCode=topostal, ToFax=tofax, ToPhone=tophone, StatusText=statusText, FaxJobListCount=0, DmRecId=0 ]\r\n";
             Assert.Equal(expected, result);
         }
 
@@ -695,7 +717,8 @@ namespace VPay.Payment.Common.Tests
             var request = new TradingPostData.ReleaseNotification
             {
                 CardInformation = new TradingPostData.CardInformation { CardType = "type" },
-                CardHolder = new TradingPostData.Cardholder { Client = "client" }
+                CardHolder = new TradingPostData.Cardholder { Client = "client" },
+
             };
 
             // Act
@@ -714,6 +737,7 @@ namespace VPay.Payment.Common.Tests
             {
                 TransactionInformation = new TradingPostData.TransactionInformation { ResponseCode = "code" },
                 CardInformation = new TradingPostData.CardInformation { CardType = "type" }
+
             };
 
             // Act
@@ -810,14 +834,15 @@ namespace VPay.Payment.Common.Tests
                 ClaimDescription = "desc",
                 RequesterName = "name",
                 RepairOrderId = "orderId",
-                ClaimNotes = "notes"
+                ClaimNotes = "notes",
+                RequesterId = "id"
             };
 
             // Act
             var result = entity.ToDisplayString();
 
             // Assert
-            var expected = "Claim [ UserKey=userKey, UserField1=field1, UserField2=field2, UserField3=field3, CurrencyType=840, Amount=200, ClaimDeductible=deductible, ClaimOdometer=odometer, ClaimDescription=desc, RequesterName=name, RepairOrderId=orderId, ClaimNotes=notes ]\r\n";
+            var expected = "Claim [ UserKey=userKey, UserField1=field1, UserField2=field2, UserField3=field3, CurrencyType=840, Amount=200, ClaimDeductible=deductible, ClaimOdometer=odometer, ClaimDescription=desc, RequesterId=id, RequesterName=name, RepairOrderId=orderId, ClaimNotes=notes ]\r\n";
             Assert.Equal(expected, result);
         }
 
@@ -878,16 +903,20 @@ namespace VPay.Payment.Common.Tests
                 CardholderName = "name",
                 CardholderAddress = "address",
                 CardholderPostalCode = "postal",
-
+                LoadAmount = 1,
+                LoadFee = 1,
+                LoadTransactionId = 1,
             };
 
             // Act
             var result = entity.ToDisplayString();
 
             // Assert
-            var expected = "CardInformation [ CardType=Visa, CardNumber=1234*********56, CardCvv2=***, CardExpiration=12/2023, PayeeName=name, CardholderName=name, CardholderAddress=address, CardholderPostalCode=postal ]\r\n";
+            var expected = "CardInformation [ CardType=Visa, CardNumber=1234*********56, CardCvv2=***, CardExpiration=12/2023, LoadTransactionId=1, LoadAmount=$1.00, LoadFee=$1.00, PayeeName=name, CardholderName=name, CardholderAddress=address, CardholderPostalCode=postal ]\r\n";
             Assert.Equal(expected, result);
         }
+
+
     }
 }
 
