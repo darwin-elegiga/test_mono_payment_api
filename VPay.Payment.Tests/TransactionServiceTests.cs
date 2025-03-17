@@ -246,3 +246,175 @@ namespace VPay.Payment.Tests
         //}
     }
 }
+
+
+//using System.Collections.Generic;
+//using System.Threading.Tasks;
+//using FaxManagement.Client.v1;
+//using Microsoft.Extensions.Logging;
+//using Moq;
+//using VPay.Data.Db2.Abstractions;
+//using VPay.Data.Db2.Abstractions.TransactionWs;
+//using VPay.Payment;
+//using VPay.Payment.Common;
+//using VPay.Payment.Tests.Models;
+//using Xunit;
+
+//namespace VPay.Payment.Tests
+//{
+//    public class TransactionServiceTests
+//    {
+//        private readonly Db2ContextMock _db2ContextMock;
+//        private readonly Mock<IUserInfo> _userMock;
+//        private readonly Mock<IFaxQueueV1Client> _clientMock;
+//        private readonly Mock<ILogger<TransactionService>> _loggerMock;
+//        private readonly TransactionService _transactionService;
+
+//        public TransactionServiceTests()
+//        {
+//            _db2ContextMock = new Db2ContextMock();
+//            _userMock = new Mock<IUserInfo>();
+//            _clientMock = new Mock<IFaxQueueV1Client>();
+//            _loggerMock = new Mock<ILogger<TransactionService>>();
+//            _transactionService = new TransactionService(_db2ContextMock, _userMock.Object, _clientMock.Object, _loggerMock.Object);
+//        }
+
+//        [Fact]
+//        public async Task GetReasonCodes_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var request = new ReasonCodeRequest { TransNumber = "123", User = "testUser", Token = "token" };
+//            //var panRequest = new TransactionWsResponse { CommonData = new CommonData { SuccessCode = "0002" } };
+//           // _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<ITransactionWs>().GetPan(It.IsAny<TransactionWsRequest>())).ReturnsAsync(panRequest);
+
+//            // Act
+//            var result = await _transactionService.GetReasonCodes(request);
+
+//            // Assert
+//            Assert.Equal("0002", result.CommonData.SuccessCode);
+//        }
+
+//        [Fact]
+//        public async Task GetTransactionDetails_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var request = new TransactionDetailRequest { TransNumber = "123", User = "testUser", Token = "token" };
+//            var panResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0002" } };
+//            _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<ITransactionWs>().GetPan(It.IsAny<TransactionWsRequest>())).ReturnsAsync(panResponse);
+
+//            // Act
+//            var result = await _transactionService.GetTransactionDetails(request);
+
+//            // Assert
+//            Assert.Equal("0002", result.CommonData.SuccessCode);
+//        }
+
+//        [Fact]
+//        public async Task GetPanNumber_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var request = new StandardRequest { CommonData = new CommonData { TransNumber = "123", User = "testUser", Token = "token" } };
+//            var panResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0000" } };
+//            _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<ITransactionWs>().GetPan(It.IsAny<TransactionWsRequest>())).ReturnsAsync(panResponse);
+
+//            // Act
+//            var result = await _transactionService.GetPanNumber(request);
+
+//            // Assert
+//            Assert.Equal("0000", result.CommonData.SuccessCode);
+//        }
+
+//        [Fact]
+//        public async Task OpenPreAuth_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var request = new StandardRequest { CommonData = new CommonData { TransNumber = "123", User = "testUser", Token = "token" } };
+//            var preAuthResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0000" } };
+//            _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<ITransactionWs>().OpenPreAuth(It.IsAny<TransactionWsRequest>())).ReturnsAsync(preAuthResponse);
+
+//            // Act
+//            var result = await _transactionService.OpenPreAuth(request);
+
+//            // Assert
+//            Assert.Equal("0000", result.CommonData.SuccessCode);
+//        }
+
+//        [Fact]
+//        public async Task LoadPan_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var request = new StandardRequest { CommonData = new CommonData { TransNumber = "123", User = "testUser", Token = "token" } };
+//            var loadPanResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0000" } };
+//            _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<ITransactionWs>().LoadPan(It.IsAny<TransactionWsRequest>(), It.IsAny<string>())).ReturnsAsync(loadPanResponse);
+
+//            // Act
+//            var result = await _transactionService.LoadPan(request, "clientData");
+
+//            // Assert
+//            Assert.Equal("0000", result.CommonData.SuccessCode);
+//        }
+
+//        [Fact]
+//        public async Task GetBalanceRequest_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var request = new StandardRequest { CommonData = new CommonData { TransNumber = "123", User = "testUser", Token = "token" } };
+//            var balanceResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0000" } };
+//            _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<ITransactionWs>().BalanceRequest(It.IsAny<TransactionWsRequest>())).ReturnsAsync(balanceResponse);
+
+//            // Act
+//            var result = await _transactionService.GetBalanceRequest(request);
+
+//            // Assert
+//            Assert.Equal("0000", result.CommonData.SuccessCode);
+//        }
+
+//        [Fact]
+//        public async Task UnloadPan_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var request = new StandardRequest { CommonData = new CommonData { TransNumber = "123", User = "testUser", Token = "token" } };
+//            var unloadPanResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0000" } };
+//            _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<ITransactionWs>().UnloadPan(It.IsAny<TransactionWsRequest>())).ReturnsAsync(unloadPanResponse);
+
+//            // Act
+//            var result = await _transactionService.UnloadPan(request);
+
+//            // Assert
+//            Assert.Equal("0000", result.CommonData.SuccessCode);
+//        }
+
+//        [Fact]
+//        public async Task StopPay_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var request = new StandardRequest { CommonData = new CommonData { TransNumber = "123", User = "testUser", Token = "token" } };
+//            var stopPayResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0000" } };
+//            _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<ITransactionWs>().StopPay(It.IsAny<TransactionWsRequest>())).ReturnsAsync(stopPayResponse);
+
+//            // Act
+//            var result = await _transactionService.StopPay(request);
+
+//            // Assert
+//            Assert.Equal("0000", result.CommonData.SuccessCode);
+//        }
+
+//        [Fact]
+//        public async Task ResendFax_ShouldReturnExpectedResponse()
+//        {
+//            // Arrange
+//            var faxCode = 123;
+//            var faxNumber = "1234567890";
+//            var faxJob = new FaxJobDto { TransactionIds = new List<long> { 1 }, CorrespondenceId = 1 };
+//            _clientMock.Setup(x => x.GetFaxJob(It.IsAny<FaxJobRequestDto>())).ReturnsAsync(faxJob);
+//            var dbResult = new FaxResponse { SuccessCode = "0000", SuccessDescription = "Success", FaxNumber = faxNumber };
+//            _db2ContextMock.TransactionWsMock.Setup(x => x.GetRepository<IFax>().ResendFaxAsync(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<string>())).ReturnsAsync(dbResult);
+
+//            // Act
+//            var result = await _transactionService.ResendFax(faxCode, faxNumber);
+
+//            // Assert
+//            Assert.Equal("0000", result.CommonData.SuccessCode);
+//        }
+//    }
+//}
