@@ -349,7 +349,7 @@ namespace VPay.Payment.Common.Tests
             var result = entity.ToDisplayString();
 
             // Assert
-            var expected = "Claim [ UserKey=userKey, UserField1=field1, CurrencyType=840 ]\r\n";
+            var expected = "Claim [ UserKey=userKey, UserField1=field1, UserField2=field2, UserField3=field3, CurrencyType=840, ClaimDescription=desc, RequesterId=id, RequesterName=name, RepairOrderId=orderId, ClaimNotes=notes ]\r\n";
             Assert.Equal(expected, result);
         }
 
