@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -44,6 +45,16 @@ namespace VPay.Payment.Api.Tests.Controllers
             hostingEnv.Setup(_ => _.WebRootFileProvider).Returns(_fileProvider.Object);
 
             _sut = new LegacyController(hostingEnv.Object, mockHttpContextAccessor.Object, _transactionService.Object, _logger);
+
+            var request = context.Request;
+
+            // Set up the request properties as needed
+            request.Scheme = "https";
+            request.Host = new HostString("localhost", 5001);
+            request.Path = "/api/myaction";
+            request.QueryString = new QueryString("?param1=value1&param2=value2");
+
+            _sut.ControllerContext.HttpContext = context;
         }
 
         [Fact]
@@ -298,6 +309,102 @@ namespace VPay.Payment.Api.Tests.Controllers
             result.CommonData.SuccessCode.Should().Be("9997");
             result.CommonData.SuccessDesc.Should().Be("Unexpected Error with ResendFax");
         }
+
+        //New Code
+
+        //[Fact]
+        //public void GetWsdl_ShouldReturnWsdlFile()
+        //{
+        //    // Arrange
+        //    var fileInfoMock = new Mock<IFileInfo>();
+        //    fileInfoMock.Setup(f => f.PhysicalPath).Returns("path/to/VPayWSService.xml");
+        //    _fileProvider.Setup(fp => fp.GetFileInfo("VPayWSService.xml")).Returns(fileInfoMock.Object);
+        
+
+        //    // Arrange
+          
+
+        //    // Act
+        //    var result = _sut.GetWsdl(null);
+
+        //    // Assert
+        //    result.Should().BeOfType<FileContentResult>();
+        //    var fileResult = result as FileContentResult;
+        //    fileResult.ContentType.Should().Be("text/xml");
+        //}
+
+        //[Fact]
+        //public void GetSchemaXsd_ShouldReturnXsdFile()
+        //{
+        //    // Arrange
+        //    var fileInfoMock = new Mock<IFileInfo>();
+        //    fileInfoMock.Setup(f => f.PhysicalPath).Returns("path/to/VPayWSServiceXSD.xml");
+        //    _fileProvider.Setup(fp => fp.GetFileInfo("VPayWSServiceXSD.xml")).Returns(fileInfoMock.Object);
+
+        //    // Act
+        //    var result = _sut.GetSchemaXsd(null);
+
+        //    // Assert
+        //    result.Should().BeOfType<FileContentResult>();
+        //    var fileResult = result as FileContentResult;
+        //    fileResult.ContentType.Should().Be("text/xml");
+        //}
+
+        [Fact]
+        public void GetVer_ShouldReturnVersionInfo()
+        {
+            // Act
+            var result = _sut.GetVer();
+
+            // Assert
+            result.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task PostEcho_ShouldReturnStandardResponse()
+        {
+            // Arrange
+            var echoRequest = new EchoRequest { Es = "Test" };
+
+            // Act
+            var result = await _sut.PostEcho(echoRequest);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.CommonData.ResponseDesc.Should().Contain("VPayWs");
+            result.CommonData.SuccessCode.Should().Be("0");
+            result.CommonData.ReasonCode.Should().Be("0");
+        }
+
+        [Fact]
+        public async Task GetReasonCodes_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
+        {
+            var setupObj = new LegacyRequest()
+            {
+                Envelope = new LegacyEnvelope()
+                {
+                    Body = new LegacyBody()
+                    {
+                        GetReasonCodes = new LegacyReasonCodeRequest()
+                        {
+                            AuthenticationValues = new AuthenticationValues(),
+                            Request = new ReasonCodeRequestDto()
+                        }
+                    }
+                }
+            };
+
+            _transactionService
+                .Setup(_ => _.GetReasonCodes(It.IsAny<ReasonCodeRequest>(), CancellationToken.None))
+                .ThrowsAsync(new Exception("General Exception"));
+
+            var result = await _sut.GetReasonCodes(setupObj);
+
+            result.CommonData.SuccessCode.Should().Be("9997");
+            result.CommonData.SuccessDesc.Should().Be("Unexpected Error with GetReasonCodes");
+        }
+
+
 
     }
 }
