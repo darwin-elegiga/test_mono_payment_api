@@ -320,5 +320,35 @@ namespace VPay.Payment.Tests
             // Assert
             result.Should().NotBeNull();
         }
+
+        //New Code12
+        //[Fact]
+        //public async Task GetTransactionDetails_WithResponseValidationMessage()
+        //{
+        //    // Arrange
+        //    var request = new TransactionDetailRequest { TransNumber = "1231", User = "testUser", Token = "token", Source = 'P' };
+        //    var panResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0001" } };
+        //    _db2Context.TransactionWsMock
+        //        .Setup(x => x.GetPan(It.IsAny<TransactionWsRequest>(), default(CancellationToken))).ReturnsAsync(panResponse);
+        //    var transDetRequest = new TransactionDetailRequest
+        //    {
+        //        Source = 'P',
+        //        Token = "Test1",
+        //        TransNumber = "Test2",
+        //        User = "Test"
+        //    };
+        //    var transactionHeader = new List<TransactionHeader> { new TransactionHeader { AvailableBalance = 100.00M,ClientCode="Test",BillingEntity="Test21" } };
+
+        //    // Act
+        //    _db2Context.TransactionWsMock
+        //        .Setup(x => x.TransactionHeadersData(transDetRequest.Token, transDetRequest.User, transDetRequest.TransNumber, It.IsAny<CancellationToken>()))
+        //        .ReturnsAsync(transactionHeader);
+
+        //    var result = await _sut.GetTransactionDetails(request);
+
+        //    // Assert
+        //    result.CommonData.SuccessCode.Should().Be("0997");
+        //}
+
     }
 }
