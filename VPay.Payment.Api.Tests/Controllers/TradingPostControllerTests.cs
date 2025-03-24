@@ -52,29 +52,6 @@ namespace VPay.Payment.Tests
                 _loggerMock.Object);
         }
 
-        //[Fact]
-        //public void GetWsdl_ShouldReturnWsdlContent()
-        //{
-        //    // Arrange
-        //    var httpReq = new Mock<HttpRequest>();
-        //    httpReq.Setup(r => r.Scheme).Returns("http");
-        //    httpReq.Setup(r => r.Host).Returns(new HostString("test"));
-        //    httpReq.Setup(r => r.Path).Returns("/test");
-        //    var context = new Mock<HttpContext>();
-        //    context.Setup(c => c.Request).Returns(httpReq.Object);
-        //    _accessorMock.Setup(a => a.HttpContext).Returns(context.Object);
-        //    var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-
-        //    mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context.Object);
-        //    // Act
-        //    var result = _controller.GetWsdl(null);
-
-        //    // Assert
-        //    result.Should().BeOfType<FileContentResult>();
-        //    var fileResult = result as FileContentResult;
-        //    fileResult.ContentType.Should().Be("text/xml");
-        //}
-
         [Fact]
         public void GetWsdl_ReturnsXmlFile()
         {
@@ -108,18 +85,6 @@ namespace VPay.Payment.Tests
             Assert.NotNull(result);
             Assert.Equal("text/xml", result.ContentType);
 
-            //var resultXml = Encoding.UTF8.GetString(result.FileContents);
-            //var doc = XDocument.Parse(resultXml);
-            //var nsSoap = "http://schemas.xmlsoap.org/wsdl/soap/";
-            //var nsSoap12 = "http://schemas.xmlsoap.org/wsdl/soap12/";
-
-            //var soapAddress = doc.Descendants(XName.Get("address", nsSoap)).FirstOrDefault();
-            //var soap12Address = doc.Descendants(XName.Get("address", nsSoap12)).FirstOrDefault();
-
-            //Assert.NotNull(soapAddress);
-            //Assert.NotNull(soap12Address);
-            //Assert.Equal("http://localhost/api/tradingpost/wsdl", soapAddress.Attribute("location").Value);
-            //Assert.Equal("http://localhost/api/tradingpost/wsdl", soap12Address.Attribute("location").Value);
         }
 
         [Fact]

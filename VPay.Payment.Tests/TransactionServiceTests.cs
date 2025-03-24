@@ -99,25 +99,7 @@ namespace VPay.Payment.Tests
             // Assert
             result.CommonData.SuccessCode.Should().Be("0000");
         }
-
-        //[Fact]
-        //public async Task LoadPan_ShouldReturnExpectedResponse()
-        //{
-        //    // Arrange
-        //    var request = new StandardRequest { CommonData = new CommonData { TransNumber = "123", User = "testUser", Token = "token" } };
-        //    var loadPanResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0000" } };
-        //    string clientData = "test";
-        //    //_db2Context.GetRepository<ITransactionWs>().LoadPan(request, clientData);
-        //    _db2Context.TransactionWsMock
-        //        .Setup(x => x.LoadPan(It.IsAny<TransactionWsRequest>(), default(CancellationToken))).ReturnsAsync(loadPanResponse);
-
-        //    // Act
-        //    var result = await _sut.LoadPan(request, "clientData");
-
-        //    // Assert
-        //    result.CommonData.SuccessCode.Should().Be("0000");
-        //}
-
+                
         [Fact]
         public async Task GetBalanceRequest_ShouldReturnExpectedResponse()
         {
@@ -221,22 +203,6 @@ namespace VPay.Payment.Tests
             Assert.Contains("Invalid Trans Number", result.ToString());
         }
 
-        //[Fact]
-        //public async Task GetCorrespondenceList_ShouldReturnExpectedResponse()
-        //{
-        //    // Arrange
-        //    var transactionId = 123L;
-        //    var correspondenceList = new List<CorespDtl> { new CorespDtl { DmRecId = 1 } };
-        //    _db2Context.CorrespondenceMock
-        //        .Setup(x => x.GetByTransactionId(transactionId, default(CancellationToken))).ReturnsAsync(correspondenceList);
-
-
-        //    // Act
-        //    var result = await _sut.GetCorrespondenceList(transactionId);
-
-        //    // Assert
-        //    result.Should().BeEquivalentTo(correspondenceList);
-        //}
 
         [Fact]
         public void SetupDefaultValuesForLoadPan_ShouldSetDefaultValues()
@@ -321,34 +287,6 @@ namespace VPay.Payment.Tests
             result.Should().NotBeNull();
         }
 
-        //New Code12
-        //[Fact]
-        //public async Task GetTransactionDetails_WithResponseValidationMessage()
-        //{
-        //    // Arrange
-        //    var request = new TransactionDetailRequest { TransNumber = "1231", User = "testUser", Token = "token", Source = 'P' };
-        //    var panResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0001" } };
-        //    _db2Context.TransactionWsMock
-        //        .Setup(x => x.GetPan(It.IsAny<TransactionWsRequest>(), default(CancellationToken))).ReturnsAsync(panResponse);
-        //    var transDetRequest = new TransactionDetailRequest
-        //    {
-        //        Source = 'P',
-        //        Token = "Test1",
-        //        TransNumber = "Test2",
-        //        User = "Test"
-        //    };
-        //    var transactionHeader = new List<TransactionHeader> { new TransactionHeader { AvailableBalance = 100.00M,ClientCode="Test",BillingEntity="Test21" } };
-
-        //    // Act
-        //    _db2Context.TransactionWsMock
-        //        .Setup(x => x.TransactionHeadersData(transDetRequest.Token, transDetRequest.User, transDetRequest.TransNumber, It.IsAny<CancellationToken>()))
-        //        .ReturnsAsync(transactionHeader);
-
-        //    var result = await _sut.GetTransactionDetails(request);
-
-        //    // Assert
-        //    result.CommonData.SuccessCode.Should().Be("0997");
-        //}
-
+        
     }
 }
