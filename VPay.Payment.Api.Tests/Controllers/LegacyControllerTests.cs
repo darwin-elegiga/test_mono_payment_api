@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,13 +26,14 @@ namespace VPay.Payment.Api.Tests.Controllers
         private readonly Mock<ILegacyTransactionService> _transactionService;
         private readonly Mock<IFileProvider> _fileProvider;
         private readonly LegacyRequest _setupRequest;
+        private readonly Mock<IHttpContextAccessor> _accessorMock;
 
         public LegacyControllerTests()
         {
             _logger = new NullLogger<LegacyController>();
             _transactionService = new Mock<ILegacyTransactionService>();
             _fileProvider = new Mock<IFileProvider>();
-
+            _accessorMock = new Mock<IHttpContextAccessor>();
             var hostingEnv = new Mock<IWebHostEnvironment>();
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -319,10 +321,10 @@ namespace VPay.Payment.Api.Tests.Controllers
         //    var fileInfoMock = new Mock<IFileInfo>();
         //    fileInfoMock.Setup(f => f.PhysicalPath).Returns("path/to/VPayWSService.xml");
         //    _fileProvider.Setup(fp => fp.GetFileInfo("VPayWSService.xml")).Returns(fileInfoMock.Object);
-        
+
 
         //    // Arrange
-          
+
 
         //    // Act
         //    var result = _sut.GetWsdl(null);
@@ -349,7 +351,52 @@ namespace VPay.Payment.Api.Tests.Controllers
         //    var fileResult = result as FileContentResult;
         //    fileResult.ContentType.Should().Be("text/xml");
         //}
+        //[Fact]
+        //public void GetWsdl_ReturnsXmlFile()
+        //{
+        //    // Arrange
+        //    var xmlContent = @"
+        //        <definitions xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap12/'>
+        //            <service>
+        //                <port>
+        //                    <soap:address location='http://oldurl'/>
+        //                    <soap12:address location='http://oldurl'/>
+        //                </port>
+        //            </service>
+        //        </definitions>";
+        //    File.WriteAllText("VPayWSService.xml", xmlContent);
 
+        //    var httpReq = new Mock<HttpRequest>();
+        //    httpReq.Setup(r => r.Scheme).Returns("http");
+        //    httpReq.Setup(r => r.Host).Returns(new HostString("test"));
+        //    httpReq.Setup(r => r.Path).Returns("/test");
+        //    var context = new Mock<HttpContext>();
+        //    context.Setup(c => c.Request).Returns(httpReq.Object);
+        //    _accessorMock.Setup(a => a.HttpContext).Returns(context.Object);
+        //    var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+
+        //    mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context.Object);
+
+        //    // Act
+        //    var result = _sut.GetWsdl(null) as FileContentResult;
+
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.Equal("text/xml", result.ContentType);
+
+        //    //var resultXml = Encoding.UTF8.GetString(result.FileContents);
+        //    //var doc = XDocument.Parse(resultXml);
+        //    //var nsSoap = "http://schemas.xmlsoap.org/wsdl/soap/";
+        //    //var nsSoap12 = "http://schemas.xmlsoap.org/wsdl/soap12/";
+
+        //    //var soapAddress = doc.Descendants(XName.Get("address", nsSoap)).FirstOrDefault();
+        //    //var soap12Address = doc.Descendants(XName.Get("address", nsSoap12)).FirstOrDefault();
+
+        //    //Assert.NotNull(soapAddress);
+        //    //Assert.NotNull(soap12Address);
+        //    //Assert.Equal("http://localhost/api/tradingpost/wsdl", soapAddress.Attribute("location").Value);
+        //    //Assert.Equal("http://localhost/api/tradingpost/wsdl", soap12Address.Attribute("location").Value);
+        //}
         [Fact]
         public void GetVer_ShouldReturnVersionInfo()
         {
