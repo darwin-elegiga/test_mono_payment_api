@@ -25,15 +25,12 @@ namespace VPay.Payment.Api.Tests.Controllers
         private readonly NullLogger<LegacyController> _logger;
         private readonly Mock<ILegacyTransactionService> _transactionService;
         private readonly Mock<IFileProvider> _fileProvider;
-        private readonly LegacyRequest _setupRequest;
-        private readonly Mock<IHttpContextAccessor> _accessorMock;
 
         public LegacyControllerTests()
         {
             _logger = new NullLogger<LegacyController>();
             _transactionService = new Mock<ILegacyTransactionService>();
             _fileProvider = new Mock<IFileProvider>();
-            _accessorMock = new Mock<IHttpContextAccessor>();
             var hostingEnv = new Mock<IWebHostEnvironment>();
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -259,31 +256,6 @@ namespace VPay.Payment.Api.Tests.Controllers
             result.CommonData.SuccessDesc.Should().Be("Unexpected Error with StopPay");
         }
 
-        [Fact]
-        public void CancelFax_should_return_Deprecated_API_9997()
-        {
-            var result = _sut.CancelFax(_setupRequest);
-
-            result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
-        }
-
-        [Fact]
-        public void HoldFax_should_return_Deprecated_API_9997()
-        {
-            var result = _sut.HoldFax(_setupRequest);
-
-            result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
-        }
-
-        [Fact]
-        public void ReleaseFax_should_return_Deprecated_API_9997()
-        {
-            var result = _sut.ReleaseFax(_setupRequest);
-            result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
-        }
         [Fact]
         public async Task ResendFax_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
         {
