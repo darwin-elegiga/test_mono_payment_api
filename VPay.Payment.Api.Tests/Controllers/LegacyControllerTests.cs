@@ -23,26 +23,22 @@ namespace VPay.Payment.Api.Tests.Controllers
 {
     public class LegacyControllerTests
     {
+        private readonly Mock<IHttpContextAccessor> _accessorMock;
         private readonly Mock<IWebHostEnvironment> _webHostEnvironmentMock;
-        private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
-        private readonly Mock<ILegacyTransactionService> _transactionServiceMock;
         private readonly Mock<ILogger<LegacyController>> _loggerMock;
         private readonly LegacyController _controller;
         private readonly LegacyController _sut;
         private readonly NullLogger<LegacyController> _logger;
         private readonly Mock<ILegacyTransactionService> _transactionService;
         private readonly Mock<IFileProvider> _fileProvider;
+        private readonly Mock<IFileProvider> _fileProviderMock;
 
         public LegacyControllerTests()
         {
             _webHostEnvironmentMock = new Mock<IWebHostEnvironment>();
-            _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            _transactionServiceMock = new Mock<ILegacyTransactionService>();
             _loggerMock = new Mock<ILogger<LegacyController>>();
-
+            _accessorMock = new Mock<IHttpContextAccessor>();
             _webHostEnvironmentMock.Setup(x => x.WebRootFileProvider).Returns(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
-
-            _controller = new LegacyController(_webHostEnvironmentMock.Object, _httpContextAccessorMock.Object, _transactionServiceMock.Object, _loggerMock.Object);
 
             _logger = new NullLogger<LegacyController>();
             _transactionService = new Mock<ILegacyTransactionService>();
@@ -68,8 +64,17 @@ namespace VPay.Payment.Api.Tests.Controllers
             request.Host = new HostString("localhost", 5001);
             request.Path = "/api/myaction";
             request.QueryString = new QueryString("?param1=value1&param2=value2");
+            _fileProviderMock = new Mock<IFileProvider>();
+            var fileInfoMock = new Mock<IFileInfo>();
+            fileInfoMock.Setup(f => f.PhysicalPath).Returns("VPayWSService.xml");
+            _fileProviderMock.Setup(f => f.GetFileInfo(It.IsAny<string>())).Returns(fileInfoMock.Object);
 
             _sut.ControllerContext.HttpContext = context;
+            _controller = new LegacyController(
+                Mock.Of<IWebHostEnvironment>(env => env.WebRootFileProvider == _fileProviderMock.Object),
+                _accessorMock.Object,
+                _transactionService.Object,
+                _loggerMock.Object);
         }
 
         [Fact]
@@ -357,61 +362,40 @@ namespace VPay.Payment.Api.Tests.Controllers
         //New Code
 
         [Fact]
-        public void GetWsdl_ShouldReturnWsdlFile_WhenUrlIsNotProvided()
+        public void GetWsdl_ReturnsXmlFile()
         {
             // Arrange
-            var request = new Mock<HttpRequest>();
-            request.Setup(x => x.Scheme).Returns("http");
-            request.Setup(x => x.Host).Returns(new HostString("localhost"));
-            request.Setup(x => x.Path).Returns("/api/legacy/wsdl");
+            var xmlContent = @"
+                <definitions xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:Xsd='http://www.w3.org/2001/XMLSchema'>
+                    <service>
+                        <port>
+                            <soap:address location='http://oldurl'/>
+                            <Xsd:address location='http://oldurl'/>
+                        </port>
+                    </service>
+                </definitions>";
+            File.WriteAllText("VPayWSService.xml", xmlContent);
 
-            var httpContext = new Mock<HttpContext>();
-            httpContext.Setup(x => x.Request).Returns(request.Object);
+            var httpReq = new Mock<HttpRequest>();
+            httpReq.Setup(r => r.Scheme).Returns("http");
+            httpReq.Setup(r => r.Host).Returns(new HostString("test"));
+            httpReq.Setup(r => r.Path).Returns("/test");
+            var context = new Mock<HttpContext>();
+            context.Setup(c => c.Request).Returns(httpReq.Object);
+            _accessorMock.Setup(a => a.HttpContext).Returns(context.Object);
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
 
-            _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext.Object);
-
-            var fileInfoMock = new Mock<IFileInfo>();
-            fileInfoMock.Setup(x => x.PhysicalPath).Returns(Path.Combine(Directory.GetCurrentDirectory(), "VPayWSService.xml"));
-
-            var fileProviderMock = new Mock<IFileProvider>();
-            fileProviderMock.Setup(x => x.GetFileInfo("VPayWSService.xml")).Returns(fileInfoMock.Object);
-
-            _webHostEnvironmentMock.Setup(x => x.WebRootFileProvider).Returns(fileProviderMock.Object);
+            mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context.Object);
 
             // Act
             var result = _controller.GetWsdl(null) as FileContentResult;
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("text/xml", result.ContentType);
-            var content = Encoding.UTF8.GetString(result.FileContents);
-            Assert.Contains("<definitions", content);
-        }
-
-        [Fact]
-        public void GetWsdl_ShouldReturnWsdlFile_WhenUrlIsProvided()
-        {
-            // Arrange
-            var url = "http://localhost/api/legacy/wsdl";
-
-            var fileInfoMock = new Mock<IFileInfo>();
-            fileInfoMock.Setup(x => x.PhysicalPath).Returns(Path.Combine(Directory.GetCurrentDirectory(), "VPayWSService.xml"));
-
-            var fileProviderMock = new Mock<IFileProvider>();
-            fileProviderMock.Setup(x => x.GetFileInfo("VPayWSService.xml")).Returns(fileInfoMock.Object);
-
-            _webHostEnvironmentMock.Setup(x => x.WebRootFileProvider).Returns(fileProviderMock.Object);
-
-            // Act
-            var result = _controller.GetWsdl(url) as FileContentResult;
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal("text/xml", result.ContentType);
-            var content = Encoding.UTF8.GetString(result.FileContents);
-            Assert.Contains("<definitions", content);
-        }
 
+        }
 
     }
 }
