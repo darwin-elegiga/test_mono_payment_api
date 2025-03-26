@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Net.Http;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -102,7 +102,7 @@ namespace VPay.Payment.Tests
             // Assert
             result.CommonData.SuccessCode.Should().Be("0000");
         }
-                
+
         [Fact]
         public async Task GetBalanceRequest_ShouldReturnExpectedResponse()
         {
@@ -290,138 +290,66 @@ namespace VPay.Payment.Tests
             result.Should().NotBeNull();
         }
 
-        //New Code
+        [Fact]
+        public void CheckLoadPanForDeclineErrorMessages_WithRequestpaymentType_ShouldReturnExpectedResponse()
+        {
+            var methodInfo = typeof(TransactionService).GetMethod("CheckLoadPanForDeclineErrorMessages", BindingFlags.NonPublic | BindingFlags.Instance);
+            // Arrange
+            var request = new StandardRequest
+            {
+                Claim = new ClaimData { Amount = "0.00" },
+                CoveredItem = new CoveredItemData { Year = "2022", Deductible = "50.00", BeginOdometer = "1000" },
+                Payment = new PaymentData { Type = "TEST" }
+            };
 
-        //[Fact]
-        //public async Task GetCorrespondenceList_ShouldReturnExpectedResponse_WhenCorrespondenceExists()
-        //{
-        //    var methodInfo = typeof(TransactionService).GetMethod("GetCorrespondenceList", BindingFlags.NonPublic | BindingFlags.Instance);
-        //    // Arrange
-        //    var transactionId = 123L;
-        //    var parameters = new object[] { transactionId };
+            var parameters = new object[] { request };
 
-        //    var correspondenceList = new List<CorespDtl>
-        //    {
-        //        new CorespDtl { DmRecId = 1, Direction = "OUT", Type = "FAX", Status = "SENT" }
-        //    };
-        //    var faxJobs = new List<FaxJobDto>
-        //    {
-        //        new FaxJobDto { JobId = 1, CorrespondenceId = 1 }
-        //    };
-        //    var faxStatus = new FaxStatusResponseDto { StatusName = "Delivered" };
+            // Act
+            var result = methodInfo.Invoke(_sut, parameters);
 
-        //    _db2Context.CorrespondenceMock.Setup(x => x.GetByTransactionId(transactionId)).ReturnsAsync(correspondenceList);
-        //    _fax.Setup(x => x.JobsByTransaction(It.IsIn<FaxJobsDto>(transactionId))).ReturnsAsync(faxJobs);
-        //    _fax.Setup(x => x.GetFaxStatus(It.IsAny<FaxJobRequestDto>())).ReturnsAsync(faxStatus);
+            // Assert
+            result.Should().BeEquivalentTo(("0909", "Payee Code cannot be Blank"));
+        }
+        [Fact]
+        public void CheckLoadPanForDeclineErrorMessages_WithClaimAmount_ShouldReturnExpectedResponse()
+        {
+            var methodInfo = typeof(TransactionService).GetMethod("CheckLoadPanForDeclineErrorMessages", BindingFlags.NonPublic | BindingFlags.Instance);
+            // Arrange
+            var request = new StandardRequest
+            {
+                Claim = new ClaimData { Amount = "Test" },
+                CoveredItem = new CoveredItemData { Year = "TWENTYTWO", Deductible = "TEST", BeginOdometer = "START" },
+                Payment = new PaymentData { Type = "CLCHK" }
+            };
 
-        //    // Act
-        //    var result = methodInfo.Invoke(_sut, parameters);
-        
+            var parameters = new object[] { request };
 
-        //    //// Act
-        //    //var result = await _sut.GetCorrespondenceList(transactionId);
+            // Act
+            var result = methodInfo.Invoke(_sut, parameters);
 
-        //    // Assert
-        //    result.Should().HaveCount(1);
-        //    //result.First().StatusText.Should().Be("Delivered");
-        //}
+            // Assert
+            result.Should().BeEquivalentTo(("0956", "Check Zip cannot be Blank"));
+        }
+        [Fact]
+        public void CheckLoadPanForDeclineErrorMessages_WithDiffPaymentType_ShouldReturnExpectedResponse()
+        {
+            var methodInfo = typeof(TransactionService).GetMethod("CheckLoadPanForDeclineErrorMessages", BindingFlags.NonPublic | BindingFlags.Instance);
+            // Arrange
+            var request = new StandardRequest
+            {
+                Claim = new ClaimData { Amount = "Test" },
+                CoveredItem = new CoveredItemData { Year = "TWENTYTWO", Deductible = "TEST", BeginOdometer = "START" },
+                Payment = new PaymentData { Type = "CLEFT" }
+            };
 
-        //[Fact]
-        //public async Task GetCorrespondenceList_ShouldReturnEmptyList_WhenNoCorrespondenceExists()
-        //{
-        //    // Arrange
-        //    var transactionId = 123L;
-        //    var correspondenceList = new List<CorespDtl>();
+            var parameters = new object[] { request };
 
-        //    _db2Context.CorrespondenceMock.Setup(x => x.GetByTransactionId(transactionId)).ReturnsAsync(correspondenceList);
+            // Act
+            var result = methodInfo.Invoke(_sut, parameters);
 
-        //    // Act
-        //    var result = await _sut.GetCorrespondenceList(transactionId);
+            // Assert
+            result.Should().BeEquivalentTo(("0958", "AccountNumber cannot be Blank"));
+        }
 
-        //    // Assert
-        //    result.Should().BeEmpty();
-        //}
-
-        //[Fact]
-        //public async Task GetCorrespondenceList_ShouldReturnOriginalList_WhenNoFaxJobsExist()
-        //{
-        //    // Arrange
-        //    var transactionId = 123L;
-        //    var correspondenceList = new List<CorespDtl>
-        //    {
-        //        new CorespDtl { DmRecId = 1, Direction = "OUT", Type = "FAX", Status = "SENT" }
-        //    };
-        //    var faxJobs = new List<FaxJobDto>();
-
-        //    _db2Context.CorrespondenceMock.Setup(x => x.GetByTransactionId(transactionId)).ReturnsAsync(correspondenceList);
-        //    _fax.Setup(x => x.JobsByTransaction(transactionId)).ReturnsAsync(faxJobs);
-
-        //    // Act
-        //    var result = await _sut.GetCorrespondenceList(transactionId);
-
-        //    // Assert
-        //    result.Should().HaveCount(1);
-        //    result.First().StatusText.Should().BeNull();
-        //}
-
-        //[Fact]
-        //public async Task GetCorrespondenceList_ShouldLogInformation_WhenTransactionIdNotFoundInFaxMan()
-        //{
-        //    // Arrange
-        //    var transactionId = 123L;
-        //    var correspondenceList = new List<CorespDtl>
-        //    {
-        //        new CorespDtl { DmRecId = 1, Direction = "OUT", Type = "FAX", Status = "SENT" }
-        //    };
-
-        //    _db2Context.CorrespondenceMock.Setup(x => x.GetByTransactionId(transactionId)).ReturnsAsync(correspondenceList);
-        //    _fax.Setup(x => x.JobsByTransaction(transactionId)).ThrowsAsync(new ApiException(new HttpRequestMessage(), HttpStatusCode.NotFound, "Not Found", null, null));
-
-        //    // Act
-        //    var result = await _sut.GetCorrespondenceList(transactionId);
-
-        //    // Assert
-        //    result.Should().HaveCount(1);
-        //    result.First().StatusText.Should().BeNull();
-        //}
-
-        //[Fact]
-        //public async Task GetCorrespondenceList_ShouldLogWarning_WhenUnhandledExceptionOccurs()
-        //{
-        //    // Arrange
-        //    var transactionId = 123L;
-        //    var correspondenceList = new List<CorespDtl>
-        //    {
-        //        new CorespDtl { DmRecId = 1, Direction = "OUT", Type = "FAX", Status = "SENT" }
-        //    };
-
-        //    _db2Context.CorrespondenceMock.Setup(x => x.GetByTransactionId(transactionId)).ReturnsAsync(correspondenceList);
-        //    _fax.Setup(x => x.JobsByTransaction(transactionId)).ThrowsAsync(new ApiException(new HttpRequestMessage(), HttpStatusCode.InternalServerError, "Internal Server Error", null, null));
-
-        //    // Act
-        //    var result = await _sut.GetCorrespondenceList(transactionId);
-
-        //    // Assert
-        //    result.Should().HaveCount(1);
-        //    result.First().StatusText.Should().BeNull();
-        //}
-
-
-
-        //[Fact]
-        //public async Task LoadPan_ShouldReturnExpectedResponse()
-        //{
-        //    // Arrange
-        //    var request = new StandardRequest { CommonData = new CommonData { TransNumber = "123", User = "testUser", Token = "token" } };
-        //    string clientData = "Test";
-        //    var standardResponse = new StandardResponse { CommonData = new CommonData { SuccessCode = "0000" , ReasonCode ="Test",ReasonDesc="Test",ResponseCode="Test",SuccessDesc="Test",ResponseDesc="Test" } };
-        //    _db2Context.TransactionWsMock.Setup(x => x.LoadPan(It.IsAny<TransactionWsRequest>(),default(CancellationToken))).ReturnsAsync(standardResponse);
-
-        //    // Act
-        //    var result = await _sut.LoadPan(request,clientData);
-
-        //    // Assert
-        //    result.CommonData.SuccessCode.Should().Be("0000");
-        //}
     }
 }
