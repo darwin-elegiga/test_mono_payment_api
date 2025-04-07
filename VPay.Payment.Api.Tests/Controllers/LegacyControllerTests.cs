@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Claims;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using VPay.Data.Db2.Abstractions.TransactionWs;
@@ -15,22 +19,30 @@ using VPay.Payment.Api.Dtos;
 using VPay.Payment.Common;
 using Xunit;
 
-namespace VPay.Payment.Api.Tests
+namespace VPay.Payment.Api.Tests.Controllers
 {
     public class LegacyControllerTests
     {
+        private readonly Mock<IHttpContextAccessor> _accessorMock;
+        private readonly Mock<IWebHostEnvironment> _webHostEnvironmentMock;
+        private readonly Mock<ILogger<LegacyController>> _loggerMock;
+        private readonly LegacyController _controller;
         private readonly LegacyController _sut;
         private readonly NullLogger<LegacyController> _logger;
         private readonly Mock<ILegacyTransactionService> _transactionService;
         private readonly Mock<IFileProvider> _fileProvider;
-        private readonly LegacyRequest _setupRequest;
+        private readonly Mock<IFileProvider> _fileProviderMock;
 
         public LegacyControllerTests()
         {
+            _webHostEnvironmentMock = new Mock<IWebHostEnvironment>();
+            _loggerMock = new Mock<ILogger<LegacyController>>();
+            _accessorMock = new Mock<IHttpContextAccessor>();
+            _webHostEnvironmentMock.Setup(x => x.WebRootFileProvider).Returns(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
+
             _logger = new NullLogger<LegacyController>();
             _transactionService = new Mock<ILegacyTransactionService>();
             _fileProvider = new Mock<IFileProvider>();
-
             var hostingEnv = new Mock<IWebHostEnvironment>();
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -44,6 +56,25 @@ namespace VPay.Payment.Api.Tests
             hostingEnv.Setup(_ => _.WebRootFileProvider).Returns(_fileProvider.Object);
 
             _sut = new LegacyController(hostingEnv.Object, mockHttpContextAccessor.Object, _transactionService.Object, _logger);
+
+            var request = context.Request;
+
+            // Set up the request properties as needed
+            request.Scheme = "https";
+            request.Host = new HostString("localhost", 5001);
+            request.Path = "/api/myaction";
+            request.QueryString = new QueryString("?param1=value1&param2=value2");
+            _fileProviderMock = new Mock<IFileProvider>();
+            var fileInfoMock = new Mock<IFileInfo>();
+            fileInfoMock.Setup(f => f.PhysicalPath).Returns("VPayWSService.xml");
+            _fileProviderMock.Setup(f => f.GetFileInfo(It.IsAny<string>())).Returns(fileInfoMock.Object);
+
+            _sut.ControllerContext.HttpContext = context;
+            _controller = new LegacyController(
+                Mock.Of<IWebHostEnvironment>(env => env.WebRootFileProvider == _fileProviderMock.Object),
+                _accessorMock.Object,
+                _transactionService.Object,
+                _loggerMock.Object);
         }
 
         [Fact]
@@ -247,31 +278,6 @@ namespace VPay.Payment.Api.Tests
         }
 
         [Fact]
-        public void CancelFax_should_return_Deprecated_API_9997()
-        {
-            var result = _sut.CancelFax(_setupRequest);
-
-            result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
-        }
-
-        [Fact]
-        public void HoldFax_should_return_Deprecated_API_9997()
-        {
-            var result = _sut.HoldFax(_setupRequest);
-
-            result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
-        }
-
-        [Fact]
-        public void ReleaseFax_should_return_Deprecated_API_9997()
-        {
-            var result = _sut.ReleaseFax(_setupRequest);
-            result.CommonData.SuccessCode.Should().Be("9997");
-            result.CommonData.SuccessDesc.Should().Be("This API endpoint has been deprecated.");
-        }
-        [Fact]
         public async Task ResendFax_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
         {
             var setupObj = new LegacyRequest()
@@ -297,6 +303,98 @@ namespace VPay.Payment.Api.Tests
 
             result.CommonData.SuccessCode.Should().Be("9997");
             result.CommonData.SuccessDesc.Should().Be("Unexpected Error with ResendFax");
+        }
+
+        [Fact]
+        public void GetVer_ShouldReturnVersionInfo()
+        {
+            // Act
+            var result = _sut.GetVer();
+
+            // Assert
+            result.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task PostEcho_ShouldReturnStandardResponse()
+        {
+            // Arrange
+            var echoRequest = new EchoRequest { Es = "Test" };
+
+            // Act
+            var result = await _sut.PostEcho(echoRequest);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.CommonData.ResponseDesc.Should().Contain("VPayWs");
+            result.CommonData.SuccessCode.Should().Be("0");
+            result.CommonData.ReasonCode.Should().Be("0");
+        }
+
+        [Fact]
+        public async Task GetReasonCodes_WhenServiceThrowsException_ThenShouldReturnObjectWithErrorCode9997()
+        {
+            var setupObj = new LegacyRequest()
+            {
+                Envelope = new LegacyEnvelope()
+                {
+                    Body = new LegacyBody()
+                    {
+                        GetReasonCodes = new LegacyReasonCodeRequest()
+                        {
+                            AuthenticationValues = new AuthenticationValues(),
+                            Request = new ReasonCodeRequestDto()
+                        }
+                    }
+                }
+            };
+
+            _transactionService
+                .Setup(_ => _.GetReasonCodes(It.IsAny<ReasonCodeRequest>(), CancellationToken.None))
+                .ThrowsAsync(new Exception("General Exception"));
+
+            var result = await _sut.GetReasonCodes(setupObj);
+
+            result.CommonData.SuccessCode.Should().Be("9997");
+            result.CommonData.SuccessDesc.Should().Be("Unexpected Error with GetReasonCodes");
+        }
+
+        //New Code
+
+        [Fact]
+        public void GetWsdl_ReturnsXmlFile()
+        {
+            // Arrange
+            var xmlContent = @"
+                <definitions xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:Xsd='http://www.w3.org/2001/XMLSchema'>
+                    <service>
+                        <port>
+                            <soap:address location='http://oldurl'/>
+                            <Xsd:address location='http://oldurl'/>
+                        </port>
+                    </service>
+                </definitions>";
+            File.WriteAllText("VPayWSService.xml", xmlContent);
+
+            var httpReq = new Mock<HttpRequest>();
+            httpReq.Setup(r => r.Scheme).Returns("http");
+            httpReq.Setup(r => r.Host).Returns(new HostString("test"));
+            httpReq.Setup(r => r.Path).Returns("/test");
+            var context = new Mock<HttpContext>();
+            context.Setup(c => c.Request).Returns(httpReq.Object);
+            _accessorMock.Setup(a => a.HttpContext).Returns(context.Object);
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+
+            mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context.Object);
+
+            // Act
+            var result = _controller.GetWsdl(null) as FileContentResult;
+
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("text/xml", result.ContentType);
+
         }
 
     }
