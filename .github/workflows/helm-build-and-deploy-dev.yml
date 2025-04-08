@@ -27,6 +27,7 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
      
   deployment-plano-dev-dryrun:
+    if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
     needs: build-and-publish
     with: 
@@ -36,6 +37,7 @@ jobs:
       DRYRUN: true
     secrets: inherit  
   deployment-stl-dev-dryrun:
+    if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
     needs: build-and-publish
     with: 
@@ -45,6 +47,7 @@ jobs:
       DRYRUN: true
     secrets: inherit 
   deployment-plano-dev:
+    if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
     needs: [deployment-plano-dev-dryrun, deployment-stl-dev-dryrun]
     with: 
@@ -54,6 +57,7 @@ jobs:
       DRYRUN: false
     secrets: inherit
   deployment-stl-dev:
+    if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
     needs: [deployment-plano-dev-dryrun, deployment-stl-dev-dryrun]
     with: 
