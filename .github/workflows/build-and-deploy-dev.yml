@@ -1,9 +1,16 @@
-name: helm-build-and-deploy-to-dev
-on: 
+name: build-and-deploy-to-dev
+on:
   workflow_dispatch:
+    inputs:
+      PRE:
+        required: true
+        type: boolean
+        default: true
+  release:
+    types: [published]
   push:
     tags:
-    - '*'
+      - "*"
 
 jobs:
   sonar:
@@ -23,33 +30,14 @@ jobs:
       DOCKER_USERNAME: ${{ vars.PMNTS_DEVOPS_MSA }}
       DOCKER_REGISTRY_URL: "docker.repo1.uhc.com/vpay-docker"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
+      PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
     secrets: 
       DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
-     
-  deployment-plano-dev-dryrun:
-    if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
-    needs: build-and-publish
-    with: 
-      CHARTS_PATH: charts/payment-api
-      NAMESPACE: client-payments-dev
-      RELEASE_NAME: payment-api
-      DRYRUN: true
-    secrets: inherit  
-  deployment-stl-dev-dryrun:
-    if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
-    needs: build-and-publish
-    with: 
-      CHARTS_PATH: charts/payment-api
-      NAMESPACE: client-payments-dev
-      RELEASE_NAME: payment-api
-      DRYRUN: true
-    secrets: inherit 
+      
   deployment-plano-dev:
     if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
-    needs: [deployment-plano-dev-dryrun, deployment-stl-dev-dryrun]
+    needs: build-and-publish
     with: 
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
@@ -59,7 +47,7 @@ jobs:
   deployment-stl-dev:
     if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
-    needs: [deployment-plano-dev-dryrun, deployment-stl-dev-dryrun]
+    needs: build-and-publish
     with: 
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
