@@ -1,8 +1,12 @@
+---
 apiVersion: v1
 metadata:
   askId: AIDE_0077865
   caAgileId: 638692936141d
-  projectKey: com.optum:eps-eps
-  projectFriendlyName: vpay-test
+  projectKey: com.uhg.optum.financials:vpay-payment-api
+  projectFriendlyName: vpay-payment-api
   componentType: code
   targetQG: GATE_00
+  solutionFileName: VPay.Payment.sln
+  buildConfiguration: Release
+  dotnetVersion: 6.x

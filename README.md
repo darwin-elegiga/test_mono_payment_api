@@ -3,7 +3,7 @@
 
 # VPay Payment API
 
-This repo contains the logic and the API methods that are needed for warranty clients to handle their payments
+This repo contains the logic and the API methods that are needed for warranty clients to handle their payments 
 
 ## What is in this project?
 
