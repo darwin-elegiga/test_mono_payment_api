@@ -20,7 +20,7 @@ ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 
 ## Build Stage
 #FROM ${REGISTRY}/base-images/${BASE_SDK_IMAGE}:${DOTNET_VERSION}-${DOTNET_SDK_VARIANT} as build
-FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-sdk:latest-dev as build 
+FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-sdk:latest as build 
 
 ## Build stage arguments
 ARG CONFIG_PROFILE=Release
