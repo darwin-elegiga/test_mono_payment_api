@@ -21,7 +21,7 @@ jobs:
   build-and-publish:
     # needs: sonar
     # if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@feat/chainguard-image
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
     with: 
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
