@@ -13,15 +13,15 @@ on:
       - "*"
 
 jobs:
-  sonar:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@main
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #sonar:
+    #uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@main
+    #secrets:
+      #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     
   build-and-publish:
-    needs: sonar
-    if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
+    #needs: sonar
+    #if: always()
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@feat/jfrog-saas-migration
     with: 
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
@@ -36,7 +36,7 @@ jobs:
       
   deployment-plano-dev:
     if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@feat/jfrog-saas-migration
     needs: build-and-publish
     with: 
       CHARTS_PATH: charts/payment-api
@@ -46,7 +46,7 @@ jobs:
     secrets: inherit
   deployment-stl-dev:
     if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@feat/jfrog-saas-migration
     needs: build-and-publish
     with: 
       CHARTS_PATH: charts/payment-api
