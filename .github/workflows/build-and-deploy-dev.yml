@@ -36,6 +36,7 @@ jobs:
     secrets: 
       #DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }}
       DOCKER_PASSWORD: ${{ secrets.TEST_MSA_JFTK }}
+      DOCKER_JF_PWD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }}
       
   # deployment-plano-dev:
   #   if: always()
