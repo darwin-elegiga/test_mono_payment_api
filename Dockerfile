@@ -20,8 +20,7 @@ ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 
 ## Build Stage
 #FROM ${REGISTRY}/base-images/${BASE_SDK_IMAGE}:${DOTNET_VERSION}-${DOTNET_SDK_VARIANT} as build
-FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-sdk/dev:latest-dev as build 
-#FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-sdk/dev:8.0-latest-dev as build 
+FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-sdk/dev:latest-dev as build  
 
 ## Build stage arguments
 ARG CONFIG_PROFILE=Release
@@ -46,13 +45,17 @@ SHELL ["/bin/sh", "-c"]
 RUN dotnet restore ${PROJECT}
 ## Copy all files if restore succeeds
 COPY . ./
+
+RUN ls -la /app && whoami
+USER root
+RUN mkdir -p /app && chown -R $(whoami) /app
+
 ## Publish project without restoring
 RUN dotnet publish --no-restore -c ${CONFIG_PROFILE} -o /app/out ${PROJECT}
 
 ## New stage used to reduce the size of the final image
 #FROM ${REGISTRY}/base-images/${BASE_RUNTIME_IMAGE}:${DOTNET_VERSION}-${DOTNET_RUNTIME_VARIANT} AS final
-FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-runtime/dev:latest-dev AS final
-#FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-runtime/dev:8.0-latest-dev AS final 
+FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-runtime/dev:latest-dev AS final 
 ## Final stage arguments
 ARG PROJECT_NAME
 
