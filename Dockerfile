@@ -19,7 +19,7 @@ ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 # ARG BASE_RUNTIME_IMAGE=dotnet/core/aspnet
 
 ## Build Stage
-FROM edgeinternal1uhg.optum.com/commpay-vpay-docker-vir/docker/${BASE_SDK_IMAGE}:${DOTNET_VERSION}-${DOTNET_SDK_VARIANT} as build
+FROM edgeinternal1uhg.optum.com/commpay-vpay-docker-vir/docker/dotnet/sdk:6.0-focal as build
 
 ## Build stage arguments
 ARG CONFIG_PROFILE=Release
