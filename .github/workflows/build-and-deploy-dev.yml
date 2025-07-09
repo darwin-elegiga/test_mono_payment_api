@@ -20,7 +20,7 @@ jobs:
     
   build-and-publish:
     ##needs: sonar
-    ##if: always()
+    ###if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@feat/jfrog-saas-migration
     with: 
       PROJECT: payment-api
