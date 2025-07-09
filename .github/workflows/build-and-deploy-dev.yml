@@ -27,12 +27,15 @@ jobs:
       IMAGE_NAME: payment-web-api
       BUILD_ARGS: "PROJECT_DIR PROJECT_NAME"
       DOCKER_URL: "optum-docker-auth-prod.repo1.uhc.com"
-      DOCKER_USERNAME: ${{ vars.PMNTS_DEVOPS_MSA }}
-      DOCKER_REGISTRY_URL: "docker.repo1.uhc.com/vpay-docker"
+      #DOCKER_USERNAME: ${{ vars.PMNTS_DEVOPS_MSA }}
+      DOCKER_USERNAME: 'devops_msa@optum.com'
+      #DOCKER_REGISTRY_URL: "docker.repo1.uhc.com/vpay-docker"
+      DOCKER_REGISTRY_URL: "centraluhg.jfrog.io/commpay-vpay-docker-vir/docker"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
       PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
     secrets: 
-      DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
+      #DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }}
+      DOCKER_PASSWORD: ${{ secrets.TEST_MSA_JFTK }}
       
   # deployment-plano-dev:
   #   if: always()
