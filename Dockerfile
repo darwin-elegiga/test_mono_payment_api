@@ -55,7 +55,8 @@ RUN dotnet publish --no-restore -c ${CONFIG_PROFILE} -o /app/out ${PROJECT}
 
 ## New stage used to reduce the size of the final image
 #FROM ${REGISTRY}/base-images/${BASE_RUNTIME_IMAGE}:${DOTNET_VERSION}-${DOTNET_RUNTIME_VARIANT} AS final
-FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-runtime/dev:latest-dev AS final 
+#FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/dotnet-runtime/dev:latest-dev AS final 
+FROM optum-docker-auth-prod.repo1.uhc.com/chainguard/aspnet-runtime/dev:8.0-latest-dev AS final
 ## Final stage arguments
 ARG PROJECT_NAME
 
