@@ -1,20 +1,12 @@
 name: deploy-to-stage
 on: workflow_dispatch
 
-jobs:
-  deployment-plano-stage:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-stage.yml@main
-    with: 
-      CHARTS_PATH: charts/payment-api
-      NAMESPACE: client-payments-stage
-      RELEASE_NAME: payment-api
-      DRYRUN: false
-    secrets: inherit      
+jobs:    
   deployment-stl-stage:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-stage.yml@main
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-stage.yml@feat/jfrog-saas-migration
     with: 
       CHARTS_PATH: charts/payment-api
-      NAMESPACE: client-payments-stage
+      NAMESPACE: client-payments-stage-test
       RELEASE_NAME: payment-api
       DRYRUN: false
     secrets: inherit      
