@@ -26,7 +26,8 @@ jobs:
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
       BUILD_ARGS: "PROJECT_DIR PROJECT_NAME"
-      DOCKER_URL: "centraluhg.jfrog.io"
+      DOCKER_R_URL: "https://edgeinternal1uhg.optum.com"
+      DOCKER_W_URL: "centraluhg.jfrog.io"
       DOCKER_USERNAME: ${{ vars.TEST_MSA_JFTK_USR }}
       DOCKER_REGISTRY_URL: "centraluhg.jfrog.io/commpay-vpay-docker-vir/docker"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
