@@ -46,7 +46,7 @@ jobs:
     #  DRYRUN: false
     #secrets: inherit
   deployment-stl-dev:
-    if: always()
+    #if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@feat/jfrog-saas-migration
     needs: build-and-publish
     with: 
