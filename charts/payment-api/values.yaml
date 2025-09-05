@@ -28,6 +28,12 @@ global:
       subdomain: dev.pks.vpayusa.net
 
 api:
+  podAnnotations:
+    admission.datadoghq.com/dotnet-lib.version: v3.24.1
+  podLabels:
+    admission.datadoghq.com/enabled: "true"
+  env:
+    DD_LOGS_INJECTION: "true"
   enabled: true
   listeningPort: 80
   contentRoot: /app
