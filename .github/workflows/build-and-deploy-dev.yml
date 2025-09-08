@@ -15,6 +15,8 @@ on:
 jobs:
   sonar:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@test/sonar-token
+    secrets:
+      SONAR_TOKEN: ${{ secrets.ASTAGE_VAULT_TOKEN }}
       
   # build-and-publish:
   #   needs: sonar
