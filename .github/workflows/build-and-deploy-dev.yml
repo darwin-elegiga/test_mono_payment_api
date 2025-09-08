@@ -15,9 +15,7 @@ on:
 jobs:
   sonar:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@test/sonar-token
-    with:
-      SONAR_TOKEN: ${{ needs.call-sonar.outputs.sonar_token }}  
-    
+      
   build-and-publish:
     needs: sonar
     if: always()
