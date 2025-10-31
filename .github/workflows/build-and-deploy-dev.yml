@@ -37,8 +37,7 @@ jobs:
       DOCKER_URL: "centraluhg.jfrog.io"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
       PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
-    secrets: 
-      DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
+   
       
   deployment-plano-dev:
     if: always()
