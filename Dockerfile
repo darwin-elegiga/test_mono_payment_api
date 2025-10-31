@@ -56,8 +56,11 @@ ENV ASPNETCORE_URLS=http://+:80
 ## Create a symlink so we can use exec form entrypoint
 RUN ln -s ${PROJECT_NAME}.dll Entrypoint.dll
 
+RUN addgroup --gid 1000 bogner && adduser --uid 1000 --ingroup bogner --home /home/bogner --shell /bin/sh --disabled-password --gecos "" bogner
+RUN addgroup --gid 99 nobody && addgroup --gid 65545 nfsnobody && \
+    usermod -a -G nfsnobody,nobody bogner
 ENTRYPOINT [ "dotnet", "Entrypoint.dll" ]
-
+USER bogner
 ## Optionally add image build time
 ARG IMAGE_BUILD_TIME
 ENV IMAGE_BUILD_TIME ${IMAGE_BUILD_TIME}
