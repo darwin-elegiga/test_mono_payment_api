@@ -1,5 +1,13 @@
 name: build-and-deploy-to-dev
-on:
+permissions:
+  contents: write
+  actions: read
+  id-token: write
+  pull-requests: read 
+  packages: read 
+  security-events: write
+
+on: 
   workflow_dispatch:
     inputs:
       PRE:
@@ -9,8 +17,7 @@ on:
   release:
     types: [published]
   push:
-    tags:
-      - "*"
+    tags: '*'
 
 jobs:
   sonar:
@@ -21,7 +28,7 @@ jobs:
   build-and-publish:
     needs: sonar
     if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
     with: 
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
