@@ -21,7 +21,7 @@ on:
 
 jobs:
   sonar:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@add/sonar-source
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@main
     secrets:
       sonar-token: ${{ secrets.SONAR_TOKEN }} 
     
