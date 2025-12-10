@@ -1,7 +1,14 @@
 name: build-and-deploy-to-dev
-on:
+permissions:
+  contents: write
+  actions: read
+  id-token: write
+  pull-requests: read 
+  packages: read 
+  security-events: write
+on: 
   workflow_dispatch:
-    inputs:
+   inputs:
       PRE:
         required: true
         type: boolean
@@ -10,7 +17,7 @@ on:
     types: [published]
   push:
     tags:
-      - "*"
+      - '*'
 
 jobs:
   sonar:
