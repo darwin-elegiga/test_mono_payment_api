@@ -32,7 +32,8 @@ jobs:
     with: 
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
-      BUILD_ARGS: "PROJECT_DIR PROJECT_NAME"
+      DOCKERFILE: Dockerfile
+      DOCKER_CONTEXT_DIR: ""
       DOCKER_URL: "centraluhg.jfrog.io"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
       PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
