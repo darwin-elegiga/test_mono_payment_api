@@ -34,8 +34,10 @@ cp **/*.csproj ../ --parents;
 RUN rm -rf docker_build_context
 SHELL ["/bin/sh", "-c"]
 
-## Restore project
-RUN dotnet restore ${PROJECT}
+## Restore project using BuildKit secrets for NuGet authentication
+RUN --mount=type=secret,id=jf-token,env=JF_TOKEN \
+    --mount=type=secret,id=jf-user,env=JF_USER \
+    dotnet restore ${PROJECT}
 ## Copy all files if restore succeeds
 COPY . ./
 ## Publish project without restoring
