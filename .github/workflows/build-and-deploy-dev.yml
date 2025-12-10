@@ -14,26 +14,22 @@ on:
 
 jobs:
   sonar:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis.yml@main
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@main
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     
   build-and-publish:
     needs: sonar
     if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
     with: 
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
       BUILD_ARGS: "PROJECT_DIR PROJECT_NAME"
-      DOCKER_URL: "docker.repo1.uhc.com"
-      DOCKER_USERNAME: ${{ vars.PMNTS_DEVOPS_MSA }}
-      DOCKER_REGISTRY_URL: "docker.repo1.uhc.com/vpay-docker"
+      DOCKER_URL: "centraluhg.jfrog.io"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
       PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
-    secrets: 
-      DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
-      
+          
   deployment-plano-dev:
     if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
