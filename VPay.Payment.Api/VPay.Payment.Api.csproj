@@ -38,6 +38,7 @@
     <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.12.2" />
     <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.11.3-PAY-23503-2" />
     <PackageReference Include="VPay.Extensions.Logging.GrayLog" Version="1.0.1" />
+    <PackageReference Include="Refit" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
