@@ -4,7 +4,7 @@ using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
 using Xunit;
 
-namespace VPay.Payment.Common.Tests
+namespace VPay.Payment.Common.Tests.Helpers
 {
     public class ObjectToStringHelpersTests
     {
@@ -1061,6 +1061,153 @@ namespace VPay.Payment.Common.Tests
             var result = data.ToDisplayString();
             var expected = $"CardNumber={cardNumber.Substring(0, 4)}*********{cardNumber.Substring(14, 2)}";
             Assert.Contains(expected, result);
+        }
+        [Fact]
+        public void ToDisplayString_AmountIsNullOrWhitespace_DoesNotIncludeAmount()
+        {
+            var claim = new ClaimData { Amount = null };
+            var result = claim.ToDisplayString();
+            Assert.DoesNotContain("Amount=", result);
+
+            claim.Amount = "";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("Amount=", result);
+
+            claim.Amount = "   ";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("Amount=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ClaimDeductibleIsNullOrWhitespace_DoesNotIncludeClaimDeductible()
+        {
+            var claim = new ClaimData { ClaimDeductible = null };
+            var result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimDeductible=", result);
+
+            claim.ClaimDeductible = "";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimDeductible=", result);
+
+            claim.ClaimDeductible = "   ";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimDeductible=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ClaimOdometerIsNullOrWhitespace_DoesNotIncludeClaimOdometer()
+        {
+            var claim = new ClaimData { ClaimOdometer = null };
+            var result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimOdometer=", result);
+
+            claim.ClaimOdometer = "";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimOdometer=", result);
+
+            claim.ClaimOdometer = "   ";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimOdometer=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_AmountIsPresent_IncludesTrimmedAmount()
+        {
+            var claim = new ClaimData { Amount = " 123.45 " };
+            var result = claim.ToDisplayString();
+            Assert.Contains("Amount=123.45", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ClaimDeductibleIsPresent_IncludesTrimmedClaimDeductible()
+        {
+            var claim = new ClaimData { ClaimDeductible = " 10.00 " };
+            var result = claim.ToDisplayString();
+            Assert.Contains("ClaimDeductible=10.00", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ClaimOdometerIsPresent_IncludesTrimmedClaimOdometer()
+        {
+            var claim = new ClaimData { ClaimOdometer = " 99999 " };
+            var result = claim.ToDisplayString();
+            Assert.Contains("ClaimOdometer=99999", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_AllFieldsPresent_AllIncluded()
+        {
+            var claim = new ClaimData
+            {
+                Amount = " 123.45 ",
+                ClaimDeductible = " 10.00 ",
+                ClaimOdometer = " 99999 "
+            };
+            var result = claim.ToDisplayString();
+            Assert.Contains("Amount=123.45", result);
+            Assert.Contains("ClaimDeductible=10.00", result);
+            Assert.Contains("ClaimOdometer=99999", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_BeginDateIsNullOrWhitespace_DoesNotIncludeBeginDate()
+        {
+            var item = new CoveredItemData { BeginDate = null };
+            var result = item.ToDisplayString();
+            Assert.DoesNotContain("BeginDate=", result);
+
+            item.BeginDate = "";
+            result = item.ToDisplayString();
+            Assert.DoesNotContain("BeginDate=", result);
+
+            item.BeginDate = "   ";
+            result = item.ToDisplayString();
+            Assert.DoesNotContain("BeginDate=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ExpireDateIsNullOrWhitespace_DoesNotIncludeExpireDate()
+        {
+            var item = new CoveredItemData { ExpireDate = null };
+            var result = item.ToDisplayString();
+            Assert.DoesNotContain("ExpireDate=", result);
+
+            item.ExpireDate = "";
+            result = item.ToDisplayString();
+            Assert.DoesNotContain("ExpireDate=", result);
+
+            item.ExpireDate = "   ";
+            result = item.ToDisplayString();
+            Assert.DoesNotContain("ExpireDate=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_BeginDateIsPresent_IncludesTrimmedBeginDate()
+        {
+            var item = new CoveredItemData { BeginDate = " 20231201 " };
+            var result = item.ToDisplayString();
+            Assert.Contains("BeginDate=20231201", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ExpireDateIsPresent_IncludesTrimmedExpireDate()
+        {
+            var item = new CoveredItemData { ExpireDate = " 20241201 " };
+            var result = item.ToDisplayString();
+            Assert.Contains("ExpireDate=20241201", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_BothDatesPresent_BothIncluded()
+        {
+            var item = new CoveredItemData
+            {
+                BeginDate = " 20231201 ",
+                ExpireDate = " 20241201 "
+            };
+            var result = item.ToDisplayString();
+            Assert.Contains("BeginDate=20231201", result);
+            Assert.Contains("ExpireDate=20241201", result);
         }
 
     }
