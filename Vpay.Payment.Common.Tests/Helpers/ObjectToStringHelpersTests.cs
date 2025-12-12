@@ -4,7 +4,7 @@ using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Common;
 using Xunit;
 
-namespace VPay.Payment.Common.Tests
+namespace VPay.Payment.Common.Tests.Helpers
 {
     public class ObjectToStringHelpersTests
     {
@@ -779,7 +779,436 @@ namespace VPay.Payment.Common.Tests
             var expected = "CardInformation [ CardType=Visa, CardNumber=1234*********56, CardCvv2=***, CardExpiration=12/2023, LoadTransactionId=1, PayeeName=name, CardholderName=name, CardholderAddress=address, CardholderPostalCode=postal ]\r\n";
             Assert.Equal(expected, result);
         }
+        [Fact]
+        public void ToDisplayString_TokenIsNull_DoesNotAddToken()
+        {
+            var req = new ReasonCodeRequest { Token = null, TransNumber = "123", User = "user" };
+            var result = req.ToDisplayString();
+            Assert.DoesNotContain("Token=", result);
+        }
 
+        [Fact]
+        public void ToDisplayString_TokenIsWhitespace_DoesNotAddToken()
+        {
+            var req = new ReasonCodeRequest { Token = "   ", TransNumber = "123", User = "user" };
+            var result = req.ToDisplayString();
+            Assert.DoesNotContain("Token=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenLengthLessThanOrEqual63_AddsMaskedToken()
+        {
+            var req = new ReasonCodeRequest { Token = new string('A', 10), TransNumber = "123", User = "user" };
+            var result = req.ToDisplayString();
+            Assert.Contains("Token=****", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenLengthGreaterThan63_AddsPartialToken()
+        {
+            var token = new string('X', 70);
+            var req = new ReasonCodeRequest { Token = token, TransNumber = "123", User = "user" };
+            var result = req.ToDisplayString();
+            // Should show Token=XXXX... (substring(1,4) of token, which is 2nd to 5th char)
+            var expected = $"Token={token.Substring(1, 4)}...";
+            Assert.Contains(expected, result);
+        }
+        [Fact]
+        public void ToDisplayString_AllFieldsNullOrWhitespace_ReturnsEmptyString()
+        {
+            var req = new ReasonCodeRequest
+            {
+                TransNumber = null,
+                User = null,
+                Token = null
+            };
+            var result = req.ToDisplayString();
+            Assert.Equal("", result);
+
+            req = new ReasonCodeRequest
+            {
+                TransNumber = " ",
+                User = " ",
+                Token = " "
+            };
+            result = req.ToDisplayString();
+            Assert.Equal("", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TransNumberAndUserPresent_ReturnsExpectedString()
+        {
+            var req = new ReasonCodeRequest
+            {
+                TransNumber = "123",
+                User = "bob",
+                Token = null
+            };
+            var result = req.ToDisplayString();
+            Assert.StartsWith("ReasonCodeRequest [", result);
+            Assert.Contains("TransNumber=123", result);
+            Assert.Contains("User=bob", result);
+            Assert.DoesNotContain("Token=", result);
+            Assert.EndsWith(" ]\r\n", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenShort_ReturnsMaskedToken()
+        {
+            var req = new ReasonCodeRequest
+            {
+                TransNumber = null,
+                User = null,
+                Token = "shorttoken"
+            };
+            var result = req.ToDisplayString();
+            Assert.Contains("Token=****", result);
+            Assert.StartsWith("ReasonCodeRequest [", result);
+            Assert.EndsWith(" ]\r\n", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenLong_ReturnsPartialToken()
+        {
+            var longToken = new string('A', 70);
+            var req = new ReasonCodeRequest
+            {
+                TransNumber = null,
+                User = null,
+                Token = longToken
+            };
+            var result = req.ToDisplayString();
+            var expected = $"Token={longToken.Substring(1, 4)}...";
+            Assert.Contains(expected, result);
+            Assert.StartsWith("ReasonCodeRequest [", result);
+            Assert.EndsWith(" ]\r\n", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_MixedFields_ReturnsAllPresentFields()
+        {
+            var longToken = new string('B', 70);
+            var req = new ReasonCodeRequest
+            {
+                TransNumber = "456",
+                User = "alice",
+                Token = longToken
+            };
+            var result = req.ToDisplayString();
+            Assert.Contains("TransNumber=456", result);
+            Assert.Contains("User=alice", result);
+            Assert.Contains($"Token={longToken.Substring(1, 4)}...", result);
+            Assert.StartsWith("ReasonCodeRequest [", result);
+            Assert.EndsWith(" ]\r\n", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_PassWordIsNull_DoesNotIncludePassword()
+        {
+            var data = new CommonData { PassWord = null };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("PassWord=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_PassWordIsEmpty_DoesNotIncludePassword()
+        {
+            var data = new CommonData { PassWord = "" };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("PassWord=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_PassWordIsWhitespace_DoesNotIncludePassword()
+        {
+            var data = new CommonData { PassWord = "   " };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("PassWord=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_PassWordIsNotEmpty_IncludesMaskedPassword()
+        {
+            var data = new CommonData { PassWord = "secret" };
+            var result = data.ToDisplayString();
+            Assert.Contains(@"PassWord=""*********""", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_PassWordIsNotEmpty_AndOtherFields_IncludesMaskedPassword()
+        {
+            var data = new CommonData
+            {
+                PassWord = "secret",
+                TransNumber = "123",
+                User = "bob"
+            };
+            var result = data.ToDisplayString();
+            Assert.Contains(@"PassWord=""*********""", result);
+            Assert.Contains("TransNumber=123", result);
+            Assert.Contains("User=bob", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenIsNull_DoesNotIncludeToken()
+        {
+            var data = new CommonData { Token = null };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("Token=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenIsEmpty_DoesNotIncludeToken()
+        {
+            var data = new CommonData { Token = "" };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("Token=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenIsWhitespace_DoesNotIncludeToken()
+        {
+            var data = new CommonData { Token = "   " };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("Token=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenLengthLessThanOrEqual63_MaskedToken()
+        {
+            var data = new CommonData { Token = new string('A', 10) };
+            var result = data.ToDisplayString();
+            Assert.Contains("Token=****", result);
+            Assert.StartsWith("CommonData [", result);
+            Assert.EndsWith(" ]\r\n", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenLengthGreaterThan63_PartialToken()
+        {
+            var token = new string('X', 70);
+            var data = new CommonData { Token = token };
+            var result = data.ToDisplayString();
+            var expected = $"Token={token.Substring(1, 4)}...";
+            Assert.Contains(expected, result);
+            Assert.StartsWith("CommonData [", result);
+            Assert.EndsWith(" ]\r\n", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_TokenAndOtherFields_AllIncluded()
+        {
+            var token = new string('B', 70);
+            var data = new CommonData
+            {
+                Token = token,
+                TransNumber = "123",
+                User = "bob"
+            };
+            var result = data.ToDisplayString();
+            Assert.Contains("TransNumber=123", result);
+            Assert.Contains("User=bob", result);
+            Assert.Contains($"Token={token.Substring(1, 4)}...", result);
+            Assert.StartsWith("CommonData [", result);
+            Assert.EndsWith(" ]\r\n", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_NoFields_ReturnsEmptyString()
+        {
+            var data = new CommonData();
+            var result = data.ToDisplayString();
+            Assert.Equal("", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_CardNumberIsNull_DoesNotIncludeCardNumber()
+        {
+            var data = new CardData { CardNumber = null };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("CardNumber=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_CardNumberIsEmpty_DoesNotIncludeCardNumber()
+        {
+            var data = new CardData { CardNumber = "" };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("CardNumber=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_CardNumberIsWhitespace_DoesNotIncludeCardNumber()
+        {
+            var data = new CardData { CardNumber = "   " };
+            var result = data.ToDisplayString();
+            Assert.DoesNotContain("CardNumber=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_CardNumberLengthLessThanOrEqual15_MaskedCardNumber()
+        {
+            var data = new CardData { CardNumber = "123456789012345" }; // 15 chars
+            var result = data.ToDisplayString();
+            Assert.Contains("CardNumber=****", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_CardNumberLengthGreaterThan15_PartiallyMaskedCardNumber()
+        {
+            var cardNumber = "12345678901234567890"; // 20 chars
+            var data = new CardData { CardNumber = cardNumber };
+            var result = data.ToDisplayString();
+            var expected = $"CardNumber={cardNumber.Substring(0, 4)}*********{cardNumber.Substring(14, 2)}";
+            Assert.Contains(expected, result);
+        }
+        [Fact]
+        public void ToDisplayString_AmountIsNullOrWhitespace_DoesNotIncludeAmount()
+        {
+            var claim = new ClaimData { Amount = null };
+            var result = claim.ToDisplayString();
+            Assert.DoesNotContain("Amount=", result);
+
+            claim.Amount = "";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("Amount=", result);
+
+            claim.Amount = "   ";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("Amount=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ClaimDeductibleIsNullOrWhitespace_DoesNotIncludeClaimDeductible()
+        {
+            var claim = new ClaimData { ClaimDeductible = null };
+            var result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimDeductible=", result);
+
+            claim.ClaimDeductible = "";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimDeductible=", result);
+
+            claim.ClaimDeductible = "   ";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimDeductible=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ClaimOdometerIsNullOrWhitespace_DoesNotIncludeClaimOdometer()
+        {
+            var claim = new ClaimData { ClaimOdometer = null };
+            var result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimOdometer=", result);
+
+            claim.ClaimOdometer = "";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimOdometer=", result);
+
+            claim.ClaimOdometer = "   ";
+            result = claim.ToDisplayString();
+            Assert.DoesNotContain("ClaimOdometer=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_AmountIsPresent_IncludesTrimmedAmount()
+        {
+            var claim = new ClaimData { Amount = " 123.45 " };
+            var result = claim.ToDisplayString();
+            Assert.Contains("Amount=123.45", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ClaimDeductibleIsPresent_IncludesTrimmedClaimDeductible()
+        {
+            var claim = new ClaimData { ClaimDeductible = " 10.00 " };
+            var result = claim.ToDisplayString();
+            Assert.Contains("ClaimDeductible=10.00", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ClaimOdometerIsPresent_IncludesTrimmedClaimOdometer()
+        {
+            var claim = new ClaimData { ClaimOdometer = " 99999 " };
+            var result = claim.ToDisplayString();
+            Assert.Contains("ClaimOdometer=99999", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_AllFieldsPresent_AllIncluded()
+        {
+            var claim = new ClaimData
+            {
+                Amount = " 123.45 ",
+                ClaimDeductible = " 10.00 ",
+                ClaimOdometer = " 99999 "
+            };
+            var result = claim.ToDisplayString();
+            Assert.Contains("Amount=123.45", result);
+            Assert.Contains("ClaimDeductible=10.00", result);
+            Assert.Contains("ClaimOdometer=99999", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_BeginDateIsNullOrWhitespace_DoesNotIncludeBeginDate()
+        {
+            var item = new CoveredItemData { BeginDate = null };
+            var result = item.ToDisplayString();
+            Assert.DoesNotContain("BeginDate=", result);
+
+            item.BeginDate = "";
+            result = item.ToDisplayString();
+            Assert.DoesNotContain("BeginDate=", result);
+
+            item.BeginDate = "   ";
+            result = item.ToDisplayString();
+            Assert.DoesNotContain("BeginDate=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ExpireDateIsNullOrWhitespace_DoesNotIncludeExpireDate()
+        {
+            var item = new CoveredItemData { ExpireDate = null };
+            var result = item.ToDisplayString();
+            Assert.DoesNotContain("ExpireDate=", result);
+
+            item.ExpireDate = "";
+            result = item.ToDisplayString();
+            Assert.DoesNotContain("ExpireDate=", result);
+
+            item.ExpireDate = "   ";
+            result = item.ToDisplayString();
+            Assert.DoesNotContain("ExpireDate=", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_BeginDateIsPresent_IncludesTrimmedBeginDate()
+        {
+            var item = new CoveredItemData { BeginDate = " 20231201 " };
+            var result = item.ToDisplayString();
+            Assert.Contains("BeginDate=20231201", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_ExpireDateIsPresent_IncludesTrimmedExpireDate()
+        {
+            var item = new CoveredItemData { ExpireDate = " 20241201 " };
+            var result = item.ToDisplayString();
+            Assert.Contains("ExpireDate=20241201", result);
+        }
+
+        [Fact]
+        public void ToDisplayString_BothDatesPresent_BothIncluded()
+        {
+            var item = new CoveredItemData
+            {
+                BeginDate = " 20231201 ",
+                ExpireDate = " 20241201 "
+            };
+            var result = item.ToDisplayString();
+            Assert.Contains("BeginDate=20231201", result);
+            Assert.Contains("ExpireDate=20241201", result);
+        }
 
     }
 }

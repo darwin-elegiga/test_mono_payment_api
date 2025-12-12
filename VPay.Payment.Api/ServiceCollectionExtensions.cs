@@ -3,14 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Asp.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -45,7 +44,6 @@ namespace VPay.Payment.Api
         public static IServiceCollection AddFluentValidationSettings(this IServiceCollection services)
         {
             return services
-                .AddFluentValidationAutoValidation()
                 .AddValidatorsFromAssemblyContaining<Startup>();
         }
 
