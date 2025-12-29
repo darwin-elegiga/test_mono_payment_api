@@ -20,13 +20,13 @@ on:
     tags: '*'
 
 jobs:
-  sonar:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@add/sonar-source
-    secrets:
-      sonar-token: ${{ secrets.SONAR_TOKEN }} 
+  # sonar:
+  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@add/sonar-source
+  #   secrets:
+  #     sonar-token: ${{ secrets.SONAR_TOKEN }} 
     
   build-and-publish:
-    needs: sonar
+   # needs: sonar
     if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
     with: 
