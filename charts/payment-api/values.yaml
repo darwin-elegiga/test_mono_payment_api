@@ -29,7 +29,7 @@ global:
 
 api:
   enabled: true
-  listeningPort: 80
+  listeningPort: 8080           # <-- CHANGED from 80 to 8080
   contentRoot: /app
   probes:
     readiness:
