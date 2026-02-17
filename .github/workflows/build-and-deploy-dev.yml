@@ -8,24 +8,19 @@ permissions:
   packages: read
 on: 
   workflow_dispatch:
-    inputs:
-      PRE:
-        required: true
-        type: boolean
-        default: true
   release:
     types: [published]
   push:
     tags: '*'
 
 jobs:
-  # sonar:
-  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@add/sonar-source
-  #   secrets:
-  #     sonar-token: ${{ secrets.SONAR_TOKEN }} 
+  sonar:
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@main
+    secrets:
+      sonar-token: ${{ secrets.SONAR_TOKEN }}
     
   build-and-publish:
-   # needs: sonar
+    needs: sonar
     if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
     with: 
@@ -35,8 +30,7 @@ jobs:
       DOCKER_CONTEXT_DIR: ""
       DOCKER_URL: "centraluhg.jfrog.io"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
-      PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
-   
+    secrets: inherit
       
   deployment-plano-dev:
     if: always()
