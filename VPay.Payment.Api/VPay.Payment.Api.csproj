@@ -1,14 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\net6.0\VPay.Payment.Api.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\net8.0\VPay.Payment.Api.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\net6.0\VPay.Payment.Api.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net8.0\VPay.Payment.Api.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -32,6 +32,9 @@
     <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.12.2" />
     <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.11.3-PAY-23503-2" />
     <PackageReference Include="VPay.Extensions.Logging.GrayLog" Version="2.0.0" />
+    <PackageReference Include="Refit" Version="8.0.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VPay.Payment\VPay.Payment.csproj" />
