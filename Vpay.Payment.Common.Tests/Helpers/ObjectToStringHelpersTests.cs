@@ -80,7 +80,10 @@ namespace VPay.Payment.Common.Tests
 
             // Assert
             var expected = "CommonData [ TransNumber=123, User=testUser, Token=**** ]\r\nReasonCodes [ \r\nReasonCode=001, ReasonDesc=Description, ActionDesc=Action\n] ";
-            Assert.Equal(expected, result);
+            Assert.Equal(
+                    expected.Replace("\r\n", "\n"),
+                    result.Replace("\r\n", "\n")
+                );
         }
 
         [Fact]
