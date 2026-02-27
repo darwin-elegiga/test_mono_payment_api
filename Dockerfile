@@ -9,14 +9,14 @@ ARG DOTNET_SDK_VERSION=8.0.404
 ARG DOTNET_RUNTIME_VERSION=8.0.22
 
 ## Variants - Use jammy for .NET 5.0+
-ARG DOTNET_SDK_VARIANT=jammy
+ARG DOTNET_VARIANT=jammy
 
 ## Base image names
 ARG BASE_SDK_IMAGE=dotnet/sdk
 ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 
 ## Build Stage
-FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_SDK_IMAGE}:${DOTNET_SDK_VERSION}-${DOTNET_SDK_VARIANT} AS build
+FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_SDK_IMAGE}:${DOTNET_SDK_VERSION}-${DOTNET_VARIANT} AS build
 
 ## Build stage arguments
 ARG CONFIG_PROFILE=Release
@@ -45,7 +45,7 @@ COPY . ./
 RUN dotnet publish --no-restore -c ${CONFIG_PROFILE} -o /app/out ${PROJECT}
 
 ## Runtime stage - reduce image size
-FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_RUNTIME_IMAGE}:${DOTNET_RUNTIME_VERSION} AS final
+FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_RUNTIME_IMAGE}:${DOTNET_RUNTIME_VERSION}-${DOTNET_VARIANT} AS final
 ARG PROJECT_NAME
 
 ## Configure JFrog-based apt repositories with authentication
@@ -53,11 +53,13 @@ RUN --mount=type=secret,id=jf-token,env=JF_TOKEN \
     --mount=type=secret,id=jf-user,env=JF_USER \
     rm -f /etc/apt/sources.list && \
     rm -f /etc/apt/sources.list.d/*.list && \
+    rm -f /etc/apt/sources.list.d/*.sources && \
     mkdir -p /etc/apt/auth.conf.d && \
     echo "machine centraluhg.jfrog.io login ${JF_USER} password ${JF_TOKEN}" > /etc/apt/auth.conf.d/artifactory.conf && \
     echo "deb [trusted=yes] https://centraluhg.jfrog.io/artifactory/glb-debian-archive-ubuntu-rem-cache/ubuntu jammy main multiverse restricted universe" > /etc/apt/sources.list.d/glb-debian-security-rem.list && \
     apt-get update && \
-    apt-get upgrade -y openssl libssl3
+    apt-get upgrade -y openssl libssl3 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf /etc/apt/auth.conf.d/artifactory.conf
     
 WORKDIR /app
 
