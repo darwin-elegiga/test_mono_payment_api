@@ -1,23 +1,17 @@
 name: build-and-deploy-to-dev
 permissions:
-  contents: write
   actions: read
+  contents: write
   id-token: write
-  pull-requests: read 
-  packages: read 
+  pull-requests: read
   security-events: write
+  packages: read
 on: 
   workflow_dispatch:
-   inputs:
-      PRE:
-        required: true
-        type: boolean
-        default: true
   release:
     types: [published]
   push:
-    tags:
-      - '*'
+    tags: '*'
 
 jobs:
   sonar:
@@ -36,12 +30,12 @@ jobs:
       DOCKER_CONTEXT_DIR: ""
       DOCKER_URL: "centraluhg.jfrog.io"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
-      PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
-          
+    secrets: inherit
+      
   deployment-plano-dev:
-    #if: always()
+    if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
-    needs: [build-and-publish]
+    needs: build-and-publish
     with: 
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
@@ -49,12 +43,12 @@ jobs:
       DRYRUN: false
     secrets: inherit
   deployment-stl-dev:
-    #if: always()
+    if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
-    needs: [build-and-publish]
+    needs: build-and-publish
     with: 
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
       RELEASE_NAME: payment-api
       DRYRUN: false
-    secrets: inherit
+    secrets: inherit    
