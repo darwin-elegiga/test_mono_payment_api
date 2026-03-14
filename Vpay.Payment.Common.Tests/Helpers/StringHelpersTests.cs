@@ -2,7 +2,7 @@
 using Xunit;
 using VPay.Payment.Common;
 
-namespace VPay.Payment.Common.Tests
+namespace VPay.Payment.Common.Tests.Helpers
 {
     public class StringHelpersTests
     {

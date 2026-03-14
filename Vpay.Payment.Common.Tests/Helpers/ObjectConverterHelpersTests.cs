@@ -7,7 +7,7 @@ using VPay.Data.Db2.Abstractions.Fax;
 using VPay.Payment.Common;
 using Xunit;
 
-namespace VPay.Payment.Common.Tests
+namespace VPay.Payment.Common.Tests.Helpers
 {
     public class ObjectConverterHelpersTests
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Asp.Versioning;
 
 namespace VPay.Payment.Api
 {

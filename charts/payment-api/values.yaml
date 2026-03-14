@@ -17,6 +17,7 @@ chart:
         service: true
         ingress: true
         secret: true
+        configmap: true
     charts:
       - api
 
@@ -48,3 +49,36 @@ api:
     limits:
       memory: "512Mi"
       cpu: "100m"
+  extraVolumeMounts:
+    - mountPath: /usr/local/share/ca-certificates/vpay-root-ca.crt
+      name: vpay-custom-ca
+      subPath: vpay-root-ca.crt
+    - mountPath: /etc/ssl/certs
+      name: common-cert
+  initContainers:
+    - name: install-ca
+      image: centraluhg.jfrog.io/commpay-vpay-docker-np-loc/docker/base-images/dotnet/runtime:8.0
+      imagePullPolicy: IfNotPresent
+      command:
+        - /bin/bash
+        - -c
+        - |
+          ls -lrt /etc/custom-ca/
+          cp /etc/custom-ca/vpay-root-ca.crt /usr/local/share/ca-certificates
+          update-ca-certificates
+          cp -r /etc/ssl/certs/* /ca-store/
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+        - mountPath: /etc/custom-ca
+          name: vpay-custom-ca
+        - mountPath: /ca-store
+          name: common-cert
+  extraVolumes:
+    - name: vpay-custom-ca
+      configMap:
+        name: vpay-custom-ca
+        defaultMode: 420
+    - name: common-cert
+      emptyDir: {}

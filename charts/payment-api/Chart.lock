@@ -1,6 +1,6 @@
 dependencies:
 - name: helm-gen
-  repository: https://plinfharbor.vpayusa.net/chartrepo/devops
-  version: v1.2.0
-digest: sha256:29c607c5823b1cd74a64aa3abe43dae53ed88942ee99667b3a4e17a3bc6f7737
-generated: "2021-11-22T17:17:12.4173333-06:00"
+  repository: https://centraluhg.jfrog.io/artifactory/commpay-vpay-helm-vir
+  version: v1.2.1
+digest: sha256:32d509e38f838e4496432485f451ea3105e6e232d6e120a0570edfc8151c3db8
+generated: "2026-03-14T04:01:05.301Z"
