@@ -36,10 +36,10 @@ jobs:
       DOCKER_CONTEXT_DIR: ""
       DOCKER_URL: "centraluhg.jfrog.io"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
-      PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
-          
+    secrets: inherit
+
   deployment-plano-dev:
-    #if: always()
+    if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@main
     needs: [build-and-publish]
     with: 
@@ -49,7 +49,7 @@ jobs:
       DRYRUN: false
     secrets: inherit
   deployment-stl-dev:
-    #if: always()
+    if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
     needs: [build-and-publish]
     with: 
