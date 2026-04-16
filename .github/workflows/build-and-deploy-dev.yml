@@ -42,13 +42,13 @@ jobs:
       RELEASE_NAME: payment-api
       DRYRUN: false
     secrets: inherit
-  deployment-stl-dev:
-    if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
-    needs: build-and-publish
-    with: 
-      CHARTS_PATH: charts/payment-api
-      NAMESPACE: client-payments-dev
-      RELEASE_NAME: payment-api
-      DRYRUN: false
-    secrets: inherit    
+  # deployment-stl-dev:
+  #   if: always()
+  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-dev.yml@main
+  #   needs: build-and-publish
+  #   with: 
+  #     CHARTS_PATH: charts/payment-api
+  #     NAMESPACE: client-payments-dev
+  #     RELEASE_NAME: payment-api
+  #     DRYRUN: false
+  #   secrets: inherit    
