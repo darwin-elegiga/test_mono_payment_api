@@ -27,10 +27,10 @@ jobs:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
     with:
       environment: ${{inputs.environment}}
-      CHARTS_PATH: charts/provider-enrollment
-      NAMESPACE: vpay360-dev
+      CHARTS_PATH: charts/payment-api
+      NAMESPACE: client-payments-dev
       CONTEXT_NAME: pldev
-      RELEASE_NAME: provider-enrollment
+      RELEASE_NAME: payment-api
       VALUE_FILES: values-dev.yaml
       SOURCE_CODE_PATH: api/src
       ROLLOUT_RESTART: true
@@ -41,10 +41,10 @@ jobs:
   #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
   #   with:
   #     environment: ${{inputs.environment}}
-  #     CHARTS_PATH: charts/provider-enrollment
-  #     NAMESPACE: vpay360-dev
+  #     CHARTS_PATH: charts/payment-api
+  #     NAMESPACE: client-payments-dev
   #     CONTEXT_NAME: stldev
-  #     RELEASE_NAME: provider-enrollment
+  #     RELEASE_NAME: payment-api
   #     VALUE_FILES: values-dev.yaml
   #     SOURCE_CODE_PATH: api/src
   #     ROLLOUT_RESTART: true
@@ -55,10 +55,10 @@ jobs:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
     with:
       environment: ${{inputs.environment}}
-      CHARTS_PATH: charts/provider-enrollment
-      NAMESPACE: vpay360-stage
+      CHARTS_PATH: charts/payment-api
+      NAMESPACE: client-payments-stage
       CONTEXT_NAME: plstg
-      RELEASE_NAME: provider-enrollment
+      RELEASE_NAME: payment-api
       VALUE_FILES: values-stage.yaml
       SOURCE_CODE_PATH: api/src
       ROLLOUT_RESTART: true
@@ -69,10 +69,10 @@ jobs:
   #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
   #   with:
   #     environment: ${{inputs.environment}}
-  #     CHARTS_PATH: charts/provider-enrollment
-  #     NAMESPACE: vpay360-stage
+  #     CHARTS_PATH: charts/payment-api
+  #     NAMESPACE: client-payments-stage
   #     CONTEXT_NAME: stlstg
-  #     RELEASE_NAME: provider-enrollment
+  #     RELEASE_NAME: payment-api
   #     VALUE_FILES: values-stage.yaml
   #     SOURCE_CODE_PATH: api/src
   #     ROLLOUT_RESTART: true
@@ -83,10 +83,10 @@ jobs:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
     with:
       environment: ${{inputs.environment}}
-      CHARTS_PATH: charts/provider-enrollment
-      NAMESPACE: vpay360-prod
+      CHARTS_PATH: charts/payment-api
+      NAMESPACE: client-payments-prod
       CONTEXT_NAME: plprod
-      RELEASE_NAME: provider-enrollment
+      RELEASE_NAME: payment-api
       VALUE_FILES: values-prod.yaml
       SOURCE_CODE_PATH: api/src
       ROLLOUT_RESTART: true
@@ -101,10 +101,10 @@ jobs:
   #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
   #   with:
   #     environment: ${{inputs.environment}}
-  #     CHARTS_PATH: charts/provider-enrollment
-  #     NAMESPACE: vpay360-prod
+  #     CHARTS_PATH: charts/payment-api
+  #     NAMESPACE: client-payments-prod
   #     CONTEXT_NAME: stlprod
-  #     RELEASE_NAME: provider-enrollment
+  #     RELEASE_NAME: payment-api
   #     VALUE_FILES: values-prod.yaml
   #     SOURCE_CODE_PATH: api/src
   #     ROLLOUT_RESTART: true
