@@ -1,0 +1,115 @@
+name: Deploy ConfigMap
+run-name: "Deploying ConfigMap to ${{ inputs.environment || 'Development' }}"
+permissions:
+  contents: read
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select Environment From List Below'
+        type: choice
+        options:
+          - Staging
+          - Development
+          - Production
+        default: Staging
+        required: true
+      CHG_TICKET:
+        required: true
+        type: string
+      WAR_ROOM:
+        type: string
+        default: 'false'  
+
+jobs:
+  deployment-configmap-plano-dev:
+    if : ${{ inputs.environment == 'Development' }}
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
+    with:
+      environment: ${{inputs.environment}}
+      CHARTS_PATH: charts/provider-enrollment
+      NAMESPACE: vpay360-dev
+      CONTEXT_NAME: pldev
+      RELEASE_NAME: provider-enrollment
+      VALUE_FILES: values-dev.yaml
+      SOURCE_CODE_PATH: api/src
+      ROLLOUT_RESTART: true
+    secrets: inherit
+
+  # deployment-configmap-stl-dev:
+  #   if : ${{ inputs.environment == 'Development' }}
+  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
+  #   with:
+  #     environment: ${{inputs.environment}}
+  #     CHARTS_PATH: charts/provider-enrollment
+  #     NAMESPACE: vpay360-dev
+  #     CONTEXT_NAME: stldev
+  #     RELEASE_NAME: provider-enrollment
+  #     VALUE_FILES: values-dev.yaml
+  #     SOURCE_CODE_PATH: api/src
+  #     ROLLOUT_RESTART: true
+  #   secrets: inherit
+
+  deployment-configmap-plano-stage:
+    if : ${{ inputs.environment == 'Staging' }}
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
+    with:
+      environment: ${{inputs.environment}}
+      CHARTS_PATH: charts/provider-enrollment
+      NAMESPACE: vpay360-stage
+      CONTEXT_NAME: plstg
+      RELEASE_NAME: provider-enrollment
+      VALUE_FILES: values-stage.yaml
+      SOURCE_CODE_PATH: api/src
+      ROLLOUT_RESTART: true
+    secrets: inherit
+
+  # deployment-configmap-stl-stage:
+  #   if : ${{ inputs.environment == 'Staging' }}
+  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
+  #   with:
+  #     environment: ${{inputs.environment}}
+  #     CHARTS_PATH: charts/provider-enrollment
+  #     NAMESPACE: vpay360-stage
+  #     CONTEXT_NAME: stlstg
+  #     RELEASE_NAME: provider-enrollment
+  #     VALUE_FILES: values-stage.yaml
+  #     SOURCE_CODE_PATH: api/src
+  #     ROLLOUT_RESTART: true
+  #   secrets: inherit
+
+  deployment-configmap-plano-prod:
+    if : ${{ inputs.environment == 'Production' }}
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
+    with:
+      environment: ${{inputs.environment}}
+      CHARTS_PATH: charts/provider-enrollment
+      NAMESPACE: vpay360-prod
+      CONTEXT_NAME: plprod
+      RELEASE_NAME: provider-enrollment
+      VALUE_FILES: values-prod.yaml
+      SOURCE_CODE_PATH: api/src
+      ROLLOUT_RESTART: true
+      CHG_TICKET: ${{inputs.CHG_TICKET}}
+      WAR_ROOM: ${{inputs.WAR_ROOM}}
+      SNOW_VALIDATION : true
+      DRYRUN: false
+    secrets: inherit
+
+  # deployment-configmap-stl-prod:
+  #   if : ${{ inputs.environment == 'Production' }}
+  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
+  #   with:
+  #     environment: ${{inputs.environment}}
+  #     CHARTS_PATH: charts/provider-enrollment
+  #     NAMESPACE: vpay360-prod
+  #     CONTEXT_NAME: stlprod
+  #     RELEASE_NAME: provider-enrollment
+  #     VALUE_FILES: values-prod.yaml
+  #     SOURCE_CODE_PATH: api/src
+  #     ROLLOUT_RESTART: true
+  #     CHG_TICKET: ${{inputs.CHG_TICKET}}
+  #     WAR_ROOM: ${{inputs.WAR_ROOM}}
+  #     SNOW_VALIDATION : true  
+  #     DRYRUN: false
+  #   secrets: inherit
