@@ -51,6 +51,6 @@ jobs:
   #     CHARTS_PATH: charts/payment-api
   #     NAMESPACE: client-payments-dev
   #     RELEASE_NAME: payment-api
-  #     SOURCE_CODE_PATH: ./VPay.Payment.Api
+  #     SOURCE_CODE_PATH: ./src
   #     DRYRUN: false
   #   secrets: inherit    
