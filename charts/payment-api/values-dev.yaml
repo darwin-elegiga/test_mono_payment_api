@@ -3,3 +3,21 @@ api:
     ingress:
       domains:
         - dev-payapi.vpayusa.net
+  enabled: true
+  generate:
+    custom_configmap: true
+  configMaps:
+    appsettings.json:
+      mount: true
+      type: json
+      mountPath: /app/appsettings.json
+      subPath: appsettings.json
+      sourceFile: ./VPay.Payment.Api/appsettings.json
+      data: {}
+    appsettings.development.json:
+      mount: true
+      type: json
+      mountPath: /app/appsettings.Development.json
+      subPath: appsettings.development.json
+      sourceFile: ./VPay.Payment.Api/appsettings.Development.json
+      data: {}
