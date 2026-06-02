@@ -40,7 +40,7 @@ jobs:
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
       RELEASE_NAME: payment-api
-      SOURCE_CODE_PATH: ./src
+      SOURCE_CODE_PATH: ./VPay.Payment.Api
       DRYRUN: false
     secrets: inherit
   # deployment-stl-dev:
@@ -51,6 +51,6 @@ jobs:
   #     CHARTS_PATH: charts/payment-api
   #     NAMESPACE: client-payments-dev
   #     RELEASE_NAME: payment-api
-  #     SOURCE_CODE_PATH: ./src
+  #     SOURCE_CODE_PATH: ./VPay.Payment.Api
   #     DRYRUN: false
-  #   secrets: inherit    
+  #   secrets: inherit
