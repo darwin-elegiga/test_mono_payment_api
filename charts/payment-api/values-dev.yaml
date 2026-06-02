@@ -5,6 +5,7 @@ api:
     ingress:
       domains:
         - dev-payapi.vpayusa.net
+  replicas: 1
   enabled: true
   generate:
     custom_configmap: true
