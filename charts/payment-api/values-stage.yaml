@@ -1,3 +1,5 @@
+global:
+  parent: 'payment'
 api:
   environment:
     ingress:
