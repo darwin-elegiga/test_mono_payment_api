@@ -14,33 +14,33 @@ on:
     tags: '*'
 
 jobs:
-  sonar:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@main
-    secrets:
-      sonar-token: ${{ secrets.SONAR_TOKEN }}
+  # sonar:
+  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@main
+  #   secrets:
+  #     sonar-token: ${{ secrets.SONAR_TOKEN }}
     
-  build-and-publish:
-    needs: sonar
-    if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
-    with: 
-      PROJECT: payment-api
-      IMAGE_NAME: payment-web-api
-      DOCKERFILE: Dockerfile
-      DOCKER_CONTEXT_DIR: ""
-      DOCKER_URL: "centraluhg.jfrog.io"
-      BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
-    secrets: inherit
+  # build-and-publish:
+  #   needs: sonar
+  #   if: always()
+  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
+  #   with: 
+  #     PROJECT: payment-api
+  #     IMAGE_NAME: payment-web-api
+  #     DOCKERFILE: Dockerfile
+  #     DOCKER_CONTEXT_DIR: ""
+  #     DOCKER_URL: "centraluhg.jfrog.io"
+  #     BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
+  #   secrets: inherit
       
   deployment-plano-dev:
     if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-plano-dev.yml@feature-configmap
-    needs: build-and-publish
+    # needs: build-and-publish
     with: 
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
       RELEASE_NAME: payment-api
-      SOURCE_CODE_PATH: ./VPay.Payment.Api
+      SOURCE_CODE_PATH: VPay.Payment.Api
       DRYRUN: false
     secrets: inherit
   # deployment-stl-dev:
@@ -51,6 +51,6 @@ jobs:
   #     CHARTS_PATH: charts/payment-api
   #     NAMESPACE: client-payments-dev
   #     RELEASE_NAME: payment-api
-  #     SOURCE_CODE_PATH: ./VPay.Payment.Api
+  #     SOURCE_CODE_PATH: VPay.Payment.Api
   #     DRYRUN: false
   #   secrets: inherit
