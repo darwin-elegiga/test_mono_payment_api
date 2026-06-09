@@ -4,29 +4,31 @@ permissions:
   contents: read
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Select Environment From List Below'
-        type: choice
-        options:
-          - Staging
-          - Development
-          - Production
-        default: Staging
-        required: true
-      CHG_TICKET:
-        required: true
-        type: string
-      WAR_ROOM:
-        type: string
-        default: 'false'  
+    # inputs:
+    #   environment:
+    #     description: 'Select Environment From List Below'
+    #     type: choice
+    #     options:
+    #       - Staging
+    #       - Development
+    #       - Production
+    #     default: Staging
+    #     required: true
+    #   CHG_TICKET:
+    #     required: true
+    #     type: string
+    #   WAR_ROOM:
+    #     type: string
+    #     default: 'false'  
 
 jobs:
   deployment-configmap-plano-dev:
-    if : ${{ inputs.environment == 'Development' }}
+    # if : ${{ inputs.environment == 'Development' }}
+    if : ${{ 'Development' == 'Development' }}
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
     with:
-      environment: ${{inputs.environment}}
+      # environment: ${{inputs.environment}}
+      environment: "Development"
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
       CONTEXT_NAME: pldev
