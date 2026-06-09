@@ -3,6 +3,9 @@ run-name: "Deploying ConfigMap to ${{ inputs.environment || 'Development' }}"
 permissions:
   contents: read
 on:
+  push:
+     paths:
+       - charts/payment-api/values.yaml  # Trigger workflow if configmap.yml file is changed 
   workflow_dispatch:
     # inputs:
     #   environment:
