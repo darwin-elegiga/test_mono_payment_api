@@ -37,7 +37,7 @@ jobs:
       CONTEXT_NAME: pldev
       RELEASE_NAME: payment-api
       VALUE_FILES: values-dev.yaml
-      SOURCE_CODE_PATH: api/src
+      SOURCE_CODE_PATH: .
       ROLLOUT_RESTART: true
     secrets: inherit
 
@@ -51,7 +51,7 @@ jobs:
   #     CONTEXT_NAME: stldev
   #     RELEASE_NAME: payment-api
   #     VALUE_FILES: values-dev.yaml
-  #     SOURCE_CODE_PATH: api/src
+  #     SOURCE_CODE_PATH: .
   #     ROLLOUT_RESTART: true
   #   secrets: inherit
 
@@ -65,7 +65,7 @@ jobs:
       CONTEXT_NAME: plstg
       RELEASE_NAME: payment-api
       VALUE_FILES: values-stage.yaml
-      SOURCE_CODE_PATH: api/src
+      SOURCE_CODE_PATH: .
       ROLLOUT_RESTART: true
     secrets: inherit
 
@@ -79,7 +79,7 @@ jobs:
   #     CONTEXT_NAME: stlstg
   #     RELEASE_NAME: payment-api
   #     VALUE_FILES: values-stage.yaml
-  #     SOURCE_CODE_PATH: api/src
+  #     SOURCE_CODE_PATH: .
   #     ROLLOUT_RESTART: true
   #   secrets: inherit
 
@@ -93,7 +93,7 @@ jobs:
       CONTEXT_NAME: plprod
       RELEASE_NAME: payment-api
       VALUE_FILES: values-prod.yaml
-      SOURCE_CODE_PATH: api/src
+      SOURCE_CODE_PATH: .
       ROLLOUT_RESTART: true
       CHG_TICKET: ${{inputs.CHG_TICKET}}
       WAR_ROOM: ${{inputs.WAR_ROOM}}
@@ -111,7 +111,7 @@ jobs:
   #     CONTEXT_NAME: stlprod
   #     RELEASE_NAME: payment-api
   #     VALUE_FILES: values-prod.yaml
-  #     SOURCE_CODE_PATH: api/src
+  #     SOURCE_CODE_PATH: .
   #     ROLLOUT_RESTART: true
   #     CHG_TICKET: ${{inputs.CHG_TICKET}}
   #     WAR_ROOM: ${{inputs.WAR_ROOM}}
