@@ -3,35 +3,30 @@ run-name: "Deploying ConfigMap to ${{ inputs.environment || 'Development' }}"
 permissions:
   contents: read
 on:
-  push:
-     paths:
-       - charts/payment-api/values.yaml  # Trigger workflow if configmap.yml file is changed 
   workflow_dispatch:
-    # inputs:
-    #   environment:
-    #     description: 'Select Environment From List Below'
-    #     type: choice
-    #     options:
-    #       - Staging
-    #       - Development
-    #       - Production
-    #     default: Staging
-    #     required: true
-    #   CHG_TICKET:
-    #     required: true
-    #     type: string
-    #   WAR_ROOM:
-    #     type: string
-    #     default: 'false'  
+    inputs:
+      environment:
+        description: 'Select Environment From List Below'
+        type: choice
+        options:
+          - Staging
+          - Development
+          - Production
+        default: Staging
+        required: true
+      CHG_TICKET:
+        required: true
+        type: string
+      WAR_ROOM:
+        type: string
+        default: 'false'  
 
 jobs:
   deployment-configmap-plano-dev:
-    # if : ${{ inputs.environment == 'Development' }}
-    if : ${{ 'Development' == 'Development' }}
+    if : ${{ inputs.environment == 'Development' }}
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/configmap-deploy.yml@feature-configmap
     with:
-      # environment: ${{inputs.environment}}
-      environment: "Development"
+      environment: ${{inputs.environment}}
       CHARTS_PATH: charts/payment-api
       NAMESPACE: client-payments-dev
       CONTEXT_NAME: pldev
