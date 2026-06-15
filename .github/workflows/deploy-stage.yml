@@ -13,7 +13,7 @@ jobs:
       NAMESPACE: client-payments-stage
       RELEASE_NAME: payment-api
       DRYRUN: false
-      SOURCE_CODE_PATH: ./src
+      SOURCE_CODE_PATH: .
     secrets: inherit      
   # deployment-stl-stage:
   #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/helm-deploy-stl-stage.yml@feature-configmap
@@ -21,6 +21,6 @@ jobs:
   #     CHARTS_PATH: charts/payment-api
   #     NAMESPACE: client-payments-stage
   #     RELEASE_NAME: payment-api
-  #     SOURCE_CODE_PATH: ./src
+  #     SOURCE_CODE_PATH: .
   #     DRYRUN: false
   #   secrets: inherit      
