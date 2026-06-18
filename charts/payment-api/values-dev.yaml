@@ -1,4 +1,5 @@
 api:
+  replicas: 1
   environment:
     ingress:
       domains:
