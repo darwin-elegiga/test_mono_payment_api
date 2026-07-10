@@ -13,15 +13,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using Swashbuckle.AspNetCore.Swagger;
 using VPay.AspNetCore.SwashBuckle.HealthChecks;
 using VPay.Data.Db2.Odbc;
 using VPay.Payment.Api.Auth;
 using VPay.Payment.Common;
-using VPay.Payment.Data.Health;
 
 namespace VPay.Payment.Api
 {

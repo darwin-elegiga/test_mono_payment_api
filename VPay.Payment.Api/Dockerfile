@@ -8,9 +8,10 @@ ARG BASE_SDK_IMAGE=dotnet/sdk
 ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 
 FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_RUNTIME_IMAGE}:${DOTNET_RUNTIME_VERSION}-${DOTNET_RUNTIME_VARIANT} AS base
+
 EXPOSE 80
 
-RUN apt-get update && apt-get -y upgrade && apt-get install -y libxml2 curl
+#RUN apt-get update && apt-get -y upgrade && apt-get install -y libxml2 curl
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Debug/net6.0/clidriver/lib
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Release/net6.0/clidriver/lib

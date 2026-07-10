@@ -1,4 +1,4 @@
-FROM docker.repo1.uhc.com/ibmcom/db2:11.5.8.0
+FROM icr.io/db2_community/db2:11.5.8.0
 
 RUN mkdir /var/custom
 

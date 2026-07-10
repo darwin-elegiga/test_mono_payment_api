@@ -5,6 +5,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=LocalDevelopment
       - ASPNETCORE_Logging__GELF__AdditionalFields__namespace=client-payments-local
+      - ASPNETCORE_URLS=http://+:80
     ports:
       - "5013:80"
 

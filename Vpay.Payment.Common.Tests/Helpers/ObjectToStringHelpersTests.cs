@@ -79,7 +79,7 @@ namespace VPay.Payment.Common.Tests
             var result = response.ToDisplayString();
 
             // Assert
-            var expected = "CommonData [ TransNumber=123, User=testUser, Token=**** ]\r\nReasonCodes [ \r\nReasonCode=001, ReasonDesc=Description, ActionDesc=Action\n] ";
+            var expected = "CommonData [ TransNumber=123, User=testUser, Token=**** ]\r\nReasonCodes [ \r\nReasonCode=001, ReasonDesc=Description, ActionDesc=Action\r\n] ";
             Assert.Equal(expected, result);
         }
 

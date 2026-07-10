@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Net.Http;
 using FaxManagement.Client.Extension;
-using FaxManagement.Client.v1;
 using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,10 +10,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Refit;
 using VPay.AspNetCore.HealthChecks;
 using VPay.Data.Db2.Abstractions;
-using VPay.Payment.Api.Dtos;
 using VPay.Payment.Api.Validation;
 using VPay.Payment.Common;
 using VPay.Payment.Data.Db2.Connection;
