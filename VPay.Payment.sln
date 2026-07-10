@@ -20,9 +20,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{903A3768-1CFF-4667-B82E-B80625CEFE0B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		CODEOWNERS = CODEOWNERS
+		Dockerfile = Dockerfile
+		NuGet.config = NuGet.config
 		odbc-setup\odbc.ini = odbc-setup\odbc.ini
 		odbc-setup\odbcinst.ini = odbc-setup\odbcinst.ini
 		README.md = README.md
+		vitals.yml = vitals.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB2", "DB2", "{8107F8E3-F612-4B3C-AE77-A29204F0FD9C}"
