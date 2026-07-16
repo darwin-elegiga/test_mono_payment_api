@@ -13,13 +13,12 @@ EXPOSE 80
 
 #RUN apt-get update && apt-get -y upgrade && apt-get install -y libxml2 curl
 
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Debug/net6.0/clidriver/lib
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Release/net6.0/clidriver/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Debug/net8.0/clidriver/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Release/net8.0/clidriver/lib
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/clidriver/lib
-ENV PATH=$PATH:/app/bin/Debug/net6.0/clidriver/bin:/app/bin/Debug/net6.0/clidriver/lib
-ENV PATH=$PATH:/app/bin/Release/net6.0/clidriver/bin:/app/bin/Release/net6.0/clidriver/lib
-ENV PATH=$PATH:/app/bin/Debug/net6.0/clidriver/bin:/app/clidriver/lib
-
+ENV PATH=$PATH:/app/bin/Debug/net8.0/clidriver/bin:/app/bin/Debug/net8.0/clidriver/lib
+ENV PATH=$PATH:/app/bin/Release/net8.0/clidriver/bin:/app/bin/Release/net8.0/clidriver/lib
+ENV PATH=$PATH:/app/bin/Debug/net8.0/clidriver/bin:/app/clidriver/lib
 
 FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_SDK_IMAGE}:${DOTNET_SDK_VERSION}-${DOTNET_SDK_VARIANT} AS build
 WORKDIR /src
