@@ -1,0 +1,22 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: payment-api
+  namespace: client-payments-dev
+  labels:
+    app: payment-api-api-development
+    app.kubernetes.io/cluster-domain: dev.pks.vpayusa.net
+    app.kubernetes.io/instance: payment-api-api
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: payment-api
+    app.kubernetes.io/part-of: payment-api
+    helm.sh/chart: payment-api-0.0.1
+spec:
+  parentRefs:
+    - name: gateway
+  hostnames:
+    - dev-payapi.vpayusa.net
+  rules:
+    - backendRefs:
+        - name: payment-api
+          port: 8080

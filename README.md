@@ -40,3 +40,28 @@ These instructions will get you a copy of the project up and running on your loc
   }
 }
 ```
+
+## CUE Manifest Generation
+
+Kubernetes manifests are generated from CUE definitions under `cac/`.
+
+### Generate manifests
+
+Run from the repository root:
+
+```bash
+bash cac/scripts/validate.sh
+bash cac/scripts/generate-dev.sh <image-tag>
+bash cac/scripts/generate-stage.sh <image-tag>
+bash cac/scripts/generate-prod.sh <image-tag>
+```
+
+Generated files are written to:
+
+- `cac/generated/dev/`
+- `cac/generated/stage/`
+- `cac/generated/prod/`
+
+The runtime application configuration file remains `appsettings.json`. CUE is used to generate Kubernetes manifests and deployment wiring only.
+
+See `docs/cue-migration.md` for migration details, resource mapping, and workflow behavior.
