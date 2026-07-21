@@ -14,6 +14,7 @@ package config
   appsettingsConfigMapKey: string
   appsettingsMountPath:    string
   ingressHostname:         string
+  httpRouteName:           string
 
   helmAppLabel:      string
   helmInstanceLabel: string

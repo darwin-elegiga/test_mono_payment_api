@@ -9,6 +9,7 @@ EnvConfigMap: {
     appsettingsConfigMapKey: "appsettings.development.json"
     appsettingsMountPath:    "/app/appsettings.Development.json"
     ingressHostname:         "dev-payapi.vpayusa.net"
+    httpRouteName:           "payment-api-v1"
 
     helmAppLabel:      "payment-api-api-development"
     helmInstanceLabel: "payment-api-api"

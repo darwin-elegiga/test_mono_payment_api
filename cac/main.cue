@@ -225,7 +225,7 @@ if _cfg.resources.externalSecret.enabled {
 if _cfg.resources.httpRoute.enabled {
   HTTPRoute: templates.#HTTPRoute & {
     metadata: {
-      name:      _cfg.appName
+      name:      _cfg.httpRouteName
       namespace: _cfg.namespace
       labels:    _helmLabels
     }
