@@ -93,6 +93,14 @@ jobs:
           set -euo pipefail
 
           env_name='stage'
+          chart_src_dir="charts/payment-api"
+          chart_temp_dir="$RUNNER_TEMP/payment-api-chart-${env_name}"
+
+          rm -rf "$chart_temp_dir"
+          mkdir -p "$chart_temp_dir"
+          cp -R "$chart_src_dir"/. "$chart_temp_dir"/
+          rm -f "$chart_temp_dir/Chart.lock"
+
           cat <<EOF > default-env-dc-values.yaml
           global:
             environment:
@@ -101,11 +109,11 @@ jobs:
                 subdomain: stage.pks.vpayusa.net
           EOF
 
-          helm dependency build charts/payment-api
-          helm template payment-api charts/payment-api \
+          helm dependency build "$chart_temp_dir"
+          helm template payment-api "$chart_temp_dir" \
             -f default-env-dc-values.yaml \
-            -f charts/payment-api/values-${env_name}.yaml \
-            -f charts/payment-api/secret-values.yaml \
+            -f "$chart_temp_dir/values-${env_name}.yaml" \
+            -f "$chart_temp_dir/secret-values.yaml" \
             --namespace "client-payments-${env_name}" \
             > "/tmp/payment-api-helm-${env_name}.yaml"
 
