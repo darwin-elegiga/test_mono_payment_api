@@ -93,12 +93,13 @@ jobs:
           set -euo pipefail
 
           env_name='dev'
+          env_title="$(printf '%s' "$env_name" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
           cat <<EOF > default-env-dc-values.yaml
           global:
             environment:
-              name: Development
+              name: ${env_title}
               ingress:
-                subdomain: dev.pks.vpayusa.net
+                subdomain: ${env_name}.pks.vpayusa.net
           EOF
 
           helm dependency build charts/payment-api
