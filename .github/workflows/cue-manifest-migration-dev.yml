@@ -86,7 +86,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash ./cac/scripts/generate-dev.sh "$SOURCE_REF_NAME"
+          bash ./cac/scripts/generate-dev.sh "latest"
 
       - name: Render Helm manifests
         shell: bash
