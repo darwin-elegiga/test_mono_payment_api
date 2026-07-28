@@ -10,9 +10,9 @@ permissions:
 
 on:
   workflow_dispatch:    
-  push:
-    branches:
-      - cue-migration
+  # push:
+  #   branches:
+  #     - cue-migration
 
 jobs:
   compare-cue-and-helm-manifests:
