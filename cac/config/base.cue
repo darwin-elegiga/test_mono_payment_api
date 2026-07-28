@@ -42,8 +42,8 @@ package config
     }
     externalSecret: {
       enabled:         bool
-      storeName:       string
-      storeKind:       string
+      storeName:       string  // One of: vault-store-devops, vault-store-dba, vault-store-engineering, vault-store-secret
+      storeKind:       string  // Defaults to ClusterSecretStore
       refreshInterval: string
       creationPolicy:  string
       deletionPolicy:  string

@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
         - name: payment-api
-          image: centraluhg.jfrog.io/commpay-vpay-docker-vir/docker/payment-api/payment-web-api:cue-migration
+          image: centraluhg.jfrog.io/commpay-vpay-docker-vir/docker/payment-api/payment-web-api:latest
           imagePullPolicy: Always
           ports:
             - name: http
