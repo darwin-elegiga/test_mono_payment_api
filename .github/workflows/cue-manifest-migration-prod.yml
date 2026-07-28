@@ -9,21 +9,13 @@ permissions:
   security-events: write
 
 on:
-  workflow_dispatch:
-    inputs:
-      source_ref:
-        description: Branch, tag, or SHA to publish from.
-        required: false
-        type: string
-        default: ''
-      repo_name:
-        description: Optional repo-name override for the manifest folder.
-        required: false
-        type: string
-        default: ''
+  workflow_dispatch:    
+  # push:
+  #   branches:
+  #     - cue-migration
 
 jobs:
-  cue-manifest-migration-prod:
+  compare-cue-and-helm-manifests:
     runs-on:
       group: vpay-runner-group
     steps:
@@ -31,41 +23,27 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ inputs.source_ref || github.ref_name }}
+          ref: ${{ github.ref_name }}
 
       - name: Resolve repository name
         shell: bash
         run: |
           set -euo pipefail
-
-          repo_name_input='${{ inputs.repo_name }}'
-          if [[ -n "$repo_name_input" ]]; then
-            repo_name="$repo_name_input"
-          else
             repo_name='${{ github.event.repository.name }}'
-          fi
-
-          safe_repo_name="$(printf '%s' "$repo_name" | tr -cd 'A-Za-z0-9._-')"
-          if [[ -z "$safe_repo_name" ]]; then
-            echo "Repository name is empty after sanitization" >&2
+            safe_repo_name="$(printf '%s' "$repo_name" | tr -cd 'A-Za-z0-9._-')"
+            if [[ -z "$safe_repo_name" ]]; then
+               echo "Repository name is empty after sanitization" >&2
             exit 1
-          fi
-
-          source_ref_input='${{ inputs.source_ref }}'
-          if [[ -n "$source_ref_input" ]]; then
-            source_ref="$source_ref_input"
-          else
-            source_ref="$GITHUB_REF_NAME"
-          fi
-
+            fi
+          
           echo "REPO_NAME=$safe_repo_name" >> "$GITHUB_ENV"
-          echo "SOURCE_REF_NAME=$source_ref" >> "$GITHUB_ENV"
+          echo "SOURCE_REF_NAME=${{ github.ref }}" >> "$GITHUB_ENV"
 
       - name: Install CUE
         shell: bash
         run: |
           set -euo pipefail
-          curl -sSLo cue.tar.gz https://github.com/cue-lang/cue/releases/download/v0.9.2/cue_v0.9.2_linux_amd64.tar.gz
+          curl -sSLo cue.tar.gz https://github.com/cue-lang/cue/releases/download/v0.14.2/cue_v0.14.2_linux_amd64.tar.gz
           tar -xzf cue.tar.gz
           mkdir -p "$HOME/bin"
           mv cue "$HOME/bin/"
@@ -83,39 +61,41 @@ jobs:
 
       - name: Generate CUE manifests
         shell: bash
+        env:
+          IMAGE_TAG: ${{ github.ref_name }}
+          ENV_NAME: prod
         run: |
           set -euo pipefail
-          bash ./cac/scripts/generate-prod.sh "latest"
-
+          cd cac
+          cue cmd --inject tag="$IMAGE_TAG" --inject deployment="$ENV_NAME" --inject env="$ENV_NAME" gen .
       - name: Render Helm manifests
         shell: bash
+        env:
+          IMAGE_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
 
           env_name='prod'
-          chart_src_dir="charts/payment-api"
-          chart_temp_dir="$RUNNER_TEMP/payment-api-chart-${env_name}"
-
-          rm -rf "$chart_temp_dir"
-          mkdir -p "$chart_temp_dir"
-          cp -R "$chart_src_dir"/. "$chart_temp_dir"/
-          rm -f "$chart_temp_dir/Chart.lock"
-
+          env_title="$(printf '%s' "$env_name" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
           cat <<EOF > default-env-dc-values.yaml
           global:
             environment:
-              name: Production
+              name: ${env_title}
               ingress:
-                subdomain: prod.pks.vpayusa.net
+                subdomain: ${env_name}.pks.vpayusa.net
           EOF
-
+          # Copy chart to temp directory and remove Chart.lock to avoid sync conflicts
+          chart_temp_dir="$RUNNER_TEMP/payment-api-chart"
+          cp -r charts/payment-api "$chart_temp_dir"
+          rm -f "$chart_temp_dir/Chart.lock"
           helm dependency build "$chart_temp_dir"
           helm template payment-api "$chart_temp_dir" \
             -f default-env-dc-values.yaml \
-            -f "$chart_temp_dir/values-${env_name}.yaml" \
+            -f "$chart_temp_dir/values.yaml" \
             -f "$chart_temp_dir/secret-values.yaml" \
             --namespace "client-payments-${env_name}" \
-            > "/tmp/payment-api-helm-${env_name}.yaml"
+            --set "chart.virtual.shared.image.tag=${IMAGE_TAG}" \
+            > "/tmp/vpay-consolidated-claim-api-helm-${env_name}.yaml"
 
       - name: Compare CUE and Helm manifests
         shell: bash
@@ -132,7 +112,7 @@ jobs:
 
           env_name = os.environ["ENV_NAME"]
           cue_dir = Path(f"cac/generated/{env_name}")
-          helm_file = Path(f"/tmp/payment-api-helm-{env_name}.yaml")
+          helm_file = Path(f"/tmp/vpay-consolidated-claim-api-helm-{env_name}.yaml")
 
           def load_documents(directory_or_file):
             documents = []
@@ -210,41 +190,10 @@ jobs:
 
           print(f"CUE and Helm manifests match for {env_name}")
           PY
-
-      - name: Publish generated manifests
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          env_name='prod'
-          source_env_dir="$GITHUB_WORKSPACE/cac/generated/$env_name"
-          manifest_repo_dir="$GITHUB_WORKSPACE/manifests"
-          target_env_dir="$manifest_repo_dir/k8s-cue-manifests/$REPO_NAME/$env_name"
-
-          rm -rf "$target_env_dir"
-          mkdir -p "$target_env_dir"
-
-          shopt -s nullglob
-          generated_files=("$source_env_dir"/*.yaml "$source_env_dir"/*.yml)
-          if [[ ${#generated_files[@]} -eq 0 ]]; then
-            echo "No generated YAML files found in $source_env_dir" >&2
-            exit 1
-          fi
-
-          cp "${generated_files[@]}" "$target_env_dir/"
-          shopt -u nullglob
-
-          git -C "$manifest_repo_dir" config user.email "github-actions[bot]@users.noreply.github.com"
-          git -C "$manifest_repo_dir" config user.name "github-actions[bot]"
-
-          git -C "$manifest_repo_dir" add "k8s-cue-manifests/$REPO_NAME/$env_name"
-
-          if git -C "$manifest_repo_dir" diff --cached --quiet; then
-            echo "No manifest changes to publish for $env_name."
-            exit 0
-          fi
-
-          git -C "$manifest_repo_dir" commit -m "Publish CUE manifests for $REPO_NAME $env_name"
-          git -C "$manifest_repo_dir" fetch origin k8s-cue-manifests
-          git -C "$manifest_repo_dir" rebase origin/k8s-cue-manifests
-          git -C "$manifest_repo_dir" push origin "HEAD:k8s-cue-manifests"
+  
+  publish-cue-manifests:
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/publish-cue-manifests.yaml@feature/docker-tags-output
+    needs: [compare-cue-and-helm-manifests]
+    with:
+     ENV_NAME: prod
+    secrets: inherit 
