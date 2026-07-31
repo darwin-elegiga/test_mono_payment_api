@@ -191,21 +191,22 @@ jobs:
           print(f"CUE and Helm manifests match for {env_name}")
           PY
 
-  build-and-publish:
-    needs: compare-cue-and-helm-manifests
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
-    with: 
-      PROJECT: payment-api
-      IMAGE_NAME: payment-web-api
-      DOCKERFILE: Dockerfile
-      DOCKER_CONTEXT_DIR: ""
-      DOCKER_URL: "centraluhg.jfrog.io"
-      BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
-    secrets: inherit
+  # build-and-publish:
+  #   needs: compare-cue-and-helm-manifests
+  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
+  #   with: 
+  #     PROJECT: payment-api
+  #     IMAGE_NAME: payment-web-api
+  #     DOCKERFILE: Dockerfile
+  #     DOCKER_CONTEXT_DIR: ""
+  #     DOCKER_URL: "centraluhg.jfrog.io"
+  #     BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
+  #   secrets: inherit
   
   publish-cue-manifests:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/publish-cue-manifests.yaml@main
-    needs: [compare-cue-and-helm-manifests,build-and-publish]
+    # needs: [compare-cue-and-helm-manifests,build-and-publish]
+    needs: [compare-cue-and-helm-manifests]
     with:
      ENV_NAME: dev
     secrets: inherit 
