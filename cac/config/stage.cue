@@ -36,7 +36,7 @@ EnvConfigMap: {
       }
       externalSecret: {
         enabled:         true
-        storeName:       "vault-backend"
+        storeName:       "vault-store-dba"
         storeKind:       "ClusterSecretStore"
         refreshInterval: "1h"
         creationPolicy:  "Owner"
