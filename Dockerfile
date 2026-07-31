@@ -56,7 +56,7 @@ RUN --mount=type=secret,id=jf-token,env=JF_TOKEN \
     rm -f /etc/apt/sources.list.d/*.sources && \
     mkdir -p /etc/apt/auth.conf.d && \
     echo "machine centraluhg.jfrog.io login ${JF_USER} password ${JF_TOKEN}" > /etc/apt/auth.conf.d/artifactory.conf && \
-    echo "deb [trusted=yes] https://centraluhg.jfrog.io/artifactory/glb-debian-archive-ubuntu-rem-cache/ubuntu jammy main multiverse restricted universe" > /etc/apt/sources.list.d/glb-debian-security-rem.list && \
+    echo "deb [trusted=yes] https://centraluhg.jfrog.io/artifactory/glb-debian-archive-ubuntu-rem/ubuntu jammy main multiverse restricted universe" > /etc/apt/sources.list.d/glb-debian-security-rem.list && \
     apt-get update && \
     apt-get upgrade -y openssl libssl3 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf /etc/apt/auth.conf.d/artifactory.conf
