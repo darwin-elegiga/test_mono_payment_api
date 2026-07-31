@@ -10,9 +10,9 @@ permissions:
 
 on:
   workflow_dispatch:    
-  # push:
-  #   branches:
-  #     - cue-migration
+  push:
+    branches:
+      - cue-migration
 
 jobs:
   compare-cue-and-helm-manifests:
@@ -204,7 +204,7 @@ jobs:
     secrets: inherit
   
   publish-cue-manifests:
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/publish-cue-manifests.yaml@feature/docker-tags-output
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/publish-cue-manifests.yaml@main
     needs: [compare-cue-and-helm-manifests,build-and-publish]
     with:
      ENV_NAME: dev
