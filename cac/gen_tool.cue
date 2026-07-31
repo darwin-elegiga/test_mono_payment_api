@@ -22,7 +22,7 @@ command: gen: {
 
   if _cfg.resources.configMap.enabled {
     "write:configmap": file.Create & {
-      filename: "generated/\(_deployment)/configmap.yaml"
+      filename: "generated/\(_deployment)/configmap-api.yaml"
       contents: yaml.Marshal(ConfigMap)
     }
   }
