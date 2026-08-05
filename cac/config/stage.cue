@@ -2,10 +2,21 @@ package config
 
 EnvConfigMap: {
   stage: {
+    env:                     "stage"
+    deployment:              "stage"
     namespace:               "client-payments-stage"
     dotnetEnv:               "Staging"
     replicas:                1
+    servicePort:             8080
     containerPort:           8080
+    imagePullPolicy:         "Always"
+    envVars: {
+      ASPNETCORE_ENVIRONMENT: "Staging"
+      TZ:                     "America/Chicago"
+    }
+    labels: {
+      "app.kubernetes.io/part-of": "payment-api"
+    }
     appsettingsConfigMapKey: "appsettings.staging.json"
     appsettingsMountPath:    "/app/appsettings.Staging.json"
     ingressHostname:         "stg-payapi.vpayusa.net"
@@ -33,6 +44,7 @@ EnvConfigMap: {
       }
       configMap: {
         enabled: true
+        name:    "payment-api-appsettings-json"
       }
       externalSecret: {
         enabled:         true
@@ -41,13 +53,30 @@ EnvConfigMap: {
         refreshInterval: "1h"
         creationPolicy:  "Owner"
         deletionPolicy:  "Retain"
+        targetName:      "payment-api-appsettings-secure-json"
         remoteKey:       "secret/client-payments/payment-api/stage/db2"
+        data: [
+          {
+            secretKey: "Db2Username"
+            remoteRef: {
+              key:      "secret/client-payments/payment-api/stage/db2"
+              property: "username"
+            }
+          },
+          {
+            secretKey: "Db2Password"
+            remoteRef: {
+              key:      "secret/client-payments/payment-api/stage/db2"
+              property: "password"
+            }
+          },
+        ]
       }
       httpRoute: {
         enabled: true
-        parentRef: {
+        parentRefs: [{
           name: "gateway"
-        }
+        }]
         hostnames: ["stg-payapi.vpayusa.net"]
       }
     }

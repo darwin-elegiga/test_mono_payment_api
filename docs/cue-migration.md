@@ -35,7 +35,7 @@ Reference implementation used during migration:
   - `appsettings.development.json`
   - `appsettings.staging.json`
   - `appsettings.production.json`
-- Separate appsettings publication workflow is provided in `.github/workflows/publish-appsettings-configmap.yml` and copies only generated `configmap.yaml`.
+- ConfigMap-only publishing is handled by `.github/workflows/cue-configmap-deploy.yml`, which generates CUE manifests and publishes only `configmap*.yaml` files.
 
 ## Generation and Validation
 
@@ -54,26 +54,26 @@ Outputs are written to:
 - `cac/generated/stage/`
 - `cac/generated/prod/`
 
+Only `.gitkeep` placeholders are tracked in `cac/generated/`; generated manifests are produced by scripts and workflows at runtime.
+
 ## Workflow Alignment
 
-Added migration workflows:
+Aligned CUE workflows:
 
-- `.github/workflows/cue-manifest-migration-dev.yml`
-- `.github/workflows/cue-manifest-migration-stage.yml`
-- `.github/workflows/cue-manifest-migration-prod.yml`
+- `.github/workflows/cue-build-and-deploy-dev.yml`
+- `.github/workflows/cue-deploy-stage.yml`
+- `.github/workflows/cue-deploy-prod.yml`
+- `.github/workflows/cue-configmap-deploy.yml`
 
-Each workflow is dispatch-driven and performs:
+Workflow behavior:
 
-1. CUE generation.
-2. Helm rendering for parity comparison.
-3. Compare step (resource keys and deployment image references).
-4. Publish of generated environment manifests.
+1. Generate manifests from CUE for the target environment.
+2. Capture and inject `deployedBy` metadata for label traceability.
+3. Publish generated manifests to the shared manifests repository.
+4. For configmap deploy, publish only `configmap*.yaml` outputs.
 
-Existing stage/prod deploy workflows are preserved to keep current deployment contract unchanged.
+Existing Helm deploy workflows remain available for non-CUE deployment paths.
 
 ## Known Constraint
 
-Local Helm parity can be blocked when chart dependency fetch requires authentication to the internal Helm repository (`401`). In that case:
-
-- CUE generation and validation remain executable.
-- Helm parity comparison is pending until repository auth is available.
+Local Helm parity is no longer part of the CUE workflows. If chart dependency access is unavailable, Helm deploy workflows may still require internal repository authentication.

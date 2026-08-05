@@ -1,16 +1,30 @@
 package config
 
+#ExternalSecretStoreName: "vault-store-devops" | "vault-store-dba" | "vault-store-engineering" | "vault-store-secret"
+
+#ExternalSecretStoreRef: {
+  name: #ExternalSecretStoreName
+  kind: *"ClusterSecretStore" | string
+}
+
 #Config: {
   appName:   string
   imageTag:  string
   imageRepo: string
-  env:       string
+  env:       "dev" | "stage" | "prod"
   deployment: "dev" | "stage" | "prod"
 
   namespace:               string
   dotnetEnv:               string
   replicas:                int
-  containerPort:           int
+  servicePort:             *80 | int
+  containerPort:           *80 | int
+  imagePullPolicy:         *"Always" | string
+  envVars: {
+    ASPNETCORE_ENVIRONMENT: string
+    TZ:                     string
+  }
+  labels: [string]: string
   appsettingsConfigMapKey: string
   appsettingsMountPath:    string
   ingressHostname:         string
@@ -42,20 +56,37 @@ package config
     }
     externalSecret: {
       enabled:         bool
-      storeName:       string  // One of: vault-store-devops, vault-store-dba, vault-store-engineering, vault-store-secret
-      storeKind:       string  // Defaults to ClusterSecretStore
+      storeName:       *"vault-store-secret" | #ExternalSecretStoreName
+      storeKind:       *"ClusterSecretStore" | string
       refreshInterval: string
       creationPolicy:  string
       deletionPolicy:  string
-      remoteKey:       string
+      targetName:      string
+      targetTemplate?: string
+      remoteKey?:      string
+      data?: [...{
+        secretKey: string
+        sourceRef?: {
+          storeRef: #ExternalSecretStoreRef
+        }
+        remoteRef: {
+          key:      string
+          property: string
+        }
+      }]
     }
     httpRoute: {
       enabled: bool
-      parentRef: {
+      parentRef?: {
         name:        string
         namespace?:  string
         sectionName?: string
       }
+      parentRefs?: [...{
+        name: string
+        namespace?: string
+        sectionName?: string
+      }]
       hostnames: [...string]
     }
   }
