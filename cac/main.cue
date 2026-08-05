@@ -171,8 +171,7 @@ if _cfg.resources.service.enabled {
     spec: {
       type: _cfg.resources.service.type
       selector: {
-        "app.kubernetes.io/instance": _cfg.helmInstanceLabel
-        "app.kubernetes.io/name":     _cfg.appName
+        app: _cfg.helmAppLabel
       }
       ports: [{
         name:       "http"
