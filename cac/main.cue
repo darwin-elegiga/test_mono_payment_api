@@ -231,8 +231,8 @@ if _cfg.resources.externalSecret.enabled {
           }
         }
       }
-      data: if _cfg.resources.externalSecret.data != _|_ {
-        [
+      if _cfg.resources.externalSecret.data != _|_ {
+        data: [
           for item in _cfg.resources.externalSecret.data {
             {
               secretKey: item.secretKey
@@ -251,22 +251,25 @@ if _cfg.resources.externalSecret.enabled {
             }
           },
         ]
-      } else [
-        {
-          secretKey: "Db2Username"
-          remoteRef: {
-            key:      _cfg.resources.externalSecret.remoteKey
-            property: "username"
-          }
-        },
-        {
-          secretKey: "Db2Password"
-          remoteRef: {
-            key:      _cfg.resources.externalSecret.remoteKey
-            property: "password"
-          }
-        },
-      ]
+      }
+      if _cfg.resources.externalSecret.data == _|_ {
+        data: [
+          {
+            secretKey: "Db2Username"
+            remoteRef: {
+              key:      _cfg.resources.externalSecret.remoteKey
+              property: "username"
+            }
+          },
+          {
+            secretKey: "Db2Password"
+            remoteRef: {
+              key:      _cfg.resources.externalSecret.remoteKey
+              property: "password"
+            }
+          },
+        ]
+      }
     }
   }
 }
@@ -279,11 +282,14 @@ if _cfg.resources.httpRoute.enabled {
       labels:    _resourceLabels
     }
     spec: {
-      parentRefs: if _cfg.resources.httpRoute.parentRefs != _|_ {
-        _cfg.resources.httpRoute.parentRefs
-      } else [{
-        name: _cfg.resources.httpRoute.parentRef.name
-      }]
+      if _cfg.resources.httpRoute.parentRefs != _|_ {
+        parentRefs: _cfg.resources.httpRoute.parentRefs
+      }
+      if _cfg.resources.httpRoute.parentRefs == _|_ {
+        parentRefs: [{
+          name: _cfg.resources.httpRoute.parentRef.name
+        }]
+      }
       hostnames: _cfg.resources.httpRoute.hostnames
       rules: [{
         backendRefs: [{
