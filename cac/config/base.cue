@@ -53,6 +53,9 @@ package config
     }
     configMap: {
       enabled: bool
+      name:    string
+      fileName?: string
+      content?:  string
     }
     externalSecret: {
       enabled:         bool
