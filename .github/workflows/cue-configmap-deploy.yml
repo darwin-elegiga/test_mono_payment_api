@@ -65,7 +65,7 @@ jobs:
         shell: bash
         env:
           IMAGE_TAG: ${{ github.ref_name }}
-          ENV_NAME: ${{ inputs.environment }}
+          ENV_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'dev' }}
           GITHUB_TRIGGERING_ACTOR: ${{ github.triggering_actor }}
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
@@ -73,6 +73,13 @@ jobs:
           GITHUB_RUN_ID: ${{ github.run_id }}
         run: |
           set -euo pipefail
+          case "${ENV_NAME:-}" in
+            dev|stage|prod) ;;
+            *)
+              echo "Invalid ENV_NAME: '${ENV_NAME:-}' (expected dev, stage, or prod)" >&2
+              exit 1
+              ;;
+          esac
           cd cac
           mkdir -p "generated/$ENV_NAME"
           is_bot_actor() {
@@ -112,7 +119,7 @@ jobs:
       - name: Keep only configmap manifest
         shell: bash
         env:
-          ENV_NAME: ${{ inputs.environment }}
+          ENV_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'dev' }}
         run: |
           set -euo pipefail
           find "cac/generated/$ENV_NAME" -type f \( -name '*.yaml' -o -name '*.yml' \) ! \( -name 'configmap*.yaml' -o -name 'configmap*.yml' \) -delete
@@ -120,7 +127,7 @@ jobs:
       - name: Verify configmap manifests only
         shell: bash
         env:
-          ENV_NAME: ${{ inputs.environment }}
+          ENV_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'dev' }}
         run: |
           set -euo pipefail
 
@@ -154,6 +161,6 @@ jobs:
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/publish-cue-manifests.yaml@main
     needs: generate-configmap-manifest
     with:
-      ENV_NAME: ${{ inputs.environment }}
+      ENV_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'dev' }}
       DEPLOYED_BY: ${{ needs.generate-configmap-manifest.outputs.deployed_by }}
     secrets: inherit
