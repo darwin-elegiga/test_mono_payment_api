@@ -9,7 +9,7 @@ permissions:
   security-events: write
 
 on:
-  push:
+  # push:
   workflow_dispatch:
 
 jobs:
