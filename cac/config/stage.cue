@@ -75,10 +75,10 @@ EnvConfigMap: {
       httpRoute: {
         enabled: true
         hostnames: [
-          "stg-payapi.vpayusa.net"
-          "payment-api.vpay-stg-k8.vpayusa.net"
-          "payment-api.vpay-stg-stl-k8.vpayusa.net"
-          "payment-api.stg.pks.vpayusa.net"
+          "stg-payapi.vpayusa.net",
+          "payment-api.vpay-stg-k8.vpayusa.net",
+          "payment-api.vpay-stg-stl-k8.vpayusa.net",
+          "payment-api.stg.pks.vpayusa.net",
           "payment-api.plpksstg.vpayusa.net"
         ]
       }
