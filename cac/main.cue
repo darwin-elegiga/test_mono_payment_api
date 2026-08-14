@@ -286,14 +286,26 @@ if _cfg.resources.httpRoute.enabled {
       }
       if _cfg.resources.httpRoute.parentRefs == _|_ {
         parentRefs: [{
-          name: _cfg.resources.httpRoute.parentRef.name
+          group:     "gateway.networking.k8s.io"
+          kind:      "Gateway"
+          name:      "public-gateway"
+          namespace: "ingress-gateway"
         }]
       }
       hostnames: _cfg.resources.httpRoute.hostnames
       rules: [{
         backendRefs: [{
-          name: _cfg.appName
-          port: _cfg.servicePort
+          group:  ""
+          kind:   "Service"
+          name:   _cfg.appName
+          port:   80
+          weight: 1
+        }]
+        matches: [{
+          path: {
+            type:  "PathPrefix"
+            value: "/"
+          }
         }]
       }]
     }

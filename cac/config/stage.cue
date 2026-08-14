@@ -74,10 +74,13 @@ EnvConfigMap: {
       }
       httpRoute: {
         enabled: true
-        parentRefs: [{
-          name: "gateway"
-        }]
-        hostnames: ["stg-payapi.vpayusa.net"]
+        hostnames: [
+          "stg-payapi.vpayusa.net"
+          "payment-api.vpay-stg-k8.vpayusa.net"
+          "payment-api.vpay-stg-stl-k8.vpayusa.net"
+          "payment-api.stg.pks.vpayusa.net"
+          "payment-api.plpksstg.vpayusa.net"
+        ]
       }
     }
   }

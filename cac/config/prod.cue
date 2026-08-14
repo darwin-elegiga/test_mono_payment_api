@@ -74,9 +74,6 @@ EnvConfigMap: {
       }
       httpRoute: {
         enabled: true
-        parentRefs: [{
-          name: "gateway"
-        }]
         hostnames: ["payapi.vpayusa.net"]
       }
     }

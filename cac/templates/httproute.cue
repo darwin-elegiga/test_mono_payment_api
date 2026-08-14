@@ -12,16 +12,27 @@ package templates
 	}
 	spec: {
 		parentRefs: [...{
+			group?:       string
+			kind?:        string
 			name:        string
 			namespace?: string
 			sectionName?: string
 		}]
 		hostnames?: [...string]
-				rules?: [...{
-						backendRefs: [...{
-								name: string
-								port: int
-						}]
-				}]
+		rules?: [...{
+			backendRefs: [...{
+				group?:  string
+				kind?:   string
+				name:    string
+				port:    int
+				weight?: int
+			}]
+			matches?: [...{
+				path: {
+					type:  string
+					value: string
+				}
+			}]
+		}]
 	}
 }
