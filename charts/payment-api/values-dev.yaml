@@ -1,6 +1,7 @@
 global:
   parent: 'payment'
 api:
+  replicas: 1
   environment:
     ingress:
       domains:
