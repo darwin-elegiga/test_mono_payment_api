@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using VPay.Data.Db2.Abstractions.TransactionWs;
 using VPay.Payment.Api.Dtos;
 using VPay.Payment.Common;
+using VPay.Payment.Common.Helpers;
 
 namespace VPay.Payment.Api.Auth
 {
@@ -90,11 +91,11 @@ namespace VPay.Payment.Api.Auth
             using (Logger.BeginScope(new Dictionary<string, object>
             {
                 ["SourceIp"] = av.IpAddress,
-                ["UserName"] = av.UserId,
-                ["AuthId"] = av.Id
+                ["UserName"] = SanitizeHelper.MaskForLogging(av.UserId),
+                ["AuthId"] = SanitizeHelper.MaskForLogging(av.Id)
             }))
             {
-                using (Logger.BeginScope(new Dictionary<string, object> { ["UserID"] = av.UserId }))
+                using (Logger.BeginScope(new Dictionary<string, object> { ["UserID"] = SanitizeHelper.MaskForLogging(av.UserId) }))
                 {
                     Logger.LogDebug($"VPay.PaymentApi: Login: Attempting to logon");
                 }
@@ -164,7 +165,7 @@ namespace VPay.Payment.Api.Auth
                             }
                         };
 
-                        using (Logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
+                        using (Logger.BeginScope(new Dictionary<string, object> { ["UserNameHash"] = SanitizeHelper.GetDeterministicHash(userName) }))
                         {
                             Logger.LogWarning("Login Failed: \n{UserRequestBody}", result.ToDisplayString().Replace(Environment.NewLine, ""));
                         }
@@ -197,7 +198,7 @@ namespace VPay.Payment.Api.Auth
 
                     if (result != null)
                     {
-                        using (Logger.BeginScope(new Dictionary<string, object> { ["UserName"] = userName }))
+                        using (Logger.BeginScope(new Dictionary<string, object> { ["UserName"] = SanitizeHelper.MaskUserName(userName) }))
                         {
                             Logger.LogWarning("Login Failed: \n{UserRequestBody}", result.ToDisplayString().Replace(Environment.NewLine,""));
                         }
