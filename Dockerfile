@@ -5,8 +5,8 @@
 ## General arguments
 ARG REGISTRY_URL=centraluhg.jfrog.io
 ARG REPO_PATH=glb-docker-mcr-docker-20200805-rem
-ARG DOTNET_SDK_VERSION=8.0.403
-ARG DOTNET_RUNTIME_VERSION=8.0.21
+ARG DOTNET_SDK_VERSION=8.0.404
+ARG DOTNET_RUNTIME_VERSION=8.0.22
 ARG DOTNET_SDK_VARIANT=jammy
 ARG DOTNET_RUNTIME_VARIANT=jammy
 ARG BASE_SDK_IMAGE=dotnet/sdk
@@ -53,11 +53,18 @@ ARG PROJECT_NAME
 
 WORKDIR /app
 
-COPY --from=build /app/out .
+# Create non-root user 'vpay' and set ownership
+RUN groupadd -r vpay && useradd -r -g vpay vpay && \
+    chown -R vpay:vpay /app
+    
+COPY --from=build --chown=vpay:vpay /app/out .
 ENV ASPNETCORE_URLS=http://+:80
 
 ## Create a symlink so we can use exec form entrypoint
 RUN ln -s ${PROJECT_NAME}.dll Entrypoint.dll
+
+# Switch to non-root user
+USER vpay
 
 ENTRYPOINT [ "dotnet", "Entrypoint.dll" ]
 
