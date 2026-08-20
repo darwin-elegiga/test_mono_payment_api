@@ -13,11 +13,11 @@ on:
       - "*"
 
 jobs:
-  # sonar:
-  #   uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@main
-  #   secrets: inherit
+  sonar:
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/sonar-analysis-dotnet.yml@main
+    secrets: inherit
   build-and-publish:
-    #needs: sonar
+    needs: sonar
     if: always()
     uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
     with: 
