@@ -67,7 +67,7 @@ ENV ASPNETCORE_URLS=http://+:80
 # Switch to non-root user
 USER vpay
 
-ENTRYPOINT [ "dotnet", "Entrypoint.dll" ]
+ENTRYPOINT [ "dotnet", "VPay.Payment.Api.dll" ]
 
 ## Optionally add image build time
 ARG IMAGE_BUILD_TIME
