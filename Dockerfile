@@ -45,11 +45,12 @@ RUN --mount=type=secret,id=jf-token,env=JF_TOKEN \
 COPY . ./
 ## Publish project without restoring
 RUN dotnet publish --no-restore -c ${CONFIG_PROFILE} -o /app/out ${PROJECT}
+RUN ls -la /app/out
 
 ## New stage used to reduce the size of the final image
 FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_RUNTIME_IMAGE}:${DOTNET_RUNTIME_VERSION}-${DOTNET_RUNTIME_VARIANT} AS final
 ## Final stage arguments
-ARG PROJECT_NAME
+ARG PROJECT_NAME=VPay.Payment.Api
 
 WORKDIR /app
 
@@ -60,8 +61,8 @@ RUN groupadd -r vpay && useradd -r -g vpay vpay && \
 COPY --from=build --chown=vpay:vpay /app/out .
 ENV ASPNETCORE_URLS=http://+:80
 
-## Create a symlink so we can use exec form entrypoint
-RUN ln -s ${PROJECT_NAME}.dll Entrypoint.dll
+### Create a symlink so we can use exec form entrypoint
+#RUN ln -s ${PROJECT_NAME}.dll Entrypoint.dll
 
 # Switch to non-root user
 USER vpay
