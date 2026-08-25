@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using VPay.Data.Db2.Abstractions;
 using VPay.Data.Db2.Abstractions.Security;
 using VPay.Payment.Common;
+using VPay.Payment.Common.Helpers;
 
 namespace VPay.Payment
 {
@@ -62,7 +63,7 @@ namespace VPay.Payment
 
             UserSessionInfo userSession = null;
 
-            using (_logger.BeginScope(new Dictionary<string, object> { ["UserID"] = param.UserId }))
+            using (_logger.BeginScope(new Dictionary<string, object> { ["UserID"] = SanitizeHelper.GetDeterministicHash(param.UserId) }))
             {
                 _logger.LogInformation($"AuthService: Try Login");
             }
@@ -75,7 +76,7 @@ namespace VPay.Payment
                 userSession.Source = 'S';
             }
 
-            using (_logger.BeginScope(new Dictionary<string, object> { ["UserID"] = param.UserId }))
+            using (_logger.BeginScope(new Dictionary<string, object> { ["UserID"] = SanitizeHelper.GetDeterministicHash(param.UserId) }))
             {
                 _logger.LogInformation($"AuthService: Completed Login");
             }
@@ -106,7 +107,7 @@ namespace VPay.Payment
 
             if (name.Length > 10 || password.Length > 10)
             {
-                using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = name }))
+                using (_logger.BeginScope(new Dictionary<string, object> { ["UserNameHash"] = SanitizeHelper.GetDeterministicHash(name) }))
                 {
                     _logger.LogWarning("UserName or Password is greather than 10 characters");
                 }
@@ -114,7 +115,7 @@ namespace VPay.Payment
                 return null;
             }
 
-            using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = name }))
+            using (_logger.BeginScope(new Dictionary<string, object> { ["UserNameHash"] = SanitizeHelper.GetDeterministicHash(name) }))
             {
                 _logger.LogInformation($"AuthService: DoLogin: Starting");
             }
@@ -133,7 +134,7 @@ namespace VPay.Payment
 
             if (!string.Equals(remoteLogin.ReturnCode, "OK"))
             {
-                using (_logger.BeginScope(new Dictionary<string, object> { ["UserName"] = name, ["ErrorMessage"] = remoteLogin.ErrorMessage }))
+                using (_logger.BeginScope(new Dictionary<string, object> { ["UserNameHash"] = SanitizeHelper.GetDeterministicHash(name), ["ErrorMessage"] = remoteLogin.ErrorMessage }))
                 {
                     _logger.LogWarning("Error occured During Remote login");
                 }
