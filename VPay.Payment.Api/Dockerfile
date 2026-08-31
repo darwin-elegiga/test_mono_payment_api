@@ -1,21 +1,23 @@
 ARG REGISTRY=docker.repo1.uhc.com/vpay-docker
 
 FROM ${REGISTRY}/base-images/dotnet/aspnet:6.0-focal-db2 AS base
+# Single knob for the target framework used in DB2 clidriver paths below
+ARG TFM=net6.0
 EXPOSE 80
 
 RUN apt-get update && apt-get -y upgrade && apt-get install -y libxml2 curl
 
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Debug/net6.0/clidriver/lib
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Release/net6.0/clidriver/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Debug/${TFM}/clidriver/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Release/${TFM}/clidriver/lib
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/clidriver/lib
-ENV PATH=$PATH:/app/bin/Debug/net6.0/clidriver/bin:/app/bin/Debug/net6.0/clidriver/lib
-ENV PATH=$PATH:/app/bin/Release/net6.0/clidriver/bin:/app/bin/Release/net6.0/clidriver/lib
-ENV PATH=$PATH:/app/bin/Debug/net6.0/clidriver/bin:/app/clidriver/lib
+ENV PATH=$PATH:/app/bin/Debug/${TFM}/clidriver/bin:/app/bin/Debug/${TFM}/clidriver/lib
+ENV PATH=$PATH:/app/bin/Release/${TFM}/clidriver/bin:/app/bin/Release/${TFM}/clidriver/lib
+ENV PATH=$PATH:/app/bin/Debug/${TFM}/clidriver/bin:/app/clidriver/lib
 
 
 FROM ${REGISTRY}/base-images/dotnet/sdk:6.0-focal-db2 AS build
 WORKDIR /src
-COPY NuGet.config NuGet.config
+COPY nuget.config nuget.config
 COPY VPay.Payment.Api/VPay.Payment.Api.csproj VPay.Payment.Api/
 RUN dotnet restore VPay.Payment.Api/VPay.Payment.Api.csproj
 COPY . .
