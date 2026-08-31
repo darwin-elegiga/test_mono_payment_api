@@ -29,10 +29,9 @@ namespace VPay.Payment.Api.Auth
             IOptionsMonitor<VPayAuthenticationOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISystemClock clock,
             IHttpContextAccessor accessor,
             IAuthService authenticationService)
-            : base(options, logger, encoder, clock)
+            : base(options, logger, encoder)
         {
             _accessor = accessor;
             _authenticationService = authenticationService;
