@@ -9,4 +9,4 @@ metadata:
   targetQG: GATE_00
   solutionFileName: VPay.Payment.sln
   buildConfiguration: Release
-  dotnetVersion: 6.x
+  dotnetVersion: 10.x

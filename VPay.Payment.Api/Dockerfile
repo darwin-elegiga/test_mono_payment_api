@@ -1,9 +1,12 @@
 ARG REGISTRY=docker.repo1.uhc.com/vpay-docker
 
-FROM ${REGISTRY}/base-images/dotnet/aspnet:6.0-focal-db2 AS base
+FROM ${REGISTRY}/base-images/dotnet/aspnet:10.0-noble-db2 AS base
 # Single knob for the target framework used in DB2 clidriver paths below
-ARG TFM=net6.0
+ARG TFM=net10.0
 EXPOSE 80
+# .NET 8+ aspnet images default to port 8080; pin the historical port 80 explicitly
+# (requires the base image to keep running as root - ports below 1024)
+ENV ASPNETCORE_URLS=http://+:80
 
 RUN apt-get update && apt-get -y upgrade && apt-get install -y libxml2 curl
 
@@ -15,7 +18,7 @@ ENV PATH=$PATH:/app/bin/Release/${TFM}/clidriver/bin:/app/bin/Release/${TFM}/cli
 ENV PATH=$PATH:/app/bin/Debug/${TFM}/clidriver/bin:/app/clidriver/lib
 
 
-FROM ${REGISTRY}/base-images/dotnet/sdk:6.0-focal-db2 AS build
+FROM ${REGISTRY}/base-images/dotnet/sdk:10.0-noble-db2 AS build
 WORKDIR /src
 COPY nuget.config nuget.config
 COPY VPay.Payment.Api/VPay.Payment.Api.csproj VPay.Payment.Api/

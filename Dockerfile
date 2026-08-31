@@ -4,11 +4,13 @@
 
 ## General arguments
 ARG REGISTRY=docker.repo1.uhc.com/vpay-docker
-ARG DOTNET_VERSION=6.0
+ARG DOTNET_VERSION=10.0
 
 ## ***Use for dotnet 5.0 and above***
-ARG DOTNET_SDK_VARIANT=focal
-ARG DOTNET_RUNTIME_VARIANT=focal-db2
+## NOTE: confirm the exact .NET 10 variant tags with the platform team before building
+## (jammy/noble base moves OpenSSL to 3.x - see the DB2 driver connectivity checklist).
+ARG DOTNET_SDK_VARIANT=noble
+ARG DOTNET_RUNTIME_VARIANT=noble-db2
 ARG BASE_SDK_IMAGE=dotnet/sdk
 ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 
