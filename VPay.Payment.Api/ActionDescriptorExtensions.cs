@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace VPay.Payment.Api
 {
@@ -9,9 +8,12 @@ namespace VPay.Payment.Api
     {
         public static ApiVersionModel GetApiVersion(this ActionDescriptor actionDescriptor)
         {
-            return actionDescriptor?.Properties
-                .Where((kvp) => ((Type)kvp.Key).Equals(typeof(ApiVersionModel)))
-                .Select(kvp => kvp.Value as ApiVersionModel).FirstOrDefault();
+            // Asp.Versioning stores ApiVersionMetadata in EndpointMetadata instead of the
+            // ApiVersionModel entry the legacy versioning package kept in Properties.
+            return actionDescriptor?.EndpointMetadata?
+                .OfType<ApiVersionMetadata>()
+                .Select(m => m.Map(ApiVersionMapping.Explicit | ApiVersionMapping.Implicit))
+                .FirstOrDefault();
         }
     }
 }
