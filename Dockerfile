@@ -3,14 +3,13 @@
 #######################################
 
 ## General arguments
-ARG REGISTRY=docker.repo1.uhc.com/vpay-docker
-ARG DOTNET_VERSION=10.0
+ARG REGISTRY_URL=centraluhg.jfrog.io
+ARG REPO_PATH=glb-docker-mcr-docker-20200805-rem
+ARG DOTNET_SDK_VERSION=10.0
+ARG DOTNET_RUNTIME_VERSION=10.0
 
 ## ***Use for dotnet 5.0 and above***
-## NOTE: confirm the exact .NET 10 variant tags with the platform team before building
-## (jammy/noble base moves OpenSSL to 3.x - see the DB2 driver connectivity checklist).
-ARG DOTNET_SDK_VARIANT=noble
-ARG DOTNET_RUNTIME_VARIANT=noble-db2
+ARG DOTNET_VARIANT=noble
 ARG BASE_SDK_IMAGE=dotnet/sdk
 ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 
@@ -21,7 +20,7 @@ ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 # ARG BASE_RUNTIME_IMAGE=dotnet/core/aspnet
 
 ## Build Stage
-FROM ${REGISTRY}/base-images/${BASE_SDK_IMAGE}:${DOTNET_VERSION}-${DOTNET_SDK_VARIANT} as build
+FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_SDK_IMAGE}:${DOTNET_SDK_VERSION}-${DOTNET_VARIANT} AS build
 
 ## Build stage arguments
 ARG CONFIG_PROFILE=Release
@@ -33,6 +32,7 @@ WORKDIR /app
 
 COPY nuget.config* ./
 COPY *.sln ./
+COPY Directory.Build.props global.json ./
 
 ## Copy .csproj files into the correct file structure
 SHELL ["/bin/bash", "-O", "globstar", "-c"]
@@ -43,21 +43,50 @@ RUN rm -rf docker_build_context
 SHELL ["/bin/sh", "-c"]
 
 ## Restore project
-RUN dotnet restore ${PROJECT}
+RUN --mount=type=secret,id=jf-token,env=JF_TOKEN \
+	--mount=type=secret,id=jf-user,env=JF_USER \
+	dotnet restore ${PROJECT}
 ## Copy all files if restore succeeds
 COPY . ./
 ## Publish project without restoring
 RUN dotnet publish --no-restore -c ${CONFIG_PROFILE} -o /app/out ${PROJECT}
 
 ## New stage used to reduce the size of the final image
-FROM ${REGISTRY}/base-images/${BASE_RUNTIME_IMAGE}:${DOTNET_VERSION}-${DOTNET_RUNTIME_VARIANT} AS final
+FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_RUNTIME_IMAGE}:${DOTNET_RUNTIME_VERSION}-${DOTNET_VARIANT} AS final
 ## Final stage arguments
 ARG PROJECT_NAME
+ARG IBM_IACCESS_PACKAGE=ibm-iaccess-1.1.0.2-1.0.amd64.deb
+
+COPY docker-packages/${IBM_IACCESS_PACKAGE} /tmp/${IBM_IACCESS_PACKAGE}
+
+RUN --mount=type=secret,id=jf-token,env=JF_TOKEN \
+	--mount=type=secret,id=jf-user,env=JF_USER \
+	rm -f /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources \
+	&& mkdir -p /etc/apt/auth.conf.d \
+	&& printf 'machine centraluhg.jfrog.io login %s password %s\n' "$JF_USER" "$JF_TOKEN" \
+		> /etc/apt/auth.conf.d/artifactory.conf \
+	&& printf 'deb [signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://centraluhg.jfrog.io/artifactory/glb-debian-archive-ubuntu-rem-cache/ubuntu noble main multiverse restricted universe\n' \
+		> /etc/apt/sources.list.d/ubuntu.list \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends libxml2 odbcinst unixodbc "/tmp/${IBM_IACCESS_PACKAGE}" \
+	&& rm -f "/tmp/${IBM_IACCESS_PACKAGE}" \
+	&& rm -rf /var/lib/apt/lists/* /etc/apt/auth.conf.d/artifactory.conf
+
+COPY odbc-setup/odbc.ini /etc/odbc.ini
+COPY odbc-setup/odbcinst.ini /etc/odbcinst.ini
+
+RUN ldd /opt/ibm/iSeriesAccess/lib64/libcwbodbc.so > /tmp/ibm-iaccess-ldd.txt \
+	&& ! grep -q 'not found' /tmp/ibm-iaccess-ldd.txt \
+	&& odbcinst -q -d -n 'iSeries Access ODBC Driver' \
+	&& odbcinst -q -s -n AS400 \
+	&& rm -f /tmp/ibm-iaccess-ldd.txt
 
 WORKDIR /app
 
 COPY --from=build /app/out .
 ENV ASPNETCORE_URLS=http://+:80
+ENV LD_LIBRARY_PATH=/app/clidriver/lib
+ENV PATH=/app/clidriver/bin:/app/clidriver/lib:${PATH}
 
 ## Create a symlink so we can use exec form entrypoint
 RUN ln -s ${PROJECT_NAME}.dll Entrypoint.dll
@@ -66,5 +95,5 @@ ENTRYPOINT [ "dotnet", "Entrypoint.dll" ]
 
 ## Optionally add image build time
 ARG IMAGE_BUILD_TIME
-ENV IMAGE_BUILD_TIME ${IMAGE_BUILD_TIME}
+ENV IMAGE_BUILD_TIME=${IMAGE_BUILD_TIME}
 

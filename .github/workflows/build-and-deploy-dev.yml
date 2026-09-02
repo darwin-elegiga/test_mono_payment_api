@@ -1,4 +1,12 @@
 name: build-and-deploy-to-dev
+permissions:
+  actions: read
+  contents: write
+  id-token: write
+  packages: read
+  pull-requests: read
+  security-events: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -19,18 +27,16 @@ jobs:
   build-and-publish:
     needs: sonar
     if: always()
-    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish.yml@main
+    uses: optum-financial/vpay-actions-common-workflow/.github/workflows/docker-build-and-publish-saas.yml@main
     with: 
       PROJECT: payment-api
       IMAGE_NAME: payment-web-api
-      BUILD_ARGS: "PROJECT_DIR PROJECT_NAME"
-      DOCKER_URL: "docker.repo1.uhc.com"
-      DOCKER_USERNAME: ${{ vars.PMNTS_DEVOPS_MSA }}
-      DOCKER_REGISTRY_URL: "docker.repo1.uhc.com/vpay-docker"
+      DOCKERFILE: Dockerfile
+      DOCKER_CONTEXT_DIR: ""
+      DOCKER_URL: "centraluhg.jfrog.io"
       BUILD_ARGS_ENV_FILE_PATH: .github/build-args/
       PRE: ${{ (inputs.PRE == true || github.event_name == 'push' ) && github.event_name != 'release' }}
-    secrets: 
-      DOCKER_PASSWORD: ${{ secrets.PMNTS_DEVOPS_MSA_PWD }} 
+    secrets: inherit
       
   deployment-plano-dev:
     if: always()

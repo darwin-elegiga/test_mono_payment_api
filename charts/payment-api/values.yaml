@@ -2,7 +2,7 @@ chart:
   virtual:
     shared:
       image:
-        registry: docker.repo1.uhc.com/vpay-docker
+        registry: centraluhg.jfrog.io
         tag: latest
         pullPolicy: Always
       env:
