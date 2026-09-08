@@ -33,7 +33,7 @@ ENV PATH=$PATH:/app/bin/Debug/net10.0/clidriver/bin:/app/clidriver/lib
 
 FROM ${REGISTRY}/dotnet/sdk:10.0-noble AS build
 WORKDIR /src
-COPY NuGet.config NuGet.config
+COPY nuget.config nuget.config
 COPY Directory.Build.props global.json ./
 COPY VPay.Payment.Api/VPay.Payment.Api.csproj VPay.Payment.Api/
 COPY VPay.Payment/VPay.Payment.csproj VPay.Payment/
