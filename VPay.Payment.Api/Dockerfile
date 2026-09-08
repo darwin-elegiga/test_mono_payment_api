@@ -1,4 +1,6 @@
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS base
+ARG REGISTRY=centraluhg.jfrog.io/glb-docker-mcr-docker-20200805-rem
+
+FROM ${REGISTRY}/dotnet/aspnet:10.0-noble AS base
 ARG IBM_IACCESS_PACKAGE=ibm-iaccess-1.1.0.2-1.0.amd64.deb
 
 EXPOSE 80
@@ -7,7 +9,7 @@ ENV ASPNETCORE_URLS=http://+:80
 COPY docker-packages/${IBM_IACCESS_PACKAGE} /tmp/${IBM_IACCESS_PACKAGE}
 
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends libxml2 odbcinst unixodbc "/tmp/${IBM_IACCESS_PACKAGE}" \
+	&& apt-get install -y --no-install-recommends libxml2 curl odbcinst unixodbc "/tmp/${IBM_IACCESS_PACKAGE}" \
 	&& rm -f "/tmp/${IBM_IACCESS_PACKAGE}" \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -24,7 +26,7 @@ ENV LD_LIBRARY_PATH=/app/clidriver/lib
 ENV PATH=/app/clidriver/bin:/app/clidriver/lib:${PATH}
 
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0-noble AS build
+FROM ${REGISTRY}/dotnet/sdk:10.0-noble AS build
 WORKDIR /src
 COPY NuGet.config NuGet.config
 COPY Directory.Build.props global.json ./
