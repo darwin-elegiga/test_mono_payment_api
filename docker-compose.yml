@@ -6,6 +6,9 @@ services:
     build:
       context: .
       dockerfile: VPay.Payment.Api/Dockerfile
+      secrets:
+        - jf_user
+        - jf_token
     depends_on:
       vpay.payment.db2:
         condition: service_healthy
@@ -42,4 +45,10 @@ services:
 networks:
   paymentnetwork:
     driver: bridge
+
+secrets:
+  jf_user:
+    environment: JF_USER
+  jf_token:
+    environment: JF_TOKEN
         

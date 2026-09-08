@@ -20,7 +20,7 @@ ARG BASE_RUNTIME_IMAGE=dotnet/aspnet
 # ARG BASE_RUNTIME_IMAGE=dotnet/core/aspnet
 
 ## Build Stage
-FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_SDK_IMAGE}:${DOTNET_SDK_VERSION}-${DOTNET_VARIANT} AS build
+FROM ${REGISTRY_URL}/${REPO_PATH}/${BASE_SDK_IMAGE}:${DOTNET_SDK_VERSION}-${DOTNET_VARIANT} as build
 
 ## Build stage arguments
 ARG CONFIG_PROFILE=Release
@@ -95,5 +95,5 @@ ENTRYPOINT [ "dotnet", "Entrypoint.dll" ]
 
 ## Optionally add image build time
 ARG IMAGE_BUILD_TIME
-ENV IMAGE_BUILD_TIME=${IMAGE_BUILD_TIME}
+ENV IMAGE_BUILD_TIME ${IMAGE_BUILD_TIME}
 

@@ -17,13 +17,6 @@ using Xunit;
 
 namespace VPay.Payment.Api.Tests.MigrationGuard
 {
-    /// <summary>
-    /// Pins the externally observable behavior of the service host so that a runtime or
-    /// package migration cannot change it silently. Everything runs in-process against
-    /// TestServer: no socket leaves the test host and no downstream system is contacted.
-    /// These tests are expected to stay green on the pre-migration baseline AND after
-    /// every migration commit; a red test here means the migration changed behavior.
-    /// </summary>
     [Trait("Category", "MigrationGuard")]
     public class MigrationGuardTests : IClassFixture<MigrationGuardTests.GuardFactory>
     {
@@ -45,17 +38,9 @@ namespace VPay.Payment.Api.Tests.MigrationGuard
             {
                 builder.UseEnvironment("Development");
 
-                // Console/Debug/GELF providers registered by Program would emit log
-                // traffic from inside the tests; keep the run hermetic.
                 builder.ConfigureLogging(logging => logging.ClearProviders());
             }
 
-            /// <summary>
-            /// Swagger setup reads "{EntryAssembly}.xml" from the base directory
-            /// (ServiceCollectionExtensions.AddSwaggerGenService). Under the test runner
-            /// the entry assembly is the test host, which ships no XML docs, so the app
-            /// would fail to start. Provide an empty, well-formed document instead.
-            /// </summary>
             private static void EnsureEntryAssemblyXmlDocExists()
             {
                 var name = Assembly.GetEntryAssembly()?.GetName().Name;
@@ -73,11 +58,6 @@ namespace VPay.Payment.Api.Tests.MigrationGuard
                 }
             }
         }
-
-        // ------------------------------------------------------------------
-        // Authorization surface: a migration that drops the authentication or
-        // authorization wiring would turn these 401s into 200s or 500s.
-        // ------------------------------------------------------------------
 
         [Theory]
         [InlineData("GET", "/api/Main/PanNumber?transNumber=1")]
@@ -106,7 +86,6 @@ namespace VPay.Payment.Api.Tests.MigrationGuard
             using (var client = _factory.CreateClient())
             using (var request = BuildRequest("GET", "/api/Main/PanNumber?transNumber=1"))
             {
-                // The scheme expects a 4-part payload; two parts must fail cleanly.
                 var twoParts = Convert.ToBase64String(Encoding.UTF8.GetBytes("id:passphrase"));
                 request.Headers.Authorization = new AuthenticationHeaderValue("Basic", twoParts);
 
@@ -115,10 +94,6 @@ namespace VPay.Payment.Api.Tests.MigrationGuard
                 response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
             }
         }
-
-        // ------------------------------------------------------------------
-        // Anonymous surface: these must remain reachable without credentials.
-        // ------------------------------------------------------------------
 
         [Theory]
         [InlineData("GET", "/api/about")]
@@ -136,12 +111,6 @@ namespace VPay.Payment.Api.Tests.MigrationGuard
             }
         }
 
-        // ------------------------------------------------------------------
-        // Static WSDL content: served from wwwroot through WebRootFileProvider.
-        // A migration that changes where static web assets are published breaks
-        // these endpoints even though nothing fails at compile time.
-        // ------------------------------------------------------------------
-
         [Theory]
         [InlineData("/api/Legacy/wsdl")]
         [InlineData("/api/TradingPost/wsdl")]
@@ -156,12 +125,6 @@ namespace VPay.Payment.Api.Tests.MigrationGuard
                 body.Should().Contain("definitions", "the endpoint must return the WSDL document");
             }
         }
-
-        // ------------------------------------------------------------------
-        // Swagger document: guards two silent failure modes at once - the XML
-        // comments file going missing (startup failure) and the API-versioning
-        // metadata lookup returning nothing (empty paths section).
-        // ------------------------------------------------------------------
 
         [Fact]
         public async Task Swagger_document_lists_the_versioned_api_surface()
@@ -182,12 +145,6 @@ namespace VPay.Payment.Api.Tests.MigrationGuard
                 paths.ContainsKey("/api/Legacy/GetPanNumber").Should().BeTrue();
             }
         }
-
-        // ------------------------------------------------------------------
-        // Container wiring: package bumps can silently invalidate registrations.
-        // Resolving through a scope constructs the object graph without opening
-        // any downstream connection.
-        // ------------------------------------------------------------------
 
         [Theory]
         [InlineData(typeof(IAuthService))]

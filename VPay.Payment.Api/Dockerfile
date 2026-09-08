@@ -1,28 +1,44 @@
-ARG REGISTRY=docker.repo1.uhc.com/vpay-docker
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS base
+ARG IBM_IACCESS_PACKAGE=ibm-iaccess-1.1.0.2-1.0.amd64.deb
 
-FROM ${REGISTRY}/base-images/dotnet/aspnet:10.0-noble-db2 AS base
-# Single knob for the target framework used in DB2 clidriver paths below
-ARG TFM=net10.0
 EXPOSE 80
-# .NET 8+ aspnet images default to port 8080; pin the historical port 80 explicitly
-# (requires the base image to keep running as root - ports below 1024)
 ENV ASPNETCORE_URLS=http://+:80
 
-RUN apt-get update && apt-get -y upgrade && apt-get install -y libxml2 curl
+COPY docker-packages/${IBM_IACCESS_PACKAGE} /tmp/${IBM_IACCESS_PACKAGE}
 
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Debug/${TFM}/clidriver/lib
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Release/${TFM}/clidriver/lib
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/clidriver/lib
-ENV PATH=$PATH:/app/bin/Debug/${TFM}/clidriver/bin:/app/bin/Debug/${TFM}/clidriver/lib
-ENV PATH=$PATH:/app/bin/Release/${TFM}/clidriver/bin:/app/bin/Release/${TFM}/clidriver/lib
-ENV PATH=$PATH:/app/bin/Debug/${TFM}/clidriver/bin:/app/clidriver/lib
+RUN printf 'Types: deb\nURIs: https://security.ubuntu.com/ubuntu\nSuites: noble noble-updates noble-security\nComponents: main universe restricted multiverse\nSigned-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg\n' \
+		> /etc/apt/sources.list.d/ubuntu.sources \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends libxml2 odbcinst unixodbc "/tmp/${IBM_IACCESS_PACKAGE}" \
+	&& rm -f "/tmp/${IBM_IACCESS_PACKAGE}" \
+	&& rm -rf /var/lib/apt/lists/*
+
+COPY odbc-setup/odbc.ini /etc/odbc.ini
+COPY odbc-setup/odbcinst.ini /etc/odbcinst.ini
+
+RUN ldd /opt/ibm/iSeriesAccess/lib64/libcwbodbc.so > /tmp/ibm-iaccess-ldd.txt \
+	&& ! grep -q 'not found' /tmp/ibm-iaccess-ldd.txt \
+	&& odbcinst -q -d -n 'iSeries Access ODBC Driver' \
+	&& odbcinst -q -s -n AS400 \
+	&& rm -f /tmp/ibm-iaccess-ldd.txt
+
+ENV LD_LIBRARY_PATH=/app/clidriver/lib
+ENV PATH=/app/clidriver/bin:/app/clidriver/lib:${PATH}
 
 
-FROM ${REGISTRY}/base-images/dotnet/sdk:10.0-noble-db2 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble AS build
 WORKDIR /src
-COPY nuget.config nuget.config
+COPY NuGet.config NuGet.config
+COPY Directory.Build.props global.json ./
 COPY VPay.Payment.Api/VPay.Payment.Api.csproj VPay.Payment.Api/
-RUN dotnet restore VPay.Payment.Api/VPay.Payment.Api.csproj
+COPY VPay.Payment/VPay.Payment.csproj VPay.Payment/
+COPY VPay.Payment.Common/VPay.Payment.Common.csproj VPay.Payment.Common/
+COPY database/VPay.Payment.Data.Db2/VPay.Payment.Data.Db2.csproj database/VPay.Payment.Data.Db2/
+RUN --mount=type=secret,id=jf_user \
+	--mount=type=secret,id=jf_token \
+	JF_USER="$(cat /run/secrets/jf_user)" \
+	JF_TOKEN="$(cat /run/secrets/jf_token)" \
+	dotnet restore VPay.Payment.Api/VPay.Payment.Api.csproj
 COPY . .
 WORKDIR /src/VPay.Payment.Api
 RUN dotnet build VPay.Payment.Api.csproj -c Release -o /app

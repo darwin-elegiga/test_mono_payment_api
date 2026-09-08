@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Emit the XML docs next to the assembly regardless of TFM (Swagger IncludeXmlComments reads it from the output dir) -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
@@ -19,14 +18,14 @@
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Gelf.Extensions.Logging" Version="2.6.0" />
     <PackageReference Include="GlobalExceptionHandler" Version="4.0.2" />
-    <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.1.1" />
+    <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="10.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.11" />
     <PackageReference Include="Asp.Versioning.Mvc" Version="10.2.1" />
-    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.2.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.9.0" />
-    <PackageReference Include="System.IO.Abstractions" Version="22.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.15" PrivateAssets="All" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
+    <PackageReference Include="System.IO.Abstractions" Version="19.2.51" />
     <PackageReference Include="VPay.Data.Db2.Abstractions" Version="1.12.2" />
     <PackageReference Include="VPay.Data.Db2.Odbc" Version="1.11.3-PAY-23503-2" />
     <PackageReference Include="VPay.Extensions.Logging.GrayLog" Version="1.0.1" />
