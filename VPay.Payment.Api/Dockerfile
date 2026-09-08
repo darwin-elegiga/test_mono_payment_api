@@ -9,6 +9,7 @@ ENV ASPNETCORE_URLS=http://+:80
 COPY docker-packages/${IBM_IACCESS_PACKAGE} /tmp/${IBM_IACCESS_PACKAGE}
 
 RUN apt-get update \
+	&& apt-get -y upgrade \
 	&& apt-get install -y --no-install-recommends libxml2 curl odbcinst unixodbc "/tmp/${IBM_IACCESS_PACKAGE}" \
 	&& rm -f "/tmp/${IBM_IACCESS_PACKAGE}" \
 	&& rm -rf /var/lib/apt/lists/*
@@ -22,8 +23,12 @@ RUN ldd /opt/ibm/iSeriesAccess/lib64/libcwbodbc.so > /tmp/ibm-iaccess-ldd.txt \
 	&& odbcinst -q -s -n AS400 \
 	&& rm -f /tmp/ibm-iaccess-ldd.txt
 
-ENV LD_LIBRARY_PATH=/app/clidriver/lib
-ENV PATH=/app/clidriver/bin:/app/clidriver/lib:${PATH}
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Debug/net10.0/clidriver/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/bin/Release/net10.0/clidriver/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/clidriver/lib
+ENV PATH=$PATH:/app/bin/Debug/net10.0/clidriver/bin:/app/bin/Debug/net10.0/clidriver/lib
+ENV PATH=$PATH:/app/bin/Release/net10.0/clidriver/bin:/app/bin/Release/net10.0/clidriver/lib
+ENV PATH=$PATH:/app/bin/Debug/net10.0/clidriver/bin:/app/clidriver/lib
 
 
 FROM ${REGISTRY}/dotnet/sdk:10.0-noble AS build
