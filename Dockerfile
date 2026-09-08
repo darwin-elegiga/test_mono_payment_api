@@ -43,9 +43,7 @@ RUN rm -rf docker_build_context
 SHELL ["/bin/sh", "-c"]
 
 ## Restore project
-RUN --mount=type=secret,id=jf-token,env=JF_TOKEN \
-	--mount=type=secret,id=jf-user,env=JF_USER \
-	dotnet restore ${PROJECT}
+RUN dotnet restore ${PROJECT}
 ## Copy all files if restore succeeds
 COPY . ./
 ## Publish project without restoring
@@ -59,18 +57,10 @@ ARG IBM_IACCESS_PACKAGE=ibm-iaccess-1.1.0.2-1.0.amd64.deb
 
 COPY docker-packages/${IBM_IACCESS_PACKAGE} /tmp/${IBM_IACCESS_PACKAGE}
 
-RUN --mount=type=secret,id=jf-token,env=JF_TOKEN \
-	--mount=type=secret,id=jf-user,env=JF_USER \
-	rm -f /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources \
-	&& mkdir -p /etc/apt/auth.conf.d \
-	&& printf 'machine centraluhg.jfrog.io login %s password %s\n' "$JF_USER" "$JF_TOKEN" \
-		> /etc/apt/auth.conf.d/artifactory.conf \
-	&& printf 'deb [signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://centraluhg.jfrog.io/artifactory/glb-debian-archive-ubuntu-rem-cache/ubuntu noble main multiverse restricted universe\n' \
-		> /etc/apt/sources.list.d/ubuntu.list \
-	&& apt-get update \
+RUN apt-get update \
 	&& apt-get install -y --no-install-recommends libxml2 odbcinst unixodbc "/tmp/${IBM_IACCESS_PACKAGE}" \
 	&& rm -f "/tmp/${IBM_IACCESS_PACKAGE}" \
-	&& rm -rf /var/lib/apt/lists/* /etc/apt/auth.conf.d/artifactory.conf
+	&& rm -rf /var/lib/apt/lists/*
 
 COPY odbc-setup/odbc.ini /etc/odbc.ini
 COPY odbc-setup/odbcinst.ini /etc/odbcinst.ini

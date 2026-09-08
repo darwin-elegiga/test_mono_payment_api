@@ -6,9 +6,7 @@ ENV ASPNETCORE_URLS=http://+:80
 
 COPY docker-packages/${IBM_IACCESS_PACKAGE} /tmp/${IBM_IACCESS_PACKAGE}
 
-RUN printf 'Types: deb\nURIs: https://security.ubuntu.com/ubuntu\nSuites: noble noble-updates noble-security\nComponents: main universe restricted multiverse\nSigned-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg\n' \
-		> /etc/apt/sources.list.d/ubuntu.sources \
-	&& apt-get update \
+RUN apt-get update \
 	&& apt-get install -y --no-install-recommends libxml2 odbcinst unixodbc "/tmp/${IBM_IACCESS_PACKAGE}" \
 	&& rm -f "/tmp/${IBM_IACCESS_PACKAGE}" \
 	&& rm -rf /var/lib/apt/lists/*
@@ -34,11 +32,7 @@ COPY VPay.Payment.Api/VPay.Payment.Api.csproj VPay.Payment.Api/
 COPY VPay.Payment/VPay.Payment.csproj VPay.Payment/
 COPY VPay.Payment.Common/VPay.Payment.Common.csproj VPay.Payment.Common/
 COPY database/VPay.Payment.Data.Db2/VPay.Payment.Data.Db2.csproj database/VPay.Payment.Data.Db2/
-RUN --mount=type=secret,id=jf_user \
-	--mount=type=secret,id=jf_token \
-	JF_USER="$(cat /run/secrets/jf_user)" \
-	JF_TOKEN="$(cat /run/secrets/jf_token)" \
-	dotnet restore VPay.Payment.Api/VPay.Payment.Api.csproj
+RUN dotnet restore VPay.Payment.Api/VPay.Payment.Api.csproj
 COPY . .
 WORKDIR /src/VPay.Payment.Api
 RUN dotnet build VPay.Payment.Api.csproj -c Release -o /app

@@ -3,6 +3,7 @@ using IBM.Data.Db2;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using VPay.Data.Db2.Odbc;
 
 namespace VPay.Payment.Data.Db2.Connection;
 
@@ -20,6 +21,7 @@ public static class ServiceProviderExtensions
             var config = x.GetRequiredService<DB2UnifiedConnectionSettings>();
 
             var connectionString = GetConnectionString(config);
+            serviceCollection.AddDb2OdbcConnection(connectionString);
 
             return new DB2UnifiedConnection(connectionString, config.IsLocal,
                 factory.CreateLogger<DB2UnifiedConnection>());
